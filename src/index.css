@@ -22,8 +22,101 @@ a {
 }
 
 body {
-  @apply m-0 min-w-xs min-h-dvh grid place-items-center;
+  @apply m-0 min-w-xs min-h-dvh;
 
   @apply bg-white text-slate-900;
   @apply dark:bg-slate-900 dark:text-slate-50;
+}
+
+button {
+  @apply focus:outline-none cursor-pointer; /* had focus:ring-3 focus:ring-blue-500/40 */
+  &:disabled {
+    @apply opacity-50;
+  }
+}
+
+/*.custom-scroll-thumb {*/
+/*  @apply [scrollbar-color:#00E2A7_transparent];*/
+/*  @apply [&::-webkit-scrollbar]:bg-transparent [&::-webkit-scrollbar]:w-2.5 [&::-webkit-scrollbar-thumb]:bg-brand-main;*/
+/*  @supports (scrollbar-color: black black) {*/
+/*    scrollbar-width: thin;*/
+/*  }*/
+/*}*/
+
+.invisible-scroll {
+  @apply [scrollbar-color:transparent_transparent];
+  @apply [&::-webkit-scrollbar]:bg-transparent [&::-webkit-scrollbar]:w-0 [&::-webkit-scrollbar-thumb]:bg-transparent;
+  @supports (scrollbar-color: black black) {
+    scrollbar-width: none;
+  }
+}
+
+.hide-able {
+  transition: grid-template-rows .2s, translate .25s;
+}
+
+.hiding-animation {
+  @apply grid-rows-[0fr] -translate-x-full;
+}
+
+.dialog-container {
+  @apply fixed top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-full p-4 grid place-items-center z-30;
+}
+
+.dialog-input {
+  @apply bg-slate-900 border-b border-slate-500 px-3.5 py-2.5 focus:border-slate-100 focus:outline-none focus:placeholder:opacity-40;
+}
+
+.dialog-button {
+  @apply flex-1 px-6 py-2 font-semibold rounded;
+}
+
+.toast {
+  @apply relative flex flex-col p-4 pb-6 rounded overflow-hidden;
+
+  .toast-progress-container {
+    @apply flex absolute bottom-0 left-0 right-0;
+  }
+
+  .toast-progress-bar {
+    @apply w-full h-2 transition;
+  }
+
+  &.error {
+    @apply bg-red-500;
+
+    & .toast-progress-container {
+      @apply bg-red-700;
+    }
+
+    & .toast-progress-bar {
+      @apply bg-red-300 [&.timeout]:-translate-x-full;
+    }
+  }
+}
+
+.small-toast {
+  @apply flex items-center self-center gap-2 pl-4 pr-5 py-2 rounded;
+
+  &.success {
+    @apply text-green-200 bg-green-700/40;
+  }
+}
+
+.assessment-scroller {
+  @apply grid grid-cols-1 grid-rows-[repeat(11,100%)] overflow-y-scroll scroll-smooth snap-y snap-mandatory outline-sky-500/50 -outline-offset-2 focus:outline-2;
+}
+
+.assessment-scroller-overlay {
+  @apply absolute inset-0 grid grid-rows-[0fr] pointer-events-none;
+  transition: grid-template-rows 0s;
+
+  & .assessment-progress-bar {
+    @apply bg-black/25;
+  }
+
+  &.animate {
+    @apply grid-rows-[1fr];
+    transition: grid-template-rows 1.5s linear;
+  }
 }
