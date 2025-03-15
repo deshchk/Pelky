@@ -1,4 +1,3 @@
-import Shadow from "@/components/atoms/Shadow"
 import SimpleButton from "@/components/atoms/SimpleButton"
 import { useEffect, useRef, useState } from "react"
 import { nbsps } from "@/utils"

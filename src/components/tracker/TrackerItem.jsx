@@ -1,4 +1,3 @@
-import Options from "@/assets/options.svg?react"
 import Trash from "@/assets/trash.svg?react"
 import {useEffect, useRef, useState} from "react"
 import useDialog from "@/hooks/useDialog"
