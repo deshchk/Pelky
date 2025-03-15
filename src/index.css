@@ -4,6 +4,7 @@
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
+  height: 100dvh;
 
   color-scheme: light dark;
 
@@ -22,7 +23,7 @@ a {
 }
 
 body {
-  @apply m-0 min-w-xs min-h-dvh;
+  @apply m-0 min-w-xs min-h-dvh overscroll-contain;
 
   @apply bg-white text-slate-900;
   @apply dark:bg-slate-900 dark:text-slate-50;
@@ -52,6 +53,7 @@ button {
 }
 
 .hide-able {
+  @apply grid;
   transition: grid-template-rows .2s, translate .25s;
 }
 
@@ -120,3 +122,10 @@ button {
     transition: grid-template-rows 1.5s linear;
   }
 }
+
+.tracker-item {
+  &.last-assessed {
+    @apply outline-4 outline-green-500/30 outline-offset-2;
+  }
+}
+

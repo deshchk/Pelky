@@ -1,12 +1,8 @@
 import TrackerList from "@/components/tracker/TrackerList"
-import { memo, useEffect, useRef } from "react"
+import { memo, useRef } from "react"
 
 function Content({items, setItems, assessments, setAssessments, setToastData, setDialogData}) {
   const mainEl = useRef(null)
-
-  useEffect(() => {
-    mainEl.current.scrollTo({top: mainEl.current.scrollHeight, behavior: 'instant'})
-  }, [items])
 
   const listProps = {
     setItems,

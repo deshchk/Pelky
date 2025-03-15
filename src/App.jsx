@@ -11,31 +11,55 @@ function App() {
       id: 1,
       title: 'radość',
       priority: 'min',
+      lastAssessed: false,
+      settingReminder: false,
+      reminderTime: "18:00",
+      reminderDays: []
     },
     {
       id: 2,
       title: 'smutek',
       priority: 'min',
+      lastAssessed: false,
+      settingReminder: false,
+      reminderTime: "18:00",
+      reminderDays: []
     },
     {
       id: 3,
       title: 'satysfakcja z życia',
       priority: 'mid',
+      lastAssessed: false,
+      settingReminder: false,
+      reminderTime: "18:00",
+      reminderDays: []
     },
     {
       id: 4,
       title: 'satysfakcja z pracy',
       priority: 'mid',
+      lastAssessed: false,
+      settingReminder: false,
+      reminderTime: "18:00",
+      reminderDays: []
     },
     {
       id: 5,
       title: 'kreatywność',
       priority: 'max',
+      lastAssessed: false,
+      settingReminder: false,
+      reminderTime: "18:00",
+      reminderDays: []
     },
     {
       id: 6,
       title: 'produktywność',
       priority: 'max',
+      lastAssessed: false,
+      settingReminder: false,
+      reminderTime: "18:00",
+      reminderDays: []
     },
   ])
 
@@ -59,6 +83,13 @@ function App() {
     setDialogData
   }
 
+  const navProps = {
+    items,
+    setItems,
+    setToastData,
+    setDialogData
+  }
+
   return (
     <>
       <ToastContext.Provider value={{ data: toastData, push: setToastData }}>
@@ -70,7 +101,7 @@ function App() {
       </DialogContext.Provider>
 
       <Content {...contentProps} />
-      <Nav items={items} setItems={setItems} setToast={setToastData} setDialog={setDialogData} />
+      <Nav {...navProps} />
     </>
   )
 }

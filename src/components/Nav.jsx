@@ -4,7 +4,7 @@ import Add from "@/assets/add.svg?react"
 import { newID } from "@/utils"
 import { memo } from "react"
 
-function Nav({items, setItems, setToast, setDialog}) {
+function Nav({items, setItems, setToastData, setDialogData}) {
 
   const errorCodes = {
     1: 'Item with this name already exists.'
@@ -19,14 +19,14 @@ function Nav({items, setItems, setToast, setDialog}) {
       type: 'error',
     }
 
-    setToast(toasts => toasts.concat([toast]))
+    setToastData(toasts => toasts.concat([toast]))
 
     setTimeout(() => {
-      setToast(toasts => toasts.toSpliced(toasts.indexOf(toast), 1))
+      setToastData(toasts => toasts.toSpliced(toasts.indexOf(toast), 1))
     }, toast.time)
   }
 
-  const confirmAdd = useDialog(setDialog, {
+  const confirmAdd = useDialog(setDialogData, {
     id: newID(),
     Icon: Add,
     title: `Adding new item`,

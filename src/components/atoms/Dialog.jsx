@@ -1,7 +1,8 @@
 import Shadow from "@/components/atoms/Shadow"
 import SimpleButton from "@/components/atoms/SimpleButton"
 import { useEffect, useRef, useState } from "react"
-import { nbsps, useOutsideClick } from "@/utils"
+import { nbsps } from "@/utils"
+import { useOutsideClick } from "@/hooks/useOutsideClick"
 
 function Dialog({props, handleConfirm, closeDialog}) {
   const {

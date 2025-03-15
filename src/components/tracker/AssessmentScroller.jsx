@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { newID } from "@/utils"
 
-function AssessmentScroller({color, borderColor, item, setToast}) {
+function AssessmentScroller({color, borderColor, item, setToast, setItems}) {
 
   const scroller = useRef(null)
   const scrollerOverlay = useRef(null)
@@ -31,6 +31,7 @@ function AssessmentScroller({color, borderColor, item, setToast}) {
     }
 
     setToast(toasts => toasts.concat([toast]))
+    setItems(prev => prev.map(i => i.id === item.id ? {...i, lastAssessed: true} : {...i, lastAssessed: false} ))
 
     setTimeout(() => {
       setToast(toasts => toasts.toSpliced(toasts.indexOf(toast), 1))
