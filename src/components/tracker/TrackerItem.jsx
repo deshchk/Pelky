@@ -17,7 +17,6 @@ function TrackerItem({children, item, data}) {
   const scrollEl = useRef(null)
 
   const wasSettingReminder = useRef(false)
-  const dontDelete = useRef(false)
 
   const [touchEnded, setTouchEnded] = useState(true)
   const [deleting, setDeleting] = useState(false)
@@ -79,23 +78,16 @@ function TrackerItem({children, item, data}) {
     }
 
     if (!item.settingReminder) {
-      if (!dontDelete.current) {
-        (e.target.scrollLeft > e.target.clientWidth/2 && touchEnded && !deleting) && deleteItem()
-      } else {
-        if (e.target.scrollLeft < scrollEl.current.children[0].clientWidth+1 && wasSettingReminder.current) {
-          console.log('here')
-          scrollEl.current.classList.add('stop-scroll')
-        } else {
-          scrollEl.current.scrollTo({left: scrollEl.current.children[0].clientWidth+1, behavior: 'instant'})
-          wasSettingReminder.current = false
-          dontDelete.current = false
-          setTimeout(() => {
-            scrollEl.current.classList.remove('stop-scroll')
-          }, 5000)
-        }
+      if (wasSettingReminder.current && e.target.scrollLeft > e.target.children[0].clientWidth + 1) {
+        e.target.classList.add('stop-scroll')
+      } else if (e.target.scrollLeft > e.target.clientWidth / 1.25 && touchEnded && !deleting) {
+        deleteItem()
       }
     } else if (wasSettingReminder.current) {
       setItems(prev => prev.map(i => i.id === item.id ? {...i, settingReminder: false} : {...i} ))
+      e.target.scrollTo({left: e.target.children[0].clientWidth+1})
+      wasSettingReminder.current = false
+      e.target.classList.remove('stop-scroll')
     }
   }
 
@@ -103,14 +95,14 @@ function TrackerItem({children, item, data}) {
     if (item.lastAssessed) {
       setItems(prev => prev.map(i => ({...i, lastAssessed: false}) ))
     }
+    if (item.settingReminder) {
+      setItems(prev => prev.map(i => i.id === item.id ? {...i, settingReminder: false} : {...i} ))
+    }
   }, itemEl, {item, setItems})
 
   useEffect(() => {
     if (!item.settingReminder) {
       scrollEl.current.scrollTo({left: scrollEl.current.children[0].clientWidth+1})
-      if (wasSettingReminder.current) {
-        dontDelete.current = true
-      }
     }
   }, [item.settingReminder])
 
