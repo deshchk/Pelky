@@ -30,7 +30,7 @@ body {
 }
 
 button {
-  @apply focus:outline-none cursor-pointer; /* had focus:ring-3 focus:ring-blue-500/40 */
+  @apply focus:outline-none cursor-pointer touch-manipulation; /* had focus:ring-3 focus:ring-blue-500/40 */
   &:disabled {
     @apply opacity-50;
   }

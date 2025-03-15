@@ -5,6 +5,7 @@ function Content({items, setItems, assessments, setAssessments, setToastData, se
   const mainEl = useRef(null)
 
   const listProps = {
+    items,
     setItems,
     assessments,
     setAssessments,
