@@ -1,4 +1,4 @@
-function DaysSelector ({selectedDays, setSelectedDays}) {
+function DaySelector ({selectedDays, setSelectedDays}) {
   const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
 
   function onChange(e) {
@@ -37,4 +37,4 @@ function DaysSelector ({selectedDays, setSelectedDays}) {
   )
 }
 
-export default DaysSelector
+export default DaySelector

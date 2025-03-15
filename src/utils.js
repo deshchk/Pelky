@@ -8,3 +8,18 @@ export const newID = () => {
   }
   return result
 }
+
+const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+const todayString = new Intl.DateTimeFormat("en-US", {weekday: "long"}).format(new Date()).toLowerCase()
+export const todayNum = days.indexOf(todayString) // 0-6
+
+export const isItToday = (date) => date.split(',')[0] === new Intl.DateTimeFormat("en-AU", {
+  day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date())
+
+export const debounce = (func, wait) => {
+  let timeout
+  return (...args) => {
+    clearTimeout(timeout)
+    timeout = setTimeout(() => func(...args), wait)
+  }
+}

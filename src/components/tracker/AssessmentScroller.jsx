@@ -1,26 +1,26 @@
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { newID } from "@/utils"
 
-function AssessmentScroller({color, borderColor, item, setToast, setItems}) {
+function AssessmentScroller(props) {
+  const {
+    colorClasses,
+    borderColorClasses,
+    item,
+    setItems,
+    setAssessments,
+    setToastData
+  } = props
 
   const scroller = useRef(null)
   const scrollerOverlay = useRef(null)
   const middleEl = useRef(null)
 
+  const colorVar = useRef(`--color-${colorClasses.split(' ')[0].slice(3)}`)
+  const loading = useRef(false)
+
   const [currentAssessment, setCurrentAssessment] = useState(null)
 
-  useEffect(() => {
-    middleEl.current && middleEl.current.scrollIntoView({block: 'center', behavior: 'instant'})
-  }, [])
-
-  function saveAssessment(assessment) {
-    console.log('saved: ', assessment)
-    scrollerOverlay.current.classList.remove('animate')
-    middleEl.current.scrollIntoView({block: 'center', behavior: 'instant'})
-    handleSuccess()
-  }
-
-  function handleSuccess() {
+  const handleSuccess = useCallback(() => {
     const toastID = newID()
     const toast = {
       id: toastID,
@@ -30,22 +30,65 @@ function AssessmentScroller({color, borderColor, item, setToast, setItems}) {
       size: 'small'
     }
 
-    setToast(toasts => toasts.concat([toast]))
+    setToastData(toasts => toasts.concat([toast]))
     setItems(prev => prev.map(i => i.id === item.id ? {...i, lastAssessed: true} : {...i, lastAssessed: false} ))
 
     setTimeout(() => {
-      setToast(toasts => toasts.toSpliced(toasts.indexOf(toast), 1))
+      setToastData(toasts => toasts.toSpliced(toasts.indexOf(toast), 1))
     }, toast.time)
-  }
+  }, [item.id, setItems, setToastData])
+
+  const saveAssessment = useCallback((assessment) => {
+    setAssessments(prev => {
+      if (prev.some(ass => ass.item_id === item.id)) {
+        return prev.map(ass =>
+            ass.item_id === item.id ? ({
+              ...ass,
+              last: {
+                id: newID(),
+                value: assessment,
+                date: new Intl.DateTimeFormat("en-AU", {
+                  day: "2-digit", month: "2-digit", year: "numeric",
+                  hour: "numeric", minute: "numeric"
+                }).format(new Date()).toUpperCase(),
+                note: null
+              },
+              past: [...ass.past, ass.last]
+            }) : ass
+        )
+      } else {
+        return prev.concat({
+          item_id: item.id,
+          group_id: null,
+          last: {
+            id: newID(),
+            value: assessment,
+            date: new Intl.DateTimeFormat("en-AU", {
+              day: "2-digit", month: "2-digit", year: "numeric",
+              hour: "numeric", minute: "numeric"
+            }).format(new Date()).toUpperCase(),
+            note: null
+          },
+          past: []
+        })
+      }
+    })
+
+    scrollerOverlay.current.classList.remove('animate')
+    middleEl.current.scrollIntoView({block: 'center', behavior: 'instant'})
+    handleSuccess()
+  }, [handleSuccess, item.id, setAssessments, setItems])
 
   const timeoutAnimate = useRef(null)
   const timeoutSave = useRef(null)
-  function onScroll(e) {
+
+  const onScroll = useCallback((e) => {
+    if (loading.current) return
+
     const itemSize = e.target.scrollHeight/11
     const scrolledIndex = Math.floor((e.target.scrollTop + itemSize/2) / itemSize)
     const currentValue = 10-scrolledIndex-5
 
-    const colorVar = `--color-${color.split(' ')[0].slice(3)}`
     const tint = ['--color-red-500', '--color-green-500']
     const colorPercent = Math.abs(scrolledIndex - 5)/5*100
 
@@ -67,32 +110,44 @@ function AssessmentScroller({color, borderColor, item, setToast, setItems}) {
 
     if (scrolledIndex !== 5) {
       scroller.current.style.backgroundColor = `
-        color-mix(in oklab, var(${colorVar}) ${100-colorPercent}%, var(${scrolledIndex > 5 ? tint[0] : tint[1]}) ${colorPercent-20}%)
+        color-mix(in oklab, var(${colorVar.current}) ${100-colorPercent}%, var(${scrolledIndex > 5 ? tint[0] : tint[1]}) ${colorPercent-20}%)
       `.trim()
     } else {
-      scroller.current.style.backgroundColor = `var(${colorVar})`
+      scroller.current.style.backgroundColor = `var(${colorVar.current})`
     }
-  }
+  }, [currentAssessment, saveAssessment])
+
+  useEffect(() => {
+    loading.current = true
+    middleEl.current && middleEl.current.scrollIntoView({block: 'center', behavior: 'instant'})
+    setTimeout(() => {
+      loading.current = false
+    }, 100)
+  }, [])
+
+  useEffect(() => {
+    colorVar.current = `--color-${colorClasses.split(' ')[0].slice(3)}`
+    scroller.current.style.backgroundColor = `var(${colorVar.current})`
+  }, [colorClasses])
+
+
 
   return (
-    <>
-      <div className={`relative w-24 border-l grid ${borderColor}`}>
-        <div className={`assessment-scroller invisible-scroll ${color}`} onScroll={onScroll} ref={scroller}>
-          {Array.from(Array.from(Array(11).keys()).map(key => key - 5)).reverse().map(mark => (
-            <div key={mark.toString()} ref={mark === 0 ? middleEl : null} className={`
-              grid place-items-center snap-center ${mark === 0 && 'snap-always'} font-medium
-              ${item.priority === 'max' ? 'text-2xl' : 'text-xl'}
-            `.trim()}
-            >
-              <span className="relative z-10">{mark}</span>
-            </div>
-          ))}
-        </div>
-        <div className="assessment-scroller-overlay" ref={scrollerOverlay}>
-          <div className="assessment-progress-bar"></div>
-        </div>
+    <div className={`relative w-24 border-l grid ${borderColorClasses}`}>
+      <div className={`assessment-scroller invisible-scroll ${colorClasses}`} onScroll={onScroll} ref={scroller}>
+        {[-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5].map(mark => (
+          <div key={mark} ref={mark === 0 ? middleEl : null} className={`
+            grid place-items-center snap-center ${mark === 0 && 'snap-always'} font-medium text-xl
+          `.trim()}
+          >
+            <span className="relative z-10">{mark}</span>
+          </div>
+        ))}
       </div>
-    </>
+      <div className="assessment-scroller-overlay" ref={scrollerOverlay}>
+        <div className="assessment-progress-bar"></div>
+      </div>
+    </div>
   )
 }
 
