@@ -7,7 +7,7 @@ function TrackerList({items, data}) {
 
   const loadingTimeClasses = items[0] ?
     items[0].priority === 'min' ? '![transition:_grid-template-rows_.2s,_translate_.55s]' :
-    items[0].priority === 'mid' && '![transition:_grid-template-rows_.2s,_translate_.40s]' : ''
+    items[0].priority === 'mid' ? '![transition:_grid-template-rows_.2s,_translate_.40s]' : '' : ''
 
   useEffect(() => {
     listContainer.current.classList.remove('hiding-animation')

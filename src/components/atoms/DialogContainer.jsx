@@ -22,7 +22,7 @@ function DialogContainer() {
     <>
       <Shadow />
 
-      <div className="dialog-container opacity-0 [&.open]:opacity-100 transition-opacity duration-300" ref={dialogContainer}>
+      <div className="dialog-container w-screen opacity-0 [&.open]:opacity-100 transition-opacity duration-300" ref={dialogContainer}>
         {d &&
           <Dialog props={d.props} handleConfirm={d.handleConfirm} closeDialog={d.closeDialog} key={d.id} />
         }

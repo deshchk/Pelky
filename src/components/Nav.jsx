@@ -26,7 +26,7 @@ function Nav({items, setItems, setToastData, setDialogData}) {
     }, toast.time)
   }
 
-  const confirmAdd = useDialog(setDialogData, {
+  const addDialog = useDialog(setDialogData, {
     id: newID(),
     Icon: Add,
     title: `Adding new item`,
@@ -41,7 +41,7 @@ function Nav({items, setItems, setToastData, setDialogData}) {
   })
 
   async function addItem(){
-    const promise = await confirmAdd()
+    const promise = await addDialog()
 
     if (promise) {
       if (!items.some(item => item.title.replace(/\s/g, "").toLowerCase() === promise.replace(/\s/g, "").toLowerCase())) {

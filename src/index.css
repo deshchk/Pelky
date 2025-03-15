@@ -124,6 +124,14 @@ button {
 }
 
 .tracker-item {
+  &.reminder{
+    @apply outline-2 outline-yellow-500/30 outline-offset-2;
+
+    &:after {
+      content: 'TODO';
+      @apply absolute text-[11px] font-medium text-black align-super left-4 top-0 -translate-y-[55%] bg-yellow-500 px-2 text-center rounded;
+    }
+  }
   &.last-assessed {
     @apply outline-4 outline-green-500/30 outline-offset-2;
   }

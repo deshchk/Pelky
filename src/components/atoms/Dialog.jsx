@@ -8,17 +8,20 @@ function Dialog({props, handleConfirm, closeDialog}) {
     Icon,
     title,
     message,
+    Custom,
     input,
     confirmBg,
     confirmColor,
     confirmText,
-    cancelText
+    cancelText,
+    dataCollector
   } = props
 
   const dialogEl = useRef(null)
   const dialogInput = useRef(null)
 
   const [inputValue, setInputValue] = useState("")
+  const [customData, setCustomData] = useState(null)
 
   function onInput(){
     setInputValue(dialogInput.current.value)
@@ -34,7 +37,10 @@ function Dialog({props, handleConfirm, closeDialog}) {
 
   useEffect(() => {
     dialogInput.current && dialogInput.current.focus()
-  }, [])
+    if (dataCollector) {
+      setCustomData(dataCollector)
+    }
+  }, [dataCollector])
 
   useOutsideClick(closeDialog, dialogEl)
 
@@ -44,7 +50,7 @@ function Dialog({props, handleConfirm, closeDialog}) {
         <Icon className="size-10"/>
       }
       {title &&
-        <div className="text-xl font-semibold">
+        <div className="text-xl font-semibold text-pretty mt-2">
           {nbsps(title)}
         </div>
       }
@@ -66,9 +72,12 @@ function Dialog({props, handleConfirm, closeDialog}) {
           ref={dialogInput}
         />
       }
+      {Custom &&
+        <Custom />
+      }
       <div className="flex gap-4 justify-between mt-2">
         <SimpleButton
-          onClick={() => handleConfirm(dialogInput.current ? dialogInput.current.value : true)}
+          onClick={() => handleConfirm(customData || (dialogInput.current?.value) || true)}
           disabled={input && !inputValue.replaceAll(" ", "")}
           className={`dialog-button ${confirmBg ?? 'bg-red-500'} ${confirmColor ?? 'text-white disabled:text-red-700'}`.trim()}
         >

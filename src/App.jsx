@@ -32,7 +32,7 @@ function App() {
       lastAssessed: false,
       settingReminder: false,
       reminderTime: "18:00",
-      reminderDays: []
+      reminderDays: [5]
     },
     {
       id: 4,
@@ -50,7 +50,7 @@ function App() {
       lastAssessed: false,
       settingReminder: false,
       reminderTime: "18:00",
-      reminderDays: []
+      reminderDays: [5]
     },
     {
       id: 6,
