@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react"
-import {newID, todayNum} from "@/utils"
-import {getSortedItems} from "@/data.js";
+import { newID } from "@/utils"
+import { getSortedItems } from "@/data"
 
 function AssessmentScroller(props) {
   const {
