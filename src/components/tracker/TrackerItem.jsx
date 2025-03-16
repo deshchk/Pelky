@@ -33,7 +33,7 @@ function TrackerItem({children, item, data}) {
 
   const colorClasses = item.pinned ? 'bg-sky-800' : !assessments.some(ass => ass.item_id === item.id) ? 'bg-slate-800' : 'bg-slate-700'
   const borderColorClasses = item.pinned ? 'border-slate-800' : !assessments.some(ass => ass.item_id === item.id) ? 'border-slate-950' : 'border-slate-900/80'
-
+  const animationDurationStyle = {transition: `grid-template-rows .2s, translate .${700-((items.indexOf(item)+1)*50)}s`}
 
 
   // ---------- Item functions ----------
@@ -86,7 +86,7 @@ function TrackerItem({children, item, data}) {
   async function deleteItem() {
     setDeleting(true)
 
-    if (!assessments.find(bank => bank.id === item.id)) {
+    if (!assessments.find(ass => ass.item_id === item.id)) {
       del()
     } else {
       const promise = await deleteDialog()
@@ -139,14 +139,15 @@ function TrackerItem({children, item, data}) {
 
   useEffect(() => {
     if (!item.settingReminder) {
-      // scrollEl.current.scrollTo({left: scrollEl.current.children[0].clientWidth+1})
+      scrollEl.current.scrollTo({left: scrollEl.current.children[0].clientWidth+1})
       scrollEl.current.classList.remove('stop-scroll')
     }
     if (item.reminderDays.length > 0) {
       if (item.reminderDays.includes(todayNum)
-          && !assessments.some(ass => ass.item_id === item.id && isItToday(ass.last.date))) itemContainer.current.classList.add('reminder')
+        && !assessments.some(ass => ass.item_id === item.id && isItToday(ass.last.date))) itemContainer.current.classList.add('reminder')
     }
-  }, [assessments, item.id, item.reminderDays, item.settingReminder])
+    itemContainer.current.classList.remove('hiding-animation')
+  }, [assessments, item.id, item.reminderDays, item.settingReminder, item.lastAssessed])
 
   const assessmentProps = {
     colorClasses, borderColorClasses, item, setItems, setAssessments, setToastData
@@ -155,10 +156,11 @@ function TrackerItem({children, item, data}) {
 
 
   return (
-    <li className={`tracker-item relative rounded-lg touch-manipulation ${item.lastAssessed ? 'last-assessed' : ''}`.trim()} ref={itemContainer}>
-      <div className={`hide-able grid-rows-[1fr] overflow-clip rounded-lg`}
-        onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} ref={itemEl}
-      >
+    <li className={`hide-able tracker-item relative rounded-lg touch-manipulation hiding-animation ${item.lastAssessed ? 'last-assessed' : ''}`.trim()}
+      ref={itemContainer}
+      style={animationDurationStyle}
+    >
+      <div className="hide-able grid-rows-[1fr] overflow-clip rounded-lg" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} ref={itemEl}>
 
         <div
             className="grid grid-cols-[auto_100%_100%] gap-px overflow-x-scroll overflow-y-hidden [&.stop-scroll]:overflow-hidden invisible-scroll scroll-smooth snap-x snap-mandatory grid-rows-[80px]"
@@ -170,7 +172,8 @@ function TrackerItem({children, item, data}) {
             </div>
 
             <div onClick={onSetReminder}
-                 className="bg-[color-mix(in_oklab,var(--color-yellow-500)_100%,var(--color-amber-600)_100%)] w-20 grid place-items-center">
+              className="bg-[color-mix(in_oklab,var(--color-yellow-500)_100%,var(--color-amber-600)_100%)] w-20 grid place-items-center"
+            >
               <Clock className="size-8"/>
             </div>
           </div>

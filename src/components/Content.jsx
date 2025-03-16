@@ -16,7 +16,7 @@ function Content({items, setItems, assessments, setAssessments, setToastData, se
 
 
   return (
-    <main className="min-h-dvh min-w-screen p-4 sm:p-8 flex flex-col justify-end gap-4 pb-24 sm:pb-28" ref={mainEl}>
+    <main className="min-h-dvh min-w-screen p-4 sm:p-8 flex flex-col justify-end pb-25 sm:pb-29" ref={mainEl}>
       <TrackerList items={items} data={listProps} />
     </main>
   )
