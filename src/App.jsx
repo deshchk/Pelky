@@ -3,13 +3,15 @@ import DialogContainer from "@/components/atoms/DialogContainer"
 import Content from "@/components/Content"
 import Nav from "@/components/Nav"
 import { DialogContext, ToastContext } from "@/ctxs"
-import { useState } from "react"
+import {useEffect, useRef, useState} from "react"
 import { itemsData, assessmentsData, getSortedItems } from "@/data"
 
 
 function App() {
   const [items, setItems] = useState(getSortedItems(itemsData, assessmentsData))
   const [assessments, setAssessments] = useState(assessmentsData)
+
+  const [animationsInProgress, setAnimationsInProgress] = useState(false)
 
   const [toastData, setToastData] = useState([])
   const [dialogData, setDialogData] = useState(null)
@@ -20,7 +22,9 @@ function App() {
     assessments,
     setAssessments,
     setToastData,
-    setDialogData
+    setDialogData,
+    animationsInProgress,
+    setAnimationsInProgress
   }
 
   const navProps = {
@@ -30,6 +34,21 @@ function App() {
     setDialogData
   }
 
+  const initialLoad = useRef(true)
+
+  useEffect(() => {
+    setTimeout(() => {
+      initialLoad.current = false
+    }, 50)
+  }, [])
+
+  useEffect(() => {
+    if (!initialLoad.current && !animationsInProgress) {
+      setItems(getSortedItems(items, assessments))
+    }
+  }, [assessments, animationsInProgress])
+
+  console.log(assessments)
 
 
   return (

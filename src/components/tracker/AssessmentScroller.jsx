@@ -1,14 +1,20 @@
 import { useCallback, useEffect, useRef, useState } from "react"
-import { newID } from "@/utils"
+import {newID, todayNum} from "@/utils"
+import {getSortedItems} from "@/data.js";
 
 function AssessmentScroller(props) {
   const {
     colorClasses,
     borderColorClasses,
     item,
+    items,
     setItems,
+    assessments,
     setAssessments,
-    setToastData
+    setToastData,
+    setAnimationsInProgress,
+    itemEl,
+    itemLoader
   } = props
 
   const scroller = useRef(null)
@@ -38,28 +44,11 @@ function AssessmentScroller(props) {
     }, toast.time)
   }, [item.id, setItems, setToastData])
 
-  const saveAssessment = useCallback((assessment) => {
-    setAssessments(prev => {
-      if (prev.some(ass => ass.item_id === item.id)) {
-        return prev.map(ass =>
-            ass.item_id === item.id ? ({
-              ...ass,
-              last: {
-                id: newID(),
-                value: assessment,
-                date: new Intl.DateTimeFormat("en-AU", {
-                  day: "2-digit", month: "2-digit", year: "numeric",
-                  hour: "numeric", minute: "numeric"
-                }).format(new Date()).toUpperCase(),
-                note: null
-              },
-              past: [...ass.past, ass.last]
-            }) : ass
-        )
-      } else {
-        return prev.concat({
-          item_id: item.id,
-          group_id: null,
+  const saveAssessment = (assessment) => {
+    const newAssessments = (prev) => prev.some(ass => ass.item_id === item.id) ?
+      prev.map(ass =>
+        ass.item_id === item.id ? ({
+          ...ass,
           last: {
             id: newID(),
             value: assessment,
@@ -69,15 +58,46 @@ function AssessmentScroller(props) {
             }).format(new Date()).toUpperCase(),
             note: null
           },
-          past: []
-        })
-      }
-    })
+          past: [...ass.past, ass.last]
+        }) : ass
+      )
+      :
+      prev.concat({
+        item_id: item.id,
+        group_id: null,
+        last: {
+          id: newID(),
+          value: assessment,
+          date: new Intl.DateTimeFormat("en-AU", {
+            day: "2-digit", month: "2-digit", year: "numeric",
+            hour: "numeric", minute: "numeric"
+          }).format(new Date()).toUpperCase(),
+          note: null
+        },
+        past: []
+      })
+
+    setAssessments(prev => newAssessments(prev))
 
     scrollerOverlay.current.classList.remove('animate')
     middleEl.current.scrollIntoView({block: 'center', behavior: 'instant'})
+
+    if (
+      getSortedItems(items, newAssessments(assessments)).indexOf(item) !== items.indexOf(item)
+    ) {
+      setTimeout(() => {
+        itemEl.current.classList.add('loading-animation')
+        itemLoader.current.classList.remove('loading-animation')
+      },100)
+      setTimeout(() => {
+        setAnimationsInProgress(false)
+        itemLoader.current.classList.add('loading-animation')
+        itemEl.current.classList.remove('loading-animation')
+      },800)
+    }
+
     handleSuccess()
-  }, [handleSuccess, item.id, setAssessments, setItems])
+  }
 
   const timeoutAnimate = useRef(null)
   const timeoutSave = useRef(null)
@@ -99,6 +119,7 @@ function AssessmentScroller(props) {
       timeoutAnimate.current = setTimeout(() => {
         if (currentAssessment === currentValue) {
           scrollerOverlay.current.classList.add('animate')
+          setAnimationsInProgress(true)
         }
         timeoutSave.current = setTimeout(() => {
           saveAssessment(currentAssessment)

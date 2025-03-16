@@ -69,61 +69,34 @@ export const itemsData = JSON.parse(localStorage.getItem('items')) || [
   },
 ]
 
-export const assessmentsData = JSON.parse(localStorage.getItem('assessments')) || [
-  {
-    item_id: 3,
-    group_id: null,
-    last: {
-      id: 1,
-      value: 5,
-      date: "13/03/2025, 5:23 PM",
-      note: null
-    },
-    past: []
-  },
-  {
-    item_id: 2,
-    group_id: null,
-    last: {
-      id: 2,
-      value: 1,
-      date: "12/03/2025, 10:03 AM",
-      note: null
-    },
-    past: []
-  },
-  {
-    item_id: 5,
-    group_id: null,
-    last: {
-      id: 3,
-      value: -2,
-      date: "13/03/2025, 5:24 PM",
-      note: null
-    },
-    past: []
-  },
-]
+export const assessmentsData = JSON.parse(localStorage.getItem('assessments')) || []
 
 export const getSortedItems = (items, assessments) => items.toSorted((a, b) => {
   // Helper functions
-  const isTodoItem = (item) =>
-      item.reminderDays.includes(todayNum) &&
-      !assessments.some(ass => ass.item_id === item.id && isItToday(ass.last.date))
+  const isTodoItem = item =>
+    item.reminderDays.includes(todayNum) &&
+    !assessments.some(ass => ass.item_id === item.id && isItToday(ass.last.date))
 
-  const getPastCount = (item) =>
-      assessments.find(ass => ass.item_id === item.id)?.past.length || 0
+  const getPastCount = item =>
+    assessments.find(ass => ass.item_id === item.id)?.past.length +
+    (assessments.find(ass => ass.item_id === item.id)?.last.id && 1) || 0
 
   // Priority grouping
   const aTodo = isTodoItem(a)
   const bTodo = isTodoItem(b)
 
+  // 0. To be assessed and pinned items first
+  if (aTodo && bTodo && a.pinned !== b.pinned) return a.pinned ? -1 : 1
+
   // 1. To be assessed items first
-  if (aTodo !== bTodo) return aTodo ? -1 : 1;
+  if (aTodo !== bTodo) return aTodo ? -1 : 1
 
   // 2. Pinned items second (only if not to be assessed)
   if (!aTodo && !bTodo && a.pinned !== b.pinned) return a.pinned ? -1 : 1
 
   // 3. Sort by past assessments count (descending)
-  return getPastCount(b) - getPastCount(a)
+  if (getPastCount(b) - getPastCount(a) !== 0) return getPastCount(b) - getPastCount(a)
+
+  // 4. Sort alphabetically
+  return a.title.localeCompare(b.title)
 }).reverse()

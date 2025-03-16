@@ -15,8 +15,10 @@ function TrackerList({items, data}) {
   return (
     <div className="hide-able grid-rows-[1fr] empty:!hidden hiding-animation" ref={listContainer}>
       {items.length > 0 && <ul className="grid grid-cols-1 gap-5 sm:gap-8 [&.hiding]:overflow-hidden hiding" ref={listEl}>
-        {items.map(item => (
-            <TrackerItem key={item.id} item={item} data={data}>{item.title}</TrackerItem>
+        {items.map((item, i) => (
+            <TrackerItem key={item.id} item={item} data={data} itemIndex={i+1}>
+              {item.title}
+            </TrackerItem>
         ))}
       </ul>}
     </div>

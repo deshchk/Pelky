@@ -54,11 +54,15 @@ button {
 
 .hide-able {
   @apply grid;
-  transition: grid-template-rows .2s, translate .25s;
+  transition: opacity .15s, grid-template-rows .2s, translate .25s;
 }
 
 .hiding-animation {
   @apply grid-rows-[0fr] -translate-x-full;
+}
+
+.loading-animation {
+  @apply opacity-0;
 }
 
 .dialog-container {
@@ -125,7 +129,7 @@ button {
 
 .tracker-item {
   &.reminder{
-    @apply outline-2 outline-yellow-500/30 outline-offset-2;
+    @apply outline-2 outline-yellow-500/30 outline-offset-2 mt-1.5;
 
     &:after {
       content: 'TODO';

@@ -1,21 +1,24 @@
 import Trash from "@/assets/trash.svg?react"
 import Clock from "@/assets/clock.svg?react"
 import Pin from "@/assets/pin.svg?react"
+import Loader from "@/assets/loader.svg?react"
 import { useEffect, useRef, useState } from "react"
 import useDialog from "@/hooks/useDialog"
 import AssessmentScroller from "@/components/tracker/AssessmentScroller"
 import DaySelector from "@/components/atoms/DaySelector.jsx"
 import { useOutsideClick } from "@/hooks/useOutsideClick"
 import { isItToday, todayNum } from "@/utils"
+import { getSortedItems } from "@/data"
 
-function TrackerItem({children, item, data}) {
+function TrackerItem({children, item, data, itemIndex}) {
   const {
     items,
     setItems,
     assessments,
     setAssessments,
     setToastData,
-    setDialogData
+    setDialogData,
+    setAnimationsInProgress
   } = data
 
 
@@ -23,6 +26,7 @@ function TrackerItem({children, item, data}) {
   const itemContainer = useRef(null)
   const itemEl = useRef(null)
   const scrollEl = useRef(null)
+  const itemLoader = useRef(null)
 
   const touches = useRef(0)
   const wasSettingReminder = useRef(false)
@@ -33,7 +37,8 @@ function TrackerItem({children, item, data}) {
 
   const colorClasses = item.pinned ? 'bg-sky-800' : !assessments.some(ass => ass.item_id === item.id) ? 'bg-slate-800' : 'bg-slate-700'
   const borderColorClasses = item.pinned ? 'border-slate-800' : !assessments.some(ass => ass.item_id === item.id) ? 'border-slate-950' : 'border-slate-900/80'
-  const animationDurationStyle = {transition: `grid-template-rows .2s, translate .${700-((items.indexOf(item)+1)*50)}s`}
+  const animationDurationStyle = {transition: `opacity .3s, margin .4s, grid-template-rows .2s, translate .${700-(itemIndex*50)}s`}
+
 
 
   // ---------- Item functions ----------
@@ -116,7 +121,7 @@ function TrackerItem({children, item, data}) {
     const promise = await reminderDialog()
 
     if (promise) {
-      setItems(items.map(i => i.id === item.id ? {...i, reminderDays: promise} : {...i}))
+      setItems(getSortedItems(items.map(i => i.id === item.id ? {...i, reminderDays: promise} : {...i}),assessments))
       !promise.includes(todayNum) && itemContainer.current.classList.remove('reminder')
     } else {
       setSelectedDays(item.reminderDays)
@@ -124,7 +129,7 @@ function TrackerItem({children, item, data}) {
   }
 
   function onSetPinned() {
-    setItems(items.map(i => i.id === item.id ? {...i, pinned: !i.pinned} : {...i}))
+    setItems(getSortedItems(items.map(i => i.id === item.id ? {...i, pinned: !i.pinned} : {...i}),assessments))
     scrollEl.current.scrollTo({left: scrollEl.current.children[0].clientWidth+1})
   }
 
@@ -144,22 +149,34 @@ function TrackerItem({children, item, data}) {
     }
     if (item.reminderDays.length > 0) {
       if (item.reminderDays.includes(todayNum)
-        && !assessments.some(ass => ass.item_id === item.id && isItToday(ass.last.date))) itemContainer.current.classList.add('reminder')
+        && !assessments.some(ass => ass.item_id === item.id && isItToday(ass.last.date))) {
+        itemContainer.current.classList.add('reminder')
+      }
     }
     itemContainer.current.classList.remove('hiding-animation')
   }, [assessments, item.id, item.reminderDays, item.settingReminder, item.lastAssessed])
 
   const assessmentProps = {
-    colorClasses, borderColorClasses, item, setItems, setAssessments, setToastData
+    colorClasses, borderColorClasses,
+    item, items, setItems,
+    assessments, setAssessments,
+    setToastData, setAnimationsInProgress,
+    itemContainer, itemEl, itemLoader
   }
 
 
-
   return (
-    <li className={`hide-able tracker-item relative rounded-lg touch-manipulation hiding-animation ${item.lastAssessed ? 'last-assessed' : ''}`.trim()}
+    <li className={`hide-able tracker-item relative rounded-lg touch-manipulation hiding-animation
+        shown [&:not(.shown)]:opacity-0 [&.saving]:!hidden
+        ${item.lastAssessed ? 'last-assessed' : ''}
+      `.trim()}
       ref={itemContainer}
       style={animationDurationStyle}
     >
+      <div className="absolute inset-0 group hide-able loading-animation place-items-center [&:not(.loading-animation)]:h-20 pointer-events-none" ref={itemLoader}>
+        <Loader className="size-5 text-green-500 group-[&.loading-animation]:hidden " />
+      </div>
+
       <div className="hide-able grid-rows-[1fr] overflow-clip rounded-lg" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} ref={itemEl}>
 
         <div
