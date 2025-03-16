@@ -1,5 +1,6 @@
 import Trash from "@/assets/trash.svg?react"
 import Clock from "@/assets/clock.svg?react"
+import Pin from "@/assets/pin.svg?react"
 import { useEffect, useRef, useState } from "react"
 import useDialog from "@/hooks/useDialog"
 import AssessmentScroller from "@/components/tracker/AssessmentScroller"
@@ -62,7 +63,7 @@ function TrackerItem({children, item, data}) {
     } else if (wasSettingReminder.current) {
       e.target.classList.add('stop-scroll')
       setItems(items.map(i => i.id === item.id ? {...i, settingReminder: false} : {...i}))
-      e.target.scrollTo({left: e.target.children[0].clientWidth+1})
+      // e.target.scrollTo({left: e.target.children[0].clientWidth+1})
       wasSettingReminder.current = false
     }
   }
@@ -122,6 +123,11 @@ function TrackerItem({children, item, data}) {
     }
   }
 
+  function onSetPinned() {
+    setItems(items.map(i => i.id === item.id ? {...i, pinned: !i.pinned} : {...i}))
+    scrollEl.current.scrollTo({left: scrollEl.current.children[0].clientWidth+1})
+  }
+
   useOutsideClick(() => {
     if (item.lastAssessed) {
       setItems(items.map(i => ({...i, lastAssessed: false}) ))
@@ -133,7 +139,7 @@ function TrackerItem({children, item, data}) {
 
   useEffect(() => {
     if (!item.settingReminder) {
-      scrollEl.current.scrollTo({left: scrollEl.current.children[0].clientWidth+1})
+      // scrollEl.current.scrollTo({left: scrollEl.current.children[0].clientWidth+1})
       scrollEl.current.classList.remove('stop-scroll')
     }
     if (item.reminderDays.length > 0) {
@@ -155,11 +161,18 @@ function TrackerItem({children, item, data}) {
       >
 
         <div
-          className="grid grid-cols-[auto_100%_100%] gap-px overflow-x-scroll overflow-y-hidden [&.stop-scroll]:overflow-hidden invisible-scroll scroll-smooth snap-x snap-mandatory grid-rows-[80px]"
-          onScroll={onScroll} ref={scrollEl}
+            className="grid grid-cols-[auto_100%_100%] gap-px overflow-x-scroll overflow-y-hidden [&.stop-scroll]:overflow-hidden invisible-scroll scroll-smooth snap-x snap-mandatory grid-rows-[80px]"
+            onScroll={onScroll} ref={scrollEl}
         >
-          <div onClick={onSetReminder} className={`bg-[color-mix(in_oklab,var(--color-yellow-500)_100%,var(--color-amber-600)_100%)] snap-start snap-always w-20 grid place-items-center`}>
-            <Clock className="size-8" />
+          <div className="flex snap-start snap-always">
+            <div onClick={onSetPinned} className="bg-sky-800 w-20 grid place-items-center">
+              <Pin className="size-8"/>
+            </div>
+
+            <div onClick={onSetReminder}
+                 className="bg-[color-mix(in_oklab,var(--color-yellow-500)_100%,var(--color-amber-600)_100%)] w-20 grid place-items-center">
+              <Clock className="size-8"/>
+            </div>
           </div>
 
           <div className="snap-start snap-always flex">
@@ -171,7 +184,7 @@ function TrackerItem({children, item, data}) {
           </div>
 
           <div className="bg-red-500 snap-end flex px-4 relative">
-            <Trash className="absolute top-1/2 -translate-y-1/2 size-9" />
+            <Trash className="absolute top-1/2 -translate-y-1/2 size-9"/>
           </div>
         </div>
       </div>
