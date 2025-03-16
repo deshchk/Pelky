@@ -3,8 +3,9 @@ import useDialog from "@/hooks/useDialog"
 import Add from "@/assets/add.svg?react"
 import { newID } from "@/utils"
 import { memo } from "react"
+import { getSortedItems } from "@/data"
 
-function Nav({items, setItems, setToastData, setDialogData}) {
+function Nav({items, setItems, setToastData, setDialogData, assessments}) {
 
   const errorCodes = {
     1: 'Item with this name already exists.'
@@ -45,13 +46,19 @@ function Nav({items, setItems, setToastData, setDialogData}) {
 
     if (promise) {
       if (!items.some(item => item.title.replace(/\s/g, "").toLowerCase() === promise.replace(/\s/g, "").toLowerCase())) {
-        setItems(prev => {
-          return prev.concat([{
+        setItems(prev => getSortedItems(
+          prev.concat([{
             id: newID(),
             title: promise,
-            priority: 'mid'
+            pinned: false,
+            group: null,
+            reminderDays: [],
+            status: {
+              lastAssessed: false,
+              settingReminder: false,
+            },
           }])
-        })
+        , assessments))
       } else {
         handleError(1)
       }
