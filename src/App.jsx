@@ -49,8 +49,6 @@ function App() {
     }
   }, [assessments, animationsInProgress])
 
-  console.log(assessments)
-
 
   return (
     <>

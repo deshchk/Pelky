@@ -1,5 +1,7 @@
 export const nbsps = el => el.replace(/(\s)([aAwWiIzZoOuU])(\s)/g, '$1$2\xa0')
 
+export const firstUpper = string => string.charAt(0).toUpperCase() + string.slice(1)
+
 export const newID = () => {
   let result = ''
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'

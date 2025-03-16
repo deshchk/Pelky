@@ -7,7 +7,7 @@ import useDialog from "@/hooks/useDialog"
 import AssessmentScroller from "@/components/tracker/AssessmentScroller"
 import DaySelector from "@/components/atoms/DaySelector.jsx"
 import { useOutsideClick } from "@/hooks/useOutsideClick"
-import { isItToday, todayNum } from "@/utils"
+import { firstUpper, isItToday, todayNum } from "@/utils"
 import { getSortedItems } from "@/data"
 
 function TrackerItem({children, item, data, itemIndex}) {
@@ -109,7 +109,7 @@ function TrackerItem({children, item, data, itemIndex}) {
   // ---------- Setting Reminder ----------
   const reminderDialog = useDialog(setDialogData,{
     Icon: Clock,
-    title: `Setting reminders for "${item.title}"`,
+    title: firstUpper(item.title),
     message: 'On which days would you like to be reminded about this?',
     confirmText: 'Save',
     confirmBg: 'bg-blue-500',

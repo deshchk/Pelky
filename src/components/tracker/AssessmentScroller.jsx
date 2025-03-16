@@ -156,7 +156,7 @@ function AssessmentScroller(props) {
   return (
     <div className={`relative w-24 border-l grid ${borderColorClasses}`}>
       <div className={`assessment-scroller invisible-scroll ${colorClasses}`} onScroll={onScroll} ref={scroller}>
-        {[-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5].map(mark => (
+        {[-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5].reverse().map(mark => (
           <div key={mark} ref={mark === 0 ? middleEl : null} className={`
             grid place-items-center snap-center ${mark === 0 && 'snap-always'} font-medium text-xl
           `.trim()}
