@@ -30,13 +30,11 @@ function TrackerList({items, data}) {
                 <p>No items here yet</p>
               </div>
 
-              <div
-                  className="absolute right-10 sm:right-20 bottom-30 px-5 py-2 bg-sky-900 text-slate-200 rounded-tl-md rounded-tr-md rounded-bl-md shadow-xl shadow-slate-950/20 opacity-90">
+              <div className="absolute right-10 sm:right-20 bottom-30 px-5 py-2 bg-slate-800 text-slate-200 rounded-tl-md rounded-tr-md rounded-bl-md shadow-xl shadow-slate-950/20 opacity-90">
                 Add a new one!
                 <div className={`
-                  absolute right-0 bottom-0 translate-y-full border-t-12 border-sky-900 [border-left:24px_solid_transparent]
+                  absolute right-0 bottom-0 translate-y-full border-t-12 border-slate-800 [border-left:24px_solid_transparent]
                 `}></div>
-                <Stars className="absolute -top-3.5 -left-5 size-8 scale-x-[-1] text-yellow-500 " />
               </div>
             </div>
           </div>

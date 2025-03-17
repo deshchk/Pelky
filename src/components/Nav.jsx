@@ -3,6 +3,7 @@ import useDialog from "@/hooks/useDialog"
 import { newID } from "@/utils"
 import { memo } from "react"
 import { getSortedItems, saveItems } from "@/data"
+import Stars from "@/assets/stars.svg?react"
 
 function Nav({items, setItems, setToastData, setDialogData, assessments}) {
 
@@ -64,8 +65,9 @@ function Nav({items, setItems, setToastData, setDialogData, assessments}) {
           <li>
             <SimpleButton disabled={true}>Filter</SimpleButton>
           </li>
-          <li>
-            <SimpleButton onClick={addItem}>New item</SimpleButton>
+          <li className="relative">
+            <SimpleButton blue onClick={addItem}>New item</SimpleButton>
+            {items.length === 0 && <Stars className="absolute -top-3.5 -left-5 size-8 scale-x-[-1] text-yellow-500" />}
           </li>
         </ul>
       </nav>
