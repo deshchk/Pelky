@@ -2,19 +2,22 @@ import SimpleButton from "@/components/atoms/SimpleButton"
 import { useEffect, useRef, useState } from "react"
 import { nbsps } from "@/utils"
 import { useOutsideClick } from "@/hooks/useOutsideClick"
+import Chevron from "@/assets/chevron.svg?react"
 
 function Dialog({props, handleConfirm, closeDialog}) {
   const {
     Icon,
     title,
     message,
+    customCollapsable,
+    customTitle,
     Custom,
     input,
     confirmBg,
     confirmColor,
     confirmText,
     cancelText,
-    dataCollector
+    dataCollector,
   } = props
 
   const dialogEl = useRef(null)
@@ -73,7 +76,22 @@ function Dialog({props, handleConfirm, closeDialog}) {
         />
       }
       {Custom &&
-        <Custom />
+        <div>
+          {customCollapsable && (
+            <div className={`
+                peer group flex items-center text-sm font-semibold px-3 py-2 bg-slate-900/50 rounded touch-manipulation
+              `.trim()}
+            >
+              {customTitle && customTitle}
+              <Chevron className="group-[:not(.collapsed)]:scale-y-[-1] ml-auto size-4 stroke-2 pointer-events-none" />
+            </div>
+          )}
+          <div className={`
+            hide-able grid-rows-[1fr] peer-[.collapsed]:grid-rows-[0fr] ${customCollapsable && 'peer-[:not(.collapsed)]:mt-6'} peer-[:not(.collapsed)]:mb-1
+          `}>
+            <Custom />
+          </div>
+        </div>
       }
       <div className="flex gap-4 justify-between mt-2">
         <SimpleButton

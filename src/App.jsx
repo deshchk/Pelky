@@ -3,18 +3,22 @@ import DialogContainer from "@/components/atoms/DialogContainer"
 import Content from "@/components/Content"
 import Nav from "@/components/Nav"
 import { DialogContext, ToastContext } from "@/ctxs"
-import {useEffect, useRef, useState} from "react"
-import { itemsData, assessmentsData, getSortedItems } from "@/data"
+import { useEffect, useRef, useState } from "react"
+import { loadData, saveItems, saveAssessments, getSortedItems } from "@/data"
+import Loader from "@/assets/loader.svg?react"
 
 
 function App() {
-  const [items, setItems] = useState(getSortedItems(itemsData, assessmentsData))
-  const [assessments, setAssessments] = useState(assessmentsData)
+  const [loading, setLoading] = useState(true)
+  const [items, setItems] = useState([])
+  const [assessments, setAssessments] = useState([])
 
   const [animationsInProgress, setAnimationsInProgress] = useState(false)
 
   const [toastData, setToastData] = useState([])
   const [dialogData, setDialogData] = useState(null)
+
+
 
   const contentProps = {
     items,
@@ -37,18 +41,56 @@ function App() {
 
   const initialLoad = useRef(true)
 
+
+
   useEffect(() => {
+    const fetchData = async () => {
+      const data = await loadData()
+      setItems(data.items)
+      setAssessments(data.assessments)
+      setLoading(false)
+    }
+
+    fetchData()
+
     setTimeout(() => {
       initialLoad.current = false
     }, 50)
   }, [])
 
   useEffect(() => {
+    if (!loading) {
+      saveItems(items)
+    }
+  }, [items, loading])
+
+  useEffect(() => {
+    if (!loading) {
+      saveAssessments(assessments)
+    }
+  }, [assessments, loading])
+
+
+
+  useEffect(() => {
     if (!initialLoad.current && !animationsInProgress) {
-      setItems(getSortedItems(items, assessments))
+      const sorted = getSortedItems(items, assessments)
+
+      if (JSON.stringify(sorted) !== JSON.stringify(items)) {
+        setItems(sorted)
+      }
     }
   }, [assessments, animationsInProgress])
 
+
+
+  if (loading) {
+    return (
+      <div className="fixed inset-0 grid place-items-center">
+        <Loader className="text-sky-800 size-12" />
+      </div>
+    )
+  }
 
   return (
     <>

@@ -54,7 +54,7 @@ button {
 
 .hide-able {
   @apply grid;
-  transition: opacity .15s, grid-template-rows .2s, translate .25s;
+  transition: opacity .15s, outline-color .4s, margin .2s, grid-template-rows .2s, translate .25s;
 }
 
 .hiding-animation {
@@ -63,6 +63,10 @@ button {
 
 .loading-animation {
   @apply opacity-0;
+}
+
+.collapsing-animation {
+  @apply grid-rows-[0fr];
 }
 
 .dialog-container {
@@ -128,16 +132,40 @@ button {
 }
 
 .tracker-item {
+  @apply outline-2 outline-offset-2 outline-transparent;
+
+  &:after {
+    content: '';
+    @apply absolute text-[11px] font-medium align-super left-4 top-0 -translate-y-[55%] px-2 text-center rounded opacity-0 transition-opacity duration-300;
+  }
+
   &.reminder{
-    @apply outline-2 outline-yellow-500/30 outline-offset-2 mt-1.5;
+    @apply outline-yellow-500/30 mt-1.5;
 
     &:after {
       content: 'TODO';
-      @apply absolute text-[11px] font-medium text-black align-super left-4 top-0 -translate-y-[55%] bg-yellow-500 px-2 text-center rounded;
+      @apply absolute text-[11px] font-medium text-black align-super left-4 top-0 -translate-y-[55%] bg-yellow-500 px-2 text-center rounded opacity-100;
     }
   }
   &.last-assessed {
-    @apply outline-4 outline-green-500/30 outline-offset-2;
+    @apply outline-4 outline-green-500/30;
   }
 }
 
+@keyframes left-right {
+  0% {
+    transform: scaleX(1);
+  }
+  45% {
+    transform: scaleX(1);
+  }
+  50% {
+    transform: scaleX(-1);
+  }
+  95% {
+    transform: scaleX(-1);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}

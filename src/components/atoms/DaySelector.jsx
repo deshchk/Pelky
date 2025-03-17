@@ -18,8 +18,8 @@ function DaySelector ({selectedDays, setSelectedDays}) {
   }
 
   return (
-    <>
-      <div className="flex self-end text-xs font-medium gap-3 mt-0.5 mb-1">
+    <div className="flex flex-col gap-5 overflow-hidden">
+      <div className="flex self-end text-xs font-medium gap-3 mb-1">
         <button className="px-4 py-1 bg-slate-700 rounded" onClick={onWeekendClick}>
           {selectedDays.length < 5 || selectedDays.length === 7 ? 'Working days' : 'Weekend only'}
         </button>
@@ -29,7 +29,7 @@ function DaySelector ({selectedDays, setSelectedDays}) {
         </button>
       </div>
 
-      <div className="flex flex-wrap rounded overflow-hidden gap-3 touch-manipulation mb-2">
+      <div className="flex flex-wrap rounded overflow-hidden gap-3 touch-manipulation">
         {[...days.slice(-2), ...days.slice(0, -2)].map((day, i) => (
             <label key={day} htmlFor={`day-${i}`} className={`
             flex-1 ${i === 0 || i === 1 ? 'basis-[calc(50%_-_6px)]' : 'basis-[20%-6px]'}
@@ -42,7 +42,7 @@ function DaySelector ({selectedDays, setSelectedDays}) {
           </label>
         ))}
       </div>
-    </>
+    </div>
   )
 }
 

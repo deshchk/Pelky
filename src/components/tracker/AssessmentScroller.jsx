@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { newID } from "@/utils"
-import { getSortedItems } from "@/data"
+import { getSortedItems, saveAssessments } from "@/data"
 
 function AssessmentScroller(props) {
   const {
@@ -78,6 +78,7 @@ function AssessmentScroller(props) {
       })
 
     setAssessments(prev => newAssessments(prev))
+    saveAssessments(newAssessments(assessments))
 
     scrollerOverlay.current.classList.remove('animate')
     middleEl.current.scrollIntoView({block: 'center', behavior: 'instant'})

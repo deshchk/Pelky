@@ -1,75 +1,63 @@
 import { isItToday, todayNum } from "@/utils"
+import * as db from "@/services/indexedDB"
 
-export const itemsData = JSON.parse(localStorage.getItem('items')) || [
-  {
-    id: 1,
-    title: 'radość',
-    pinned: false,
-    group: null,
-    reminderDays: [0,3],
-    status: {
-      lastAssessed: false,
-      settingReminder: false,
-    },
-  },
-  {
-    id: 2,
-    title: 'smutek',
-    pinned: true,
-    group: null,
-    reminderDays: [2,1],
-    status: {
-      lastAssessed: false,
-      settingReminder: false,
-    },
-  },
-  {
-    id: 3,
-    title: 'satysfakcja z życia',
-    pinned: false,
-    group: null,
-    reminderDays: [5,3,4,6],
-    status: {
-      lastAssessed: false,
-      settingReminder: false,
-    },
-  },
-  {
-    id: 4,
-    title: 'satysfakcja z pracy',
-    pinned: false,
-    group: null,
-    reminderDays: [6,5],
-    status: {
-      lastAssessed: false,
-      settingReminder: false,
-    },
-  },
-  {
-    id: 5,
-    title: 'kreatywność',
-    pinned: false,
-    group: null,
-    reminderDays: [3],
-    status: {
-      lastAssessed: false,
-      settingReminder: false,
-    },
-  },
-  {
-    id: 6,
-    title: 'produktywność',
-    pinned: true,
-    group: null,
-    reminderDays: [1,5],
-    status: {
-      lastAssessed: false,
-      settingReminder: false,
-    },
-  },
-]
+export const loadData = async () => {
+  try {
+    await db.initDB()
 
-export const assessmentsData = JSON.parse(localStorage.getItem('assessments')) || []
+    let items = await db.getAllItems() || []
+    let assessments = await db.getAllAssessments() || []
+
+    return {
+      items: getSortedItems(items, assessments),
+      assessments
+    }
+  } catch (error) {
+    console.error("Error loading data from IndexedDB:", error)
+
+    // Fallback do localStorage
+    return {
+      items: JSON.parse(localStorage.getItem('items')) || [],
+      assessments: JSON.parse(localStorage.getItem('assessments')) || []
+    }
+  }
+}
+
+// Function for saving all items
+export const saveItems = async (items) => {
+  try {
+    await db.saveItems(items)
+  } catch (error) {
+    console.error("Error saving items to IndexedDB:", error)
+
+    // Fallback do localStorage
+    localStorage.setItem('items', JSON.stringify(items))
+  }
+}
+
+// Function for saving all assessments
+export const saveAssessments = async (assessments) => {
+  try {
+    await db.saveAssessments(assessments)
+  } catch (error) {
+    console.error("Error saving assessments to IndexedDB:", error)
+
+    // Fallback do localStorage
+    localStorage.setItem('assessments', JSON.stringify(assessments))
+  }
+}
+
+// Function for deleting an item and its assessments
+export const deleteItemAndAssessments = async (itemId) => {
+  try {
+    await db.deleteItem(itemId)
+    await db.deleteAssessment(itemId)
+  } catch (error) {
+    console.error("Error deleting data from IndexedDB:", error)
+  }
+}
+
+
 
 export const getSortedItems = (items, assessments) => items.toSorted((a, b) => {
   // Helper functions

@@ -8,7 +8,7 @@ import AssessmentScroller from "@/components/tracker/AssessmentScroller"
 import DaySelector from "@/components/atoms/DaySelector.jsx"
 import { useOutsideClick } from "@/hooks/useOutsideClick"
 import { firstUpper, isItToday, todayNum } from "@/utils"
-import { getSortedItems } from "@/data"
+import { getSortedItems, deleteItemAndAssessments, saveItems } from "@/data"
 
 function TrackerItem({children, item, data, itemIndex}) {
   const {
@@ -37,7 +37,7 @@ function TrackerItem({children, item, data, itemIndex}) {
 
   const colorClasses = item.pinned ? 'bg-sky-800' : !assessments.some(ass => ass.item_id === item.id) ? 'bg-slate-800' : 'bg-slate-700'
   const borderColorClasses = item.pinned ? 'border-slate-800' : !assessments.some(ass => ass.item_id === item.id) ? 'border-slate-950' : 'border-slate-900/80'
-  const animationDurationStyle = {transition: `opacity .3s, margin .4s, grid-template-rows .2s, translate .${700-(itemIndex*50)}s`}
+  const animationDurationStyle = {transition: `opacity .3s, outline-color .4s, margin .4s, grid-template-rows .2s, translate .${700-(itemIndex*50)}s`}
 
 
 
@@ -81,9 +81,11 @@ function TrackerItem({children, item, data, itemIndex}) {
   })
 
   function del() {
+    itemContainer.current.classList.remove('reminder')
     itemEl.current.classList.add('hiding-animation')
     setItems(items.map(i => ({...i, settingReminder: false})))
     setTimeout(() => {
+      deleteItemAndAssessments(item.id)
       setItems(items.toSpliced(items.indexOf(item), 1))
     }, 200)
   }
@@ -121,7 +123,11 @@ function TrackerItem({children, item, data, itemIndex}) {
     const promise = await reminderDialog()
 
     if (promise) {
-      setItems(getSortedItems(items.map(i => i.id === item.id ? {...i, reminderDays: promise} : {...i}),assessments))
+      const updatedItems = getSortedItems(items.map(i => i.id === item.id ? {...i, reminderDays: promise} : {...i}),assessments)
+
+      setItems(updatedItems)
+      saveItems(updatedItems)
+
       !promise.includes(todayNum) && itemContainer.current.classList.remove('reminder')
     } else {
       setSelectedDays(item.reminderDays)
@@ -129,7 +135,11 @@ function TrackerItem({children, item, data, itemIndex}) {
   }
 
   function onSetPinned() {
-    setItems(getSortedItems(items.map(i => i.id === item.id ? {...i, pinned: !i.pinned} : {...i}),assessments))
+    const updatedItems = getSortedItems(items.map(i => i.id === item.id ? {...i, pinned: !i.pinned} : {...i}),assessments)
+
+    setItems(updatedItems)
+    saveItems(updatedItems)
+
     scrollEl.current.scrollTo({left: scrollEl.current.children[0].clientWidth+1})
   }
 
@@ -148,7 +158,7 @@ function TrackerItem({children, item, data, itemIndex}) {
       scrollEl.current.classList.remove('stop-scroll')
     }
     if (item.reminderDays.length > 0) {
-      if (item.reminderDays.includes(todayNum)
+      if (item.reminderDays.includes(todayNum) && !deleting
         && !assessments.some(ass => ass.item_id === item.id && isItToday(ass.last.date))) {
         itemContainer.current.classList.add('reminder')
       }
@@ -177,7 +187,7 @@ function TrackerItem({children, item, data, itemIndex}) {
         <Loader className="size-5 text-green-500 group-[&.loading-animation]:hidden " />
       </div>
 
-      <div className="hide-able grid-rows-[1fr] overflow-clip rounded-lg" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} ref={itemEl}>
+      <div className="hide-able grid-rows-[1fr] overflow-hidden rounded-lg" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} ref={itemEl}>
 
         <div
             className="grid grid-cols-[auto_100%_100%] gap-px overflow-x-scroll overflow-y-hidden [&.stop-scroll]:overflow-hidden invisible-scroll scroll-smooth snap-x snap-mandatory grid-rows-[80px]"

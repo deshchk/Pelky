@@ -1,9 +1,8 @@
 import SimpleButton from "./atoms/SimpleButton"
 import useDialog from "@/hooks/useDialog"
-import Add from "@/assets/add.svg?react"
 import { newID } from "@/utils"
 import { memo } from "react"
-import { getSortedItems } from "@/data"
+import { getSortedItems, saveItems } from "@/data"
 
 function Nav({items, setItems, setToastData, setDialogData, assessments}) {
 
@@ -29,15 +28,7 @@ function Nav({items, setItems, setToastData, setDialogData, assessments}) {
 
   const addDialog = useDialog(setDialogData, {
     id: newID(),
-    Icon: Add,
-    title: `Adding new item`,
-    confirmText: 'Add',
-    confirmBg: 'bg-blue-500',
-    confirmColor: 'disabled:text-blue-700',
-    input: {
-      name: 'item-name',
-      placeholder: 'Item\'s name'
-    },
+    type: 'new-item-dialog',
     items
   })
 
@@ -45,20 +36,21 @@ function Nav({items, setItems, setToastData, setDialogData, assessments}) {
     const promise = await addDialog()
 
     if (promise) {
-      if (!items.some(item => item.title.replace(/\s/g, "").toLowerCase() === promise.replace(/\s/g, "").toLowerCase())) {
-        setItems(prev => getSortedItems(
-          prev.concat([{
-            id: newID(),
-            title: promise,
-            pinned: false,
-            group: null,
-            reminderDays: [],
-            status: {
-              lastAssessed: false,
-              settingReminder: false,
-            },
-          }])
-        , assessments))
+      if (!items.some(item => item.title.replace(/\s/g, "").toLowerCase() === promise.title.replace(/\s/g, "").toLowerCase())) {
+        const newItem = {
+          id: newID(),
+          title: promise.title,
+          pinned: false,
+          group: null,
+          reminderDays: promise.selectedDays,
+          status: {
+            lastAssessed: false,
+            settingReminder: false,
+          },
+        }
+
+        setItems(prev => getSortedItems(prev.concat([newItem]), assessments))
+        saveItems([newItem])
       } else {
         handleError(1)
       }
