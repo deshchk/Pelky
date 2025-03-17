@@ -1,6 +1,5 @@
 import TrackerItem from "@/components/tracker/TrackerItem"
 import { useEffect, useRef } from "react"
-import Stars from "@/assets/stars.svg?react"
 
 function TrackerList({items, data}) {
   const listContainer = useRef(null)
