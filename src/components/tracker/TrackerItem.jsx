@@ -164,7 +164,7 @@ function TrackerItem({children, item, data, itemIndex}) {
       }
     }
     itemContainer.current.classList.remove('hiding-animation')
-  }, [assessments, item.id, item.reminderDays, item.settingReminder, item.lastAssessed])
+  }, [assessments, item.id, item.reminderDays, item.settingReminder, item.lastAssessed, deleting])
 
   const assessmentProps = {
     colorClasses, borderColorClasses,
