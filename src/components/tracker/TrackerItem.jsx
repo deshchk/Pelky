@@ -2,12 +2,13 @@ import Trash from "@/assets/trash.svg?react"
 import Clock from "@/assets/clock.svg?react"
 import Pin from "@/assets/pin.svg?react"
 import Loader from "@/assets/loader.svg?react"
+import Check from "@/assets/check.svg?react"
 import { useEffect, useRef, useState } from "react"
 import useDialog from "@/hooks/useDialog"
 import AssessmentScroller from "@/components/tracker/AssessmentScroller"
 import DaySelector from "@/components/atoms/DaySelector.jsx"
 import { useOutsideClick } from "@/hooks/useOutsideClick"
-import { firstUpper, isItToday, todayNum } from "@/utils"
+import {firstUpper, isItToday, todayNum, getLastPastAssDiff} from "@/utils"
 import { getSortedItems, deleteItemAndAssessments, saveItems } from "@/data"
 
 function TrackerItem({children, item, data, itemIndex}) {
@@ -177,21 +178,22 @@ function TrackerItem({children, item, data, itemIndex}) {
 
   return (
     <li className={`hide-able tracker-item relative rounded-lg touch-manipulation hiding-animation
-        shown [&:not(.shown)]:opacity-0 [&.saving]:!hidden
+        shown [&:not(.shown)]:opacity-0 [&.saving]:!hidden w-[calc(100%_-_32px)] sm:w-[calc(100%_-_64px)]
         ${item.lastAssessed ? 'last-assessed' : ''}
       `.trim()}
       ref={itemContainer}
       style={animationDurationStyle}
     >
       <div className="absolute inset-0 group hide-able loading-animation place-items-center [&:not(.loading-animation)]:h-20 pointer-events-none" ref={itemLoader}>
-        <Loader className="size-5 text-green-500 group-[&.loading-animation]:hidden " />
+        <Loader className="size-5 text-green-500 group-[&.loading-animation]:hidden" />
       </div>
 
       <div className="hide-able grid-rows-[1fr] overflow-hidden rounded-lg" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} ref={itemEl}>
 
-        <div
-            className="grid grid-cols-[auto_100%_100%] gap-px overflow-x-scroll overflow-y-hidden [&.stop-scroll]:overflow-hidden invisible-scroll scroll-smooth snap-x snap-mandatory grid-rows-[80px]"
-            onScroll={onScroll} ref={scrollEl}
+        <div className={`
+            grid grid-cols-[auto_100%_100%] gap-px min-h-[80px]
+            overflow-x-scroll overflow-y-hidden [&.stop-scroll]:overflow-hidden invisible-scroll scroll-smooth snap-x snap-mandatory
+          `} onScroll={onScroll} ref={scrollEl}
         >
           <div className="flex snap-start snap-always">
             <div onClick={onSetPinned} className="bg-sky-800 w-20 grid place-items-center">
@@ -205,12 +207,39 @@ function TrackerItem({children, item, data, itemIndex}) {
             </div>
           </div>
 
-          <div className="snap-start snap-always flex">
-            <div className={`flex-1 flex items-center px-6 text-white text-left ${colorClasses}`}>
-              {children}
+          <div className="relative snap-start snap-always flex">
+            <div className={`relative flex-1 flex items-center px-4 text-white text-left ${colorClasses}`}>
+              <div className="flex items-center gap-4 pr-2">
+                {
+                  assessments.find(ass => ass.item_id === item.id)?.last && isItToday(assessments.find(ass => ass.item_id === item.id)?.last.date) ?
+                    <div className={`size-5 grid place-items-center rounded-full bg-slate-900/50 text-white shrink-0`}>
+                      <Check className="size-3 stroke-2"/>
+                    </div>
+                    :
+                    <div className={`size-5 grid place-items-center rounded-full bg-slate-900/50 text-white shrink-0`}></div>
+                }
+                <span className="line-clamp-3 my-3 text-ellipsis overflow-hidden">
+                  {children}
+                </span>
+              </div>
             </div>
 
-            <AssessmentScroller {...assessmentProps} />
+            <div className="relative">
+              <AssessmentScroller {...assessmentProps} />
+              <div className="absolute top-1 left-1 bottom-1 flex flex-col justify-between">
+                {
+                    assessments.find(ass => ass.item_id === item.id)?.past.length > 0 &&
+                    <div className={`size-4.5 grid place-items-center rounded text-[9px] font-bold ${
+                        getLastPastAssDiff(item.id, assessments) < 0 ? 'bg-red-500/60' :
+                            getLastPastAssDiff(item.id, assessments) > 0 ? 'bg-green-600/60' : ''
+                    }`}>
+                      {
+                          getLastPastAssDiff(item.id, assessments) !== 0 && getLastPastAssDiff(item.id, assessments)
+                      }
+                    </div>
+                }
+              </div>
+            </div>
           </div>
 
           <div className="bg-red-500 snap-end flex px-4 relative">

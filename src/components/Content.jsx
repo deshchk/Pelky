@@ -3,7 +3,7 @@ import { memo } from "react"
 
 function Content(props) {
   return (
-    <main className="min-h-dvh min-w-screen p-4 sm:p-8 flex flex-col justify-end pb-25 sm:pb-29">
+    <main className="h-dvh min-w-full flex flex-col">
       <TrackerList items={props.items} data={props} />
     </main>
   )

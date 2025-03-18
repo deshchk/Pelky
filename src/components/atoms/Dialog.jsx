@@ -48,7 +48,7 @@ function Dialog({props, handleConfirm, closeDialog}) {
   useOutsideClick(closeDialog, dialogEl)
 
   return (
-    <div className="px-6 py-8 w-full rounded-lg bg-slate-800 border border-slate-700 text-white flex flex-col gap-6" ref={dialogEl}>
+    <div className="px-6 py-8 w-full max-w-md rounded-lg bg-slate-800 border border-slate-700 text-white flex flex-col gap-6" ref={dialogEl}>
       {Icon &&
         <Icon className="size-10"/>
       }

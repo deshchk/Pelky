@@ -4,7 +4,7 @@
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  height: 100dvh;
+  overflow: hidden;
 
   color-scheme: light dark;
 
@@ -23,8 +23,7 @@ a {
 }
 
 body {
-  @apply m-0 min-w-xs min-h-dvh overscroll-contain;
-
+  @apply m-0 min-w-xs;
   @apply bg-white text-slate-900;
   @apply dark:bg-slate-900 dark:text-slate-50;
 }
@@ -114,7 +113,7 @@ button {
 }
 
 .assessment-scroller {
-  @apply grid grid-cols-1 grid-rows-[repeat(11,100%)] overflow-y-scroll scroll-smooth snap-y snap-mandatory outline-sky-500/50 -outline-offset-2 focus:outline-2;
+  @apply grid grid-rows-[repeat(11,100%)] overflow-y-scroll scroll-smooth snap-y snap-mandatory outline-sky-500/50 -outline-offset-2 focus:outline-2;
 }
 
 .assessment-scroller-overlay {
@@ -140,7 +139,7 @@ button {
   }
 
   &.reminder{
-    @apply outline-yellow-500/30 mt-1.5;
+    @apply outline-yellow-500/30;
 
     &:after {
       content: 'TODO';
@@ -168,4 +167,8 @@ button {
   100% {
     transform: scaleX(1);
   }
+}
+
+.drop-drop-shadow {
+  filter: drop-shadow(0 -24px 12px --alpha(var(--color-sky-500) / 40%));
 }

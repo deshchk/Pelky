@@ -38,7 +38,7 @@ function NewItemDialog({handleConfirm, closeDialog}) {
   useOutsideClick(closeDialog, dialogEl)
 
   return (
-      <div className="px-6 py-8 w-full rounded-lg bg-slate-800 border border-slate-700 text-white flex flex-col gap-6" ref={dialogEl}>
+      <div className="px-6 py-8 w-full max-w-md rounded-lg bg-slate-800 border border-slate-700 text-white flex flex-col gap-6" ref={dialogEl}>
         <Add className="size-10"/>
         <div className="text-xl font-semibold text-pretty mt-2">
           Adding new item

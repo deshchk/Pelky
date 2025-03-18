@@ -25,3 +25,11 @@ export const debounce = (func, wait) => {
     timeout = setTimeout(() => func(...args), wait)
   }
 }
+
+
+export const getLastAssessment = (item_id, assessments) => assessments.find(ass => ass.item_id === item_id)?.last.value
+export const getLastPastAssessment = (item_id, assessments) => {
+  const pastAssessments = assessments.find(ass => ass.item_id === item_id).past || []
+  return pastAssessments[pastAssessments.length-1].value
+}
+export const getLastPastAssDiff = (item_id, assessments) => getLastAssessment(item_id, assessments) - getLastPastAssessment(item_id, assessments)
