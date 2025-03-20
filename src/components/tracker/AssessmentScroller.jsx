@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react"
-import { newID } from "@/utils"
+import {handleSmallToast, loadItemsInNeed, newID} from "@/utils"
 import { getSortedItems, saveAssessments } from "@/data"
 
 function AssessmentScroller(props) {
@@ -9,6 +9,7 @@ function AssessmentScroller(props) {
     item,
     items,
     setItems,
+    changingName,
     assessments,
     setAssessments,
     setToastData,
@@ -22,27 +23,9 @@ function AssessmentScroller(props) {
   const middleEl = useRef(null)
 
   const colorVar = useRef(`--color-${colorClasses.split(' ')[0].slice(3)}`)
-  const loading = useRef(false)
+  const loading = useRef(true)
 
   const [currentAssessment, setCurrentAssessment] = useState(null)
-
-  const handleSuccess = useCallback(() => {
-    const toastID = newID()
-    const toast = {
-      id: toastID,
-      message: 'Saved!',
-      time: 3000,
-      type: 'success',
-      size: 'small'
-    }
-
-    setToastData(toasts => toasts.concat([toast]))
-    setItems(prev => prev.map(i => i.id === item.id ? {...i, lastAssessed: true} : {...i, lastAssessed: false} ))
-
-    setTimeout(() => {
-      setToastData(toasts => toasts.toSpliced(toasts.indexOf(toast), 1))
-    }, toast.time)
-  }, [item.id, setItems, setToastData])
 
   const saveAssessment = (assessment) => {
     const newAssessments = (prev) => prev.some(ass => ass.item_id === item.id) ?
@@ -83,28 +66,20 @@ function AssessmentScroller(props) {
     scrollerOverlay.current.classList.remove('animate')
     middleEl.current.scrollIntoView({block: 'center', behavior: 'instant'})
 
-    if (
-      getSortedItems(items, newAssessments(assessments)).indexOf(item) !== items.indexOf(item)
-    ) {
-      setTimeout(() => {
-        itemEl.current.classList.add('loading-animation')
-        itemLoader.current.classList.remove('loading-animation')
-      },100)
-      setTimeout(() => {
-        setAnimationsInProgress(false)
-        itemLoader.current.classList.add('loading-animation')
-        itemEl.current.classList.remove('loading-animation')
-      },800)
-    }
+    loadItemsInNeed(
+      getSortedItems(items, newAssessments(assessments)).indexOf(item) !== items.indexOf(item),
+      itemEl, itemLoader, setAnimationsInProgress
+    )
 
-    handleSuccess()
+    setItems(prev => prev.map(i => i.id === item.id ? {...i, lastAssessed: true} : {...i, lastAssessed: false} ))
+    handleSmallToast('success', 1, setToastData)
   }
 
   const timeoutAnimate = useRef(null)
   const timeoutSave = useRef(null)
 
   const onScroll = useCallback((e) => {
-    if (loading.current) return
+    if (loading.current || changingName.current) return
 
     const itemSize = e.target.scrollHeight/11
     const scrolledIndex = Math.floor((e.target.scrollTop + itemSize/2) / itemSize)

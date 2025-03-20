@@ -8,7 +8,15 @@ import useDialog from "@/hooks/useDialog"
 import AssessmentScroller from "@/components/tracker/AssessmentScroller"
 import DaySelector from "@/components/atoms/DaySelector.jsx"
 import { useOutsideClick } from "@/hooks/useOutsideClick"
-import {firstUpper, isItToday, todayNum, getLastPastAssDiff} from "@/utils"
+import {
+  firstUpper,
+  isItToday,
+  todayNum,
+  getLastPastAssDiff,
+  loadItemsInNeed,
+  handleSmallToast,
+  handleBigToast
+} from "@/utils"
 import { getSortedItems, deleteItemAndAssessments, saveItems } from "@/data"
 
 function TrackerItem({children, item, data, itemIndex}) {
@@ -28,9 +36,12 @@ function TrackerItem({children, item, data, itemIndex}) {
   const itemEl = useRef(null)
   const scrollEl = useRef(null)
   const itemLoader = useRef(null)
+  const nameChangeEl = useRef(null)
+  const leftParallaxEl = useRef(null)
 
   const touches = useRef(0)
   const wasSettingReminder = useRef(false)
+  const changingName = useRef(false)
 
   const [touchEnded, setTouchEnded] = useState(true)
   const [deleting, setDeleting] = useState(false)
@@ -144,6 +155,53 @@ function TrackerItem({children, item, data, itemIndex}) {
     scrollEl.current.scrollTo({left: scrollEl.current.children[0].clientWidth+1})
   }
 
+  function onNameChangeFocus() {
+    nameChangeEl.current.classList.add('active')
+  }
+
+  function onNameChangeInput() {
+    changingName.current = true
+  }
+
+  function onNameChangeKeyPress(e) {
+    if (changingName.current && e.key === 'Enter') {
+      e.preventDefault()
+      e.target.blur()
+    }
+  }
+
+  function handleItemNameCheck() {
+    if (item.title.trim() !== nameChangeEl.current.textContent.trim()) {
+      if (items.some(i => i.id !== item.id && i.title.trim().toLowerCase() === nameChangeEl.current.textContent.trim().toLowerCase())) {
+        console.log('dupa')
+        handleBigToast('error', 1, setToastData)
+        nameChangeEl.current.textContent = item.title
+        document.activeElement.blur()
+      } else {
+        const updatedItems = getSortedItems(items.map(i => i.id === item.id ? {...i, title: nameChangeEl.current.textContent} : {...i} ), assessments)
+
+        loadItemsInNeed(
+          updatedItems.indexOf(updatedItems.find(i => i.id === item.id)) !== items.indexOf(item),
+          itemEl, itemLoader, setAnimationsInProgress
+        )
+
+        setItems(updatedItems)
+        saveItems(updatedItems)
+
+        document.activeElement.blur()
+        handleSmallToast('success', 1, setToastData)
+      }
+    }
+  }
+
+  function onNameChangeBlur() {
+    nameChangeEl.current.classList.remove('active')
+    handleItemNameCheck()
+
+    nameChangeEl.current.scrollTo({top: 0, behavior: 'instant'})
+    changingName.current = false
+  }
+
   useOutsideClick(() => {
     if (item.lastAssessed) {
       setItems(items.map(i => ({...i, lastAssessed: false}) ))
@@ -152,6 +210,13 @@ function TrackerItem({children, item, data, itemIndex}) {
       setItems(items.map(i => i.id === item.id ? {...i, settingReminder: false} : {...i} ))
     }
   }, itemEl, {item, setItems})
+
+  useOutsideClick(e => {
+    if (changingName.current && e.target.id.includes('edit-title')) {
+      e.preventDefault()
+      document.activeElement.blur()
+    }
+  }, nameChangeEl)
 
   useEffect(() => {
     if (!item.settingReminder) {
@@ -169,7 +234,7 @@ function TrackerItem({children, item, data, itemIndex}) {
 
   const assessmentProps = {
     colorClasses, borderColorClasses,
-    item, items, setItems,
+    item, items, setItems, changingName,
     assessments, setAssessments,
     setToastData, setAnimationsInProgress,
     itemContainer, itemEl, itemLoader
@@ -188,15 +253,15 @@ function TrackerItem({children, item, data, itemIndex}) {
         <Loader className="size-5 text-green-500 group-[&.loading-animation]:hidden" />
       </div>
 
-      <div className="hide-able grid-rows-[1fr] overflow-hidden rounded-lg" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} ref={itemEl}>
+      <div className="hide-able group/hide grid-rows-[1fr] overflow-hidden rounded-lg" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} ref={itemEl}>
 
         <div className={`
-            grid grid-cols-[auto_100%_100%] gap-px min-h-[80px]
+            grid grid-cols-[auto_100%_100%] gap-px group-[:not(.hiding-animation)]/hide:min-h-[80px]
             overflow-x-scroll overflow-y-hidden [&.stop-scroll]:overflow-hidden invisible-scroll scroll-smooth snap-x snap-mandatory
           `} onScroll={onScroll} ref={scrollEl}
         >
-          <div className="flex snap-start snap-always">
-            <div onClick={onSetPinned} className="bg-sky-800 w-20 grid place-items-center">
+          <div className="relative flex snap-start snap-always">
+            <div onClick={onSetPinned} className="bg-sky-800 w-20 h-full grid place-items-center sticky left-0" ref={leftParallaxEl}>
               <Pin className="size-8"/>
             </div>
 
@@ -207,39 +272,50 @@ function TrackerItem({children, item, data, itemIndex}) {
             </div>
           </div>
 
-          <div className="relative snap-start snap-always flex">
+          <div className="relative snap-start snap-always flex group-[.hiding-animation]/hide:overflow-hidden">
             <div className={`relative flex-1 flex items-center px-4 text-white text-left ${colorClasses}`}>
-              <div className="flex items-center gap-4 pr-2">
+              <div className="flex items-center gap-3 pr-2 w-full">
                 {
                   assessments.find(ass => ass.item_id === item.id)?.last && isItToday(assessments.find(ass => ass.item_id === item.id)?.last.date) ?
-                    <div className={`size-5 grid place-items-center rounded-full bg-slate-900/50 text-white shrink-0`}>
-                      <Check className="size-3 stroke-2"/>
-                    </div>
-                    :
-                    <div className={`size-5 grid place-items-center rounded-full bg-slate-900/50 text-white shrink-0`}></div>
+                  <div className={`size-5 grid place-items-center rounded-full bg-slate-900/50 text-white shrink-0`}>
+                    <Check className="size-3 stroke-2"/>
+                  </div>
+                  :
+                  <div className={`size-5 grid place-items-center rounded-full bg-slate-900/50 text-white shrink-0`}></div>
                 }
-                <span className="line-clamp-3 my-3 text-ellipsis overflow-hidden">
-                  {children}
-                </span>
-              </div>
-            </div>
 
-            <div className="relative">
-              <AssessmentScroller {...assessmentProps} />
-              <div className="absolute top-1 left-1 bottom-1 flex flex-col justify-between">
+                <div className="inline-block flex-1 my-2.5">
+                  <div
+                    contentEditable={true}
+                    className="[&:not(.active)]:line-clamp-3 max-h-[76px] rounded px-2 py-0.5 overflow-hidden focus:outline-none focus:bg-black/40"
+                    spellCheck={false}
+                    onFocus={onNameChangeFocus}
+                    onInput={onNameChangeInput}
+                    onBlur={onNameChangeBlur}
+                    onKeyPress={onNameChangeKeyPress}
+                    suppressContentEditableWarning={true}
+                    ref={nameChangeEl}
+                    id={`edit-title-${item.id}`}
+                  >{children}</div>
+                </div>
+              </div>
+
+              <div className="absolute top-0 bottom-0 -right-0.5 grid place-items-center">
                 {
                     assessments.find(ass => ass.item_id === item.id)?.past.length > 0 &&
-                    <div className={`size-4.5 grid place-items-center rounded text-[9px] font-bold ${
+                    <div className={`size-5 grid place-items-center rounded-l-full text-[9px] font-bold ${
                         getLastPastAssDiff(item.id, assessments) < 0 ? 'bg-red-500/60' :
                             getLastPastAssDiff(item.id, assessments) > 0 ? 'bg-green-600/60' : ''
                     }`}>
                       {
                           getLastPastAssDiff(item.id, assessments) !== 0 && getLastPastAssDiff(item.id, assessments)
-                      }
-                    </div>
+                    }
+                  </div>
                 }
               </div>
             </div>
+
+            <AssessmentScroller {...assessmentProps} />
           </div>
 
           <div className="bg-red-500 snap-end flex px-4 relative">

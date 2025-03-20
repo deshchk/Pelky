@@ -1,3 +1,5 @@
+import { errorCodes, successCodes } from "@/data"
+
 export const nbsps = el => el.replace(/(\s)([aAwWiIzZoOuU])(\s)/g, '$1$2\xa0')
 
 export const firstUpper = string => string.charAt(0).toUpperCase() + string.slice(1)
@@ -33,3 +35,50 @@ export const getLastPastAssessment = (item_id, assessments) => {
   return pastAssessments[pastAssessments.length-1].value
 }
 export const getLastPastAssDiff = (item_id, assessments) => getLastAssessment(item_id, assessments) - getLastPastAssessment(item_id, assessments)
+
+
+
+export function loadItemsInNeed(condition, itemEl, itemLoader, setAnimationsInProgress) {
+  if (condition) {
+    itemEl.current.classList.add('loading-animation')
+    itemLoader.current.classList.remove('loading-animation')
+    setTimeout(() => {
+      setAnimationsInProgress(false)
+      itemLoader.current.classList.add('loading-animation')
+      itemEl.current.classList.remove('loading-animation')
+    },1000)
+  }
+}
+
+export const handleBigToast = (type, messageCode, setToastData, time = 5000) => {
+  const toastID = newID()
+  const toast = {
+    id: toastID,
+    message: type === 'error' ? errorCodes[messageCode] : successCodes[messageCode],
+    time: time,
+    type: type,
+  }
+
+  setToastData(toasts => toasts.concat([toast]))
+
+  setTimeout(() => {
+    setToastData(toasts => toasts.toSpliced(toasts.indexOf(toast), 1))
+  }, toast.time)
+}
+
+export const handleSmallToast = (type, messageCode, setToastData, time = 3000) => {
+  const toastID = newID()
+  const toast = {
+    id: toastID,
+    message: type === 'error' ? errorCodes[messageCode] : successCodes[messageCode],
+    time: time,
+    type: type,
+    size: 'small'
+  }
+
+  setToastData(toasts => toasts.concat([toast]))
+
+  setTimeout(() => {
+    setToastData(toasts => toasts.toSpliced(toasts.indexOf(toast), 1))
+  }, toast.time)
+}

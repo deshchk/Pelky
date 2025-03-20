@@ -1,31 +1,11 @@
 import SimpleButton from "./atoms/SimpleButton"
 import useDialog from "@/hooks/useDialog"
-import { newID } from "@/utils"
+import {handleBigToast, newID} from "@/utils"
 import { memo } from "react"
 import { getSortedItems, saveItems } from "@/data"
 import Stars from "@/assets/stars.svg?react"
 
 function Nav({items, setItems, setToastData, setDialogData, assessments}) {
-
-  const errorCodes = {
-    1: 'Item with this name already exists.'
-  }
-
-  function handleError(errorCode) {
-    const toastID = newID()
-    const toast = {
-      id: toastID,
-      message: errorCodes[errorCode],
-      time: 5000,
-      type: 'error',
-    }
-
-    setToastData(toasts => toasts.concat([toast]))
-
-    setTimeout(() => {
-      setToastData(toasts => toasts.toSpliced(toasts.indexOf(toast), 1))
-    }, toast.time)
-  }
 
   const addDialog = useDialog(setDialogData, {
     id: newID(),
@@ -53,7 +33,7 @@ function Nav({items, setItems, setToastData, setDialogData, assessments}) {
         setItems(prev => getSortedItems(prev.concat([newItem]), assessments))
         saveItems([newItem])
       } else {
-        handleError(1)
+        handleBigToast('error', 1, setToastData)
       }
     }
   }

@@ -14,7 +14,7 @@ function Toast({handleClose, message, type}) {
   }, [message])
 
   return (message &&
-    <div className={`small-toast ${type} -translate-y-[200%] [&.open]:translate-y-0 transition-transform duration-300 pointer-events-auto`}
+    <div className={`small-toast ${type} -translate-y-[200%] [&.open]:translate-y-9 transition-transform duration-300 pointer-events-auto`}
       onClick={handleClose} ref={toastEl}
     >
       <Success className="size-4"/>

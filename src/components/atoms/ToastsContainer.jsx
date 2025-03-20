@@ -1,7 +1,7 @@
 import Toast from "@/components/atoms/Toast"
 import SmallToast from "@/components/atoms/SmallToast"
 import { ToastContext } from "@/ctxs"
-import { useContext, useEffect } from "react"
+import { useContext } from "react"
 import { createPortal } from "react-dom"
 
 function ToastsContainer() {
@@ -10,10 +10,6 @@ function ToastsContainer() {
   function closeToast() {
     toast.push(toasts => toasts.splice(toasts.indexOf(toast), 1))
   }
-
-  useEffect(() => {
-
-  }, [toast.data])
 
   return toast.data.length > 0 && createPortal(
     <div className="fixed z-40 inset-4 bottom-24 sm:bottom-28 pointer-events-none">

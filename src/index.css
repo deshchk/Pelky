@@ -81,7 +81,7 @@ button {
 }
 
 .toast {
-  @apply relative flex flex-col p-4 pb-6 rounded overflow-hidden;
+  @apply relative top-9 flex flex-col p-4 pb-6 rounded overflow-hidden;
 
   .toast-progress-container {
     @apply flex absolute bottom-0 left-0 right-0;
@@ -170,5 +170,11 @@ button {
 }
 
 .drop-drop-shadow {
-  filter: drop-shadow(0 -24px 12px --alpha(var(--color-sky-500) / 40%));
+  @apply blur-md scale-200 -translate-y-full;
+}
+
+[contenteditable] {
+  -webkit-user-select: text !important;
+  user-select: text !important;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.2);
 }

@@ -88,3 +88,12 @@ export const getSortedItems = (items, assessments) => items.toSorted((a, b) => {
   // 4. Sort alphabetically
   return a.title.localeCompare(b.title)
 }).reverse()
+
+
+export const errorCodes = {
+  1: 'Item with this name already exists.'
+}
+
+export const successCodes = {
+  1: 'Saved!'
+}
