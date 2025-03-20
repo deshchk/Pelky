@@ -26,7 +26,6 @@ function Nav({items, setItems, setToastData, setDialogData, assessments}) {
           reminderDays: promise.selectedDays,
           status: {
             lastAssessed: false,
-            settingReminder: false,
           },
         }
 
@@ -42,10 +41,10 @@ function Nav({items, setItems, setToastData, setDialogData, assessments}) {
     <>
       <nav className="fixed bottom-0 left-0 w-full bg-slate-800/80 backdrop-blur z-20">
         <ul className="py-4 px-4 sm:px-8 flex gap-4 justify-between">
-          <li>
-            <SimpleButton disabled={true}>Filter</SimpleButton>
-          </li>
-          <li className="relative">
+          {/*<li>*/}
+          {/*  <SimpleButton disabled={true}>Filter</SimpleButton>*/}
+          {/*</li>*/}
+          <li className="relative ml-auto">
             <SimpleButton blue onClick={addItem}>New item</SimpleButton>
             {items.length === 0 && <Stars className="absolute -top-3.5 -left-5 size-8 scale-x-[-1] text-yellow-500" />}
           </li>

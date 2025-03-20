@@ -151,6 +151,18 @@ button {
   }
 }
 
+.drop-drop-shadow {
+  @apply blur-md scale-200 -translate-y-full;
+}
+
+[contenteditable] {
+  -webkit-user-select: text !important;
+  user-select: text !important;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.2);
+}
+
+
+
 @keyframes left-right {
   0% {
     transform: scaleX(1);
@@ -167,14 +179,4 @@ button {
   100% {
     transform: scaleX(1);
   }
-}
-
-.drop-drop-shadow {
-  @apply blur-md scale-200 -translate-y-full;
-}
-
-[contenteditable] {
-  -webkit-user-select: text !important;
-  user-select: text !important;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.2);
 }

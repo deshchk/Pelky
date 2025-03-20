@@ -63,16 +63,18 @@ function AssessmentScroller(props) {
     setAssessments(prev => newAssessments(prev))
     saveAssessments(newAssessments(assessments))
 
-    scrollerOverlay.current.classList.remove('animate')
-    middleEl.current.scrollIntoView({block: 'center', behavior: 'instant'})
+    if (scrollerOverlay.current) {
+      scrollerOverlay.current?.classList.remove('animate')
+      middleEl.current?.scrollIntoView({block: 'center', behavior: 'instant'})
 
-    loadItemsInNeed(
-      getSortedItems(items, newAssessments(assessments)).indexOf(item) !== items.indexOf(item),
-      itemEl, itemLoader, setAnimationsInProgress
-    )
+      loadItemsInNeed(
+        getSortedItems(items, newAssessments(assessments)).indexOf(item) !== items.indexOf(item),
+        itemEl, itemLoader, setAnimationsInProgress
+      )
 
-    setItems(prev => prev.map(i => i.id === item.id ? {...i, lastAssessed: true} : {...i, lastAssessed: false} ))
-    handleSmallToast('success', 1, setToastData)
+      setItems(prev => prev.map(i => i.id === item.id ? {...i, lastAssessed: true} : {...i, lastAssessed: false} ))
+      handleSmallToast('success', 1, setToastData)
+    }
   }
 
   const timeoutAnimate = useRef(null)
@@ -94,7 +96,7 @@ function AssessmentScroller(props) {
       scrollerOverlay.current.classList.remove('animate')
       timeoutAnimate.current = setTimeout(() => {
         if (currentAssessment === currentValue) {
-          scrollerOverlay.current.classList.add('animate')
+          scrollerOverlay.current?.classList.add('animate')
           setAnimationsInProgress(true)
         }
         timeoutSave.current = setTimeout(() => {

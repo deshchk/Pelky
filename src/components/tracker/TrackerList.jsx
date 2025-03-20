@@ -1,6 +1,7 @@
 import TrackerItem from "@/components/tracker/TrackerItem"
 import {useEffect, useRef} from "react"
 import Droplets from "@/assets/droplets.svg?react"
+import { setRandomInterval } from "@/utils"
 
 function TrackerList({items, data}) {
   const listContainer = useRef(null)
@@ -8,6 +9,7 @@ function TrackerList({items, data}) {
   const topGradient = useRef(null)
   const dropLogo = useRef(null)
   const dropLogoBlur = useRef(null)
+  const eyesEl = useRef(null)
 
   function onScroll(e) {
     const stPercent = Math.min(100, e.target.scrollTop)
@@ -17,7 +19,19 @@ function TrackerList({items, data}) {
   useEffect(() => {
     dropLogo.current.classList.contains('loading') && dropLogo.current.classList.remove('loading')
     dropLogoBlur.current.classList.contains('loading') && dropLogoBlur.current.classList.remove('loading')
-  }, [])
+
+  const blinking = setRandomInterval(() => {
+    eyesEl.current.style.setProperty("--blinkPercent", '0%')
+    setTimeout(() => {
+      eyesEl.current.style.setProperty("--blinkPercent", '100%')
+    },100)
+  }, 3500, 12500, 0.1)
+
+  if (items.length > 0) {
+    blinking.clear()
+  }
+
+  }, [items.length])
 
   return (
       <div className="grid grid-cols-1 h-full empty:!hidden overflow-y-auto invisible-scroll pt-5 sm:pt-10" onScroll={onScroll} ref={listContainer}>
@@ -46,7 +60,12 @@ function TrackerList({items, data}) {
               <div className="fixed inset-0">
                 <div className="relative size-full grid place-items-center">
                   <div className="text-xl text-slate-600 font-medium">
-                    <p className="text-center text-3xl mb-2 motion-safe:animate-[left-right_5s_ease-in-out_infinite]">👀</p>
+                    <p
+                      className="text-center text-3xl mb-2 motion-safe:animate-[left-right_5s_ease-in-out_infinite] [--blinkPercent:100%] [mask-image:_linear-gradient(to_top,black_var(--blinkPercent),_transparent_var(--blinkPercent))]"
+                      ref={eyesEl}
+                    >
+                        👀
+                    </p>
                     <p>No items here yet</p>
                   </div>
 

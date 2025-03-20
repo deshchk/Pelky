@@ -6,7 +6,7 @@ import Check from "@/assets/check.svg?react"
 import { useEffect, useRef, useState } from "react"
 import useDialog from "@/hooks/useDialog"
 import AssessmentScroller from "@/components/tracker/AssessmentScroller"
-import DaySelector from "@/components/atoms/DaySelector.jsx"
+import DaySelector from "@/components/atoms/DaySelector"
 import { useOutsideClick } from "@/hooks/useOutsideClick"
 import {
   firstUpper,
@@ -40,7 +40,7 @@ function TrackerItem({children, item, data, itemIndex}) {
   const leftParallaxEl = useRef(null)
 
   const touches = useRef(0)
-  const wasSettingReminder = useRef(false)
+  const itemExtended = useRef(false)
   const changingName = useRef(false)
 
   const [touchEnded, setTouchEnded] = useState(true)
@@ -69,19 +69,11 @@ function TrackerItem({children, item, data, itemIndex}) {
 
   function onScroll(e) {
     if (e.target.scrollLeft === 0) {
-      setItems(items.map(i => i.id === item.id ? {...i, settingReminder: true} : {...i, settingReminder: false} ))
-      wasSettingReminder.current = true
+      itemExtended.current = true
     }
 
-    if (!item.settingReminder) {
-      if (e.target.scrollLeft > e.target.clientWidth / 1.25 && touchEnded && !deleting) {
-        deleteItem()
-      }
-    } else if (wasSettingReminder.current) {
-      e.target.classList.add('stop-scroll')
-      setItems(items.map(i => i.id === item.id ? {...i, settingReminder: false} : {...i}))
-      // e.target.scrollTo({left: e.target.children[0].clientWidth+1})
-      wasSettingReminder.current = false
+    if (e.target.scrollLeft > e.target.clientWidth / 1.25 && touchEnded && !deleting) {
+      deleteItem()
     }
   }
 
@@ -95,7 +87,6 @@ function TrackerItem({children, item, data, itemIndex}) {
   function del() {
     itemContainer.current.classList.remove('reminder')
     itemEl.current.classList.add('hiding-animation')
-    setItems(items.map(i => ({...i, settingReminder: false})))
     setTimeout(() => {
       deleteItemAndAssessments(item.id)
       setItems(items.toSpliced(items.indexOf(item), 1))
@@ -132,6 +123,8 @@ function TrackerItem({children, item, data, itemIndex}) {
   })
 
   async function onSetReminder() {
+    itemExtended.current = true
+
     const promise = await reminderDialog()
 
     if (promise) {
@@ -173,7 +166,6 @@ function TrackerItem({children, item, data, itemIndex}) {
   function handleItemNameCheck() {
     if (item.title.trim() !== nameChangeEl.current.textContent.trim()) {
       if (items.some(i => i.id !== item.id && i.title.trim().toLowerCase() === nameChangeEl.current.textContent.trim().toLowerCase())) {
-        console.log('dupa')
         handleBigToast('error', 1, setToastData)
         nameChangeEl.current.textContent = item.title
         document.activeElement.blur()
@@ -206,8 +198,9 @@ function TrackerItem({children, item, data, itemIndex}) {
     if (item.lastAssessed) {
       setItems(items.map(i => ({...i, lastAssessed: false}) ))
     }
-    if (item.settingReminder) {
-      setItems(items.map(i => i.id === item.id ? {...i, settingReminder: false} : {...i} ))
+    if (itemExtended.current) {
+      itemExtended.current = false
+      scrollEl.current.scrollTo({left: scrollEl.current.children[0].clientWidth+1})
     }
   }, itemEl, {item, setItems})
 
@@ -219,10 +212,6 @@ function TrackerItem({children, item, data, itemIndex}) {
   }, nameChangeEl)
 
   useEffect(() => {
-    if (!item.settingReminder) {
-      scrollEl.current.scrollTo({left: scrollEl.current.children[0].clientWidth+1})
-      scrollEl.current.classList.remove('stop-scroll')
-    }
     if (item.reminderDays.length > 0) {
       if (item.reminderDays.includes(todayNum) && !deleting
         && !assessments.some(ass => ass.item_id === item.id && isItToday(ass.last.date))) {
@@ -230,7 +219,7 @@ function TrackerItem({children, item, data, itemIndex}) {
       }
     }
     itemContainer.current.classList.remove('hiding-animation')
-  }, [assessments, item.id, item.reminderDays, item.settingReminder, item.lastAssessed, deleting])
+  }, [assessments, item.id, item.reminderDays, deleting])
 
   const assessmentProps = {
     colorClasses, borderColorClasses,
@@ -257,7 +246,7 @@ function TrackerItem({children, item, data, itemIndex}) {
 
         <div className={`
             grid grid-cols-[auto_100%_100%] gap-px group-[:not(.hiding-animation)]/hide:min-h-[80px]
-            overflow-x-scroll overflow-y-hidden [&.stop-scroll]:overflow-hidden invisible-scroll scroll-smooth snap-x snap-mandatory
+            overflow-x-scroll overflow-y-hidden invisible-scroll scroll-smooth snap-x snap-mandatory
           `} onScroll={onScroll} ref={scrollEl}
         >
           <div className="relative flex snap-start snap-always">
@@ -302,13 +291,13 @@ function TrackerItem({children, item, data, itemIndex}) {
 
               <div className="absolute top-0 bottom-0 -right-0.5 grid place-items-center">
                 {
-                    assessments.find(ass => ass.item_id === item.id)?.past.length > 0 &&
-                    <div className={`size-5 grid place-items-center rounded-l-full text-[9px] font-bold ${
-                        getLastPastAssDiff(item.id, assessments) < 0 ? 'bg-red-500/60' :
-                            getLastPastAssDiff(item.id, assessments) > 0 ? 'bg-green-600/60' : ''
-                    }`}>
-                      {
-                          getLastPastAssDiff(item.id, assessments) !== 0 && getLastPastAssDiff(item.id, assessments)
+                  assessments.find(ass => ass.item_id === item.id)?.past.length > 0 &&
+                  <div className={`size-5 grid place-items-center rounded-l-full text-[9px] font-bold ${
+                    getLastPastAssDiff(item.id, assessments) < 0 ? 'bg-red-500/60' :
+                      getLastPastAssDiff(item.id, assessments) > 0 ? 'bg-green-600/60' : ''
+                  }`}>
+                    {
+                      getLastPastAssDiff(item.id, assessments) !== 0 && getLastPastAssDiff(item.id, assessments)
                     }
                   </div>
                 }

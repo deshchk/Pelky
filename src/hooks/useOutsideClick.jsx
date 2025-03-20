@@ -9,6 +9,10 @@ export function useOutsideClick(callback, ref, deps = null) {
     }
 
     document.addEventListener("mousedown", handleClickOutside, true)
-    return () => document.removeEventListener("mousedown", handleClickOutside, true)
+    document.addEventListener("touchstart", handleClickOutside, true)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside, true)
+      document.removeEventListener("touchstart", handleClickOutside, true)
+    }
   }, [callback, ref, deps])
 }

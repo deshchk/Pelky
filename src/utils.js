@@ -28,6 +28,39 @@ export const debounce = (func, wait) => {
   }
 }
 
+export const setRandomInterval = (callback, minDelay, maxDelay, density = 0.5) => {
+  density = Math.max(0, Math.min(1, density))
+  let timeout
+
+  const runInterval = () => {
+    const timeoutFunction = () => {
+      callback()
+      runInterval()
+    }
+
+    let randomValue
+
+    if (density <= 0.5) {
+      const power = 1 + 8 * (0.5 - density)
+      randomValue = Math.pow(Math.random(), power)
+    } else {
+      const power = 1 + 8 * (density - 0.5)
+      randomValue = Math.pow(Math.random(), power)
+    }
+
+    const delay = Math.floor(randomValue * (maxDelay - minDelay + 1)) + minDelay;
+    timeout = setTimeout(timeoutFunction, delay)
+  }
+  runInterval()
+
+  return {
+    clear() { clearTimeout(timeout) },
+  }
+}
+
+
+
+
 
 export const getLastAssessment = (item_id, assessments) => assessments.find(ass => ass.item_id === item_id)?.last.value
 export const getLastPastAssessment = (item_id, assessments) => {
@@ -35,6 +68,8 @@ export const getLastPastAssessment = (item_id, assessments) => {
   return pastAssessments[pastAssessments.length-1].value
 }
 export const getLastPastAssDiff = (item_id, assessments) => getLastAssessment(item_id, assessments) - getLastPastAssessment(item_id, assessments)
+
+
 
 
 
