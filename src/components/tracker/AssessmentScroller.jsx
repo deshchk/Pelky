@@ -171,6 +171,7 @@ function AssessmentScroller(props) {
     middleEl.current && middleEl.current.scrollIntoView({block: 'center', behavior: 'instant'})
     setTimeout(() => {
       loading.current = false
+      middleEl.current && middleEl.current.scrollIntoView({block: 'center', behavior: 'instant'})
     }, 100)
   }, [])
 
