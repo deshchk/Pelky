@@ -52,7 +52,6 @@ function TrackerItem({children, item, data, itemIndex}) {
 
   const [touchEnded, setTouchEnded] = useState(false)
   const [deleting, setDeleting] = useState(false)
-  const [pinning, setPinning] = useState(false)
   const [assessmentOptions, setAssessmentOptions] = useState(false)
   const [selectedDays, setSelectedDays] = useState(item.reminderDays)
 
@@ -79,7 +78,7 @@ function TrackerItem({children, item, data, itemIndex}) {
   function onScroll(e) {
     itemExtended.current = e.target.scrollLeft === e.target.children[0].clientWidth || e.target.clientWidth + e.target.children[0].clientWidth*2
 
-    if (e.target.scrollLeft > e.target.scrollWidth - e.target.clientWidth*1.5 && touchEnded && !deleting && !pinning) {
+    if (e.target.scrollLeft > e.target.scrollWidth - e.target.clientWidth*1.5 && touchEnded && !deleting) {
       deleteItem()
     }
   }
@@ -148,17 +147,10 @@ function TrackerItem({children, item, data, itemIndex}) {
 
 
   function pinItem() {
-    setPinning(true)
     const updatedItems = getSortedItems(items.map(i => i.id === item.id ? {...i, pinned: !i.pinned} : {...i}),assessments)
 
     setItems(updatedItems)
     saveItems(updatedItems)
-
-    scrollEl.current.scrollTo({left: scrollEl.current.children[0].clientWidth, behavior: 'instant'})
-
-    setTimeout(() => {
-      setPinning(false)
-    }, 500)
   }
 
   function onSetPinned() {
@@ -248,6 +240,7 @@ function TrackerItem({children, item, data, itemIndex}) {
       }
     }
     itemContainer.current.classList.remove('hiding-animation')
+    scrollEl.current.scrollTo({left: scrollEl.current.children[0].clientWidth, behavior: 'instant'})
   }, [assessments, item, item.reminderDays, deleting])
 
   const assessmentProps = {
