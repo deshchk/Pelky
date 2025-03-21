@@ -20,15 +20,13 @@ function TrackerList({items, data}) {
     dropLogo.current.classList.contains('loading') && dropLogo.current.classList.remove('loading')
     dropLogoBlur.current.classList.contains('loading') && dropLogoBlur.current.classList.remove('loading')
 
-  const blinking = setRandomInterval(() => {
-    eyesEl.current.style.setProperty("--blinkPercent", '0%')
-    setTimeout(() => {
-      eyesEl.current.style.setProperty("--blinkPercent", '100%')
-    },100)
-  }, 3500, 12500, 0.1)
-
-  if (items.length > 0) {
-    blinking.clear()
+  if (eyesEl.current) {
+    setRandomInterval(() => {
+      eyesEl.current?.style.setProperty("--blinkPercent", '0%')
+      setTimeout(() => {
+        eyesEl.current?.style.setProperty("--blinkPercent", '100%')
+      },100)
+    }, 3500, 12500, 0.1)
   }
 
   }, [items.length])

@@ -3,6 +3,10 @@ import Clock from "@/assets/clock.svg?react"
 import Pin from "@/assets/pin.svg?react"
 import Loader from "@/assets/loader.svg?react"
 import Check from "@/assets/check.svg?react"
+import List from "@/assets/list.svg?react"
+import Xmark from "@/assets/x-mark.svg?react"
+import Pen from "@/assets/pen.svg?react"
+
 import { useEffect, useRef, useState } from "react"
 import useDialog from "@/hooks/useDialog"
 import AssessmentScroller from "@/components/tracker/AssessmentScroller"
@@ -38,13 +42,18 @@ function TrackerItem({children, item, data, itemIndex}) {
   const itemLoader = useRef(null)
   const nameChangeEl = useRef(null)
   const leftParallaxEl = useRef(null)
+  const rightParallaxEl = useRef(null)
 
   const touches = useRef(0)
   const itemExtended = useRef(false)
   const changingName = useRef(false)
+  const cancelingAssessment = useRef(false)
+  const addingAssessmentNote = useRef(false)
 
-  const [touchEnded, setTouchEnded] = useState(true)
+  const [touchEnded, setTouchEnded] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [pinning, setPinning] = useState(false)
+  const [assessmentOptions, setAssessmentOptions] = useState(false)
   const [selectedDays, setSelectedDays] = useState(item.reminderDays)
 
   const colorClasses = item.pinned ? 'bg-sky-800' : !assessments.some(ass => ass.item_id === item.id) ? 'bg-slate-800' : 'bg-slate-700'
@@ -68,12 +77,14 @@ function TrackerItem({children, item, data, itemIndex}) {
   }
 
   function onScroll(e) {
-    if (e.target.scrollLeft === 0) {
-      itemExtended.current = true
+    itemExtended.current = e.target.scrollLeft === e.target.clientWidth || (e.target.scrollWidth - e.target.scrollLeft) / 2 === e.target.clientWidth;
+
+    if (e.target.scrollLeft > e.target.scrollWidth - e.target.clientWidth*1.5 && touchEnded && !deleting && !pinning) {
+      deleteItem()
     }
 
-    if (e.target.scrollLeft > e.target.clientWidth / 1.25 && touchEnded && !deleting) {
-      deleteItem()
+    if (e.target.scrollLeft < e.target.clientWidth/2 && touchEnded && !deleting && !pinning) {
+      pinItem()
     }
   }
 
@@ -104,7 +115,7 @@ function TrackerItem({children, item, data, itemIndex}) {
       if (promise) {
         del()
       } else {
-        scrollEl.current.scrollTo({left: scrollEl.current.children[0].clientWidth+1})
+        scrollEl.current.scrollTo({left: scrollEl.current.clientWidth + scrollEl.current.children[1].clientWidth})
         setDeleting(false)
         setTouchEnded(false)
       }
@@ -139,13 +150,23 @@ function TrackerItem({children, item, data, itemIndex}) {
     }
   }
 
-  function onSetPinned() {
+
+  function pinItem() {
+    setPinning(true)
     const updatedItems = getSortedItems(items.map(i => i.id === item.id ? {...i, pinned: !i.pinned} : {...i}),assessments)
 
     setItems(updatedItems)
     saveItems(updatedItems)
 
-    scrollEl.current.scrollTo({left: scrollEl.current.children[0].clientWidth+1})
+    scrollEl.current.scrollTo({left: scrollEl.current.clientWidth + scrollEl.current.children[1].clientWidth})
+
+    setTimeout(() => {
+      setPinning(false)
+    }, 500)
+  }
+
+  function onSetPinned() {
+    pinItem()
   }
 
   function onNameChangeFocus() {
@@ -194,13 +215,25 @@ function TrackerItem({children, item, data, itemIndex}) {
     changingName.current = false
   }
 
+  function addNoteToAssessment() {
+    addingAssessmentNote.current = true
+    setAssessmentOptions(false)
+  }
+
+  function cancelAssessment() {
+    cancelingAssessment.current = true
+    setAssessmentOptions(false)
+  }
+
+
+
   useOutsideClick(() => {
     if (item.lastAssessed) {
       setItems(items.map(i => ({...i, lastAssessed: false}) ))
     }
     if (itemExtended.current) {
       itemExtended.current = false
-      scrollEl.current.scrollTo({left: scrollEl.current.children[0].clientWidth+1})
+      scrollEl.current.scrollTo({left: scrollEl.current.clientWidth + scrollEl.current.children[1].clientWidth})
     }
   }, itemEl, {item, setItems})
 
@@ -219,14 +252,15 @@ function TrackerItem({children, item, data, itemIndex}) {
       }
     }
     itemContainer.current.classList.remove('hiding-animation')
-  }, [assessments, item.id, item.reminderDays, deleting])
+  }, [assessments, item, item.reminderDays, deleting])
 
   const assessmentProps = {
     colorClasses, borderColorClasses,
     item, items, setItems, changingName,
-    assessments, setAssessments,
-    setToastData, setAnimationsInProgress,
-    itemContainer, itemEl, itemLoader
+    assessments, setAssessments, setAssessmentOptions,
+    cancelingAssessment, addingAssessmentNote,
+    setToastData, setDialogData, setAnimationsInProgress,
+    itemContainer, itemEl, itemLoader, itemExtended
   }
 
 
@@ -238,25 +272,41 @@ function TrackerItem({children, item, data, itemIndex}) {
       ref={itemContainer}
       style={animationDurationStyle}
     >
+
+      <div className={`group grid [transition:opacity_.4s,grid-template-rows_.2s] ${assessmentOptions ? 'grid-rows-[1fr] opacity-100' : 'collapsing-animation pointer-events-none opacity-0'}`}>
+        <div className="grid grid-cols-2 gap-3 overflow-hidden mb-0 group-[:not(.collapsing-animation)]:mb-3 transition-[margin-bottom_2s]">
+          <div onClick={addNoteToAssessment}
+               className="flex justify-center items-center gap-2 pr-0.5 bg-lime-600 py-1 rounded-lg">
+            <Pen className="size-4 stroke-2"/> Add a note
+          </div>
+          <div onClick={cancelAssessment}
+               className="flex justify-center items-center gap-1 pr-1.5 bg-red-500 py-1 rounded-lg">
+            <Xmark className="size-6"/> Cancel
+          </div>
+        </div>
+      </div>
+
       <div className="absolute inset-0 group hide-able loading-animation place-items-center [&:not(.loading-animation)]:h-20 pointer-events-none" ref={itemLoader}>
-        <Loader className="size-5 text-green-500 group-[&.loading-animation]:hidden" />
+        <Loader className="size-5 text-green-500 group-[&.loading-animation]:hidden"/>
       </div>
 
       <div className="hide-able group/hide grid-rows-[1fr] overflow-hidden rounded-lg" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} ref={itemEl}>
 
         <div className={`
-            grid grid-cols-[auto_100%_100%] gap-px group-[:not(.hiding-animation)]/hide:min-h-[80px]
+            grid grid-cols-[100%_auto_100%_auto_100%] group-[:not(.hiding-animation)]/hide:min-h-[80px]
             overflow-x-scroll overflow-y-hidden invisible-scroll scroll-smooth snap-x snap-mandatory
           `} onScroll={onScroll} ref={scrollEl}
         >
+          <div className="bg-sky-800 snap-end flex px-4 relative"></div>
+
           <div className="relative flex snap-start snap-always">
-            <div onClick={onSetPinned} className="bg-sky-800 w-20 h-full grid place-items-center sticky left-0" ref={leftParallaxEl}>
+            <div onClick={onSetPinned} className="bg-sky-800 w-24 grid place-items-center sticky left-0"
+                 ref={leftParallaxEl}>
               <Pin className="size-8"/>
             </div>
 
             <div onClick={onSetReminder}
-              className="bg-[color-mix(in_oklab,var(--color-yellow-500)_100%,var(--color-amber-600)_100%)] w-20 grid place-items-center"
-            >
+                 className="bg-[color-mix(in_oklab,var(--color-yellow-500)_100%,var(--color-amber-600)_100%)] w-24 grid place-items-center">
               <Clock className="size-8"/>
             </div>
           </div>
@@ -296,9 +346,9 @@ function TrackerItem({children, item, data, itemIndex}) {
                     getLastPastAssDiff(item.id, assessments) < 0 ? 'bg-red-500/60' :
                       getLastPastAssDiff(item.id, assessments) > 0 ? 'bg-green-600/60' : ''
                   }`}>
-                    {
-                      getLastPastAssDiff(item.id, assessments) !== 0 && getLastPastAssDiff(item.id, assessments)
-                    }
+                  {
+                    getLastPastAssDiff(item.id, assessments) !== 0 && getLastPastAssDiff(item.id, assessments)
+                  }
                   </div>
                 }
               </div>
@@ -307,9 +357,17 @@ function TrackerItem({children, item, data, itemIndex}) {
             <AssessmentScroller {...assessmentProps} />
           </div>
 
-          <div className="bg-red-500 snap-end flex px-4 relative">
-            <Trash className="absolute top-1/2 -translate-y-1/2 size-9"/>
+          <div className="relative flex snap-end snap-always">
+            <div className="bg-sky-50 w-24 grid place-items-center">
+              <List className="size-8 text-slate-900"/>
+            </div>
+
+            <div onClick={deleteItem} className="bg-red-500 w-24 grid place-items-center sticky right-0" ref={rightParallaxEl}>
+              <Trash className="size-9"/>
+            </div>
           </div>
+
+          <div className="bg-red-500 snap-end flex px-4 relative"></div>
         </div>
       </div>
     </li>

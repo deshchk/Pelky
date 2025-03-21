@@ -50,7 +50,7 @@ button {
     scrollbar-width: none;
   }
 
-  -webkit-overflow-scrolling: touch;
+  -webkit-overflow-scrolling: auto;
   & ::-webkit-scrollbar {
     @apply !hidden;
   }
@@ -115,6 +115,10 @@ button {
   &.success {
     @apply text-green-200 bg-green-700/40;
   }
+
+  &.error {
+    @apply text-red-200 bg-red-700/40;
+  }
 }
 
 .assessment-scroller {
@@ -122,7 +126,7 @@ button {
 }
 
 .assessment-scroller-overlay {
-  @apply absolute inset-0 grid grid-rows-[0fr] pointer-events-none;
+  @apply absolute inset-0 grid grid-rows-[0fr] pointer-events-none z-0;
   transition: grid-template-rows 0s;
 
   & .assessment-progress-bar {
@@ -131,7 +135,7 @@ button {
 
   &.animate {
     @apply grid-rows-[1fr];
-    transition: grid-template-rows 1.5s linear;
+    transition: grid-template-rows 2.5s linear;
   }
 }
 

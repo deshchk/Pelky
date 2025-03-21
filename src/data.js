@@ -91,9 +91,11 @@ export const getSortedItems = (items, assessments) => items.toSorted((a, b) => {
 
 
 export const errorCodes = {
-  1: 'Item with this name already exists.'
+  1: 'Item with this name already exists.',
+  2: 'Canceled'
 }
 
 export const successCodes = {
-  1: 'Saved!'
+  1: 'Saved!',
+  2: 'Saved with a note'
 }

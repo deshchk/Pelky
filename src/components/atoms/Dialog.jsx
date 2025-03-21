@@ -86,27 +86,25 @@ function Dialog({props, handleConfirm, closeDialog}) {
               <Chevron className="group-[:not(.collapsed)]:scale-y-[-1] ml-auto size-4 stroke-2 pointer-events-none" />
             </div>
           )}
-          <div className={`
-            hide-able grid-rows-[1fr] peer-[.collapsed]:grid-rows-[0fr] ${customCollapsable && 'peer-[:not(.collapsed)]:mt-6'} peer-[:not(.collapsed)]:mb-1
-          `}>
+          <div className={customCollapsable ? 'hide-able grid-rows-[1fr] peer-[.collapsed]:grid-rows-[0fr] peer-[:not(.collapsed)]:mt-6 peer-[:not(.collapsed)]:mb-1' : ''}>
             <Custom />
           </div>
         </div>
       }
       <div className="flex gap-4 justify-between mt-2">
         <SimpleButton
+          onClick={closeDialog}
+          className="dialog-button bg-slate-300 text-black"
+        >
+          {cancelText ?? 'Cancel'}
+        </SimpleButton>
+
+        <SimpleButton
           onClick={() => handleConfirm(customData || (dialogInput.current?.value) || true)}
           disabled={input && !inputValue.replaceAll(" ", "")}
           className={`dialog-button ${confirmBg ?? 'bg-red-500'} ${confirmColor ?? 'text-white disabled:text-red-700'}`.trim()}
         >
           {confirmText ?? 'Yes'}
-        </SimpleButton>
-
-        <SimpleButton
-          onClick={closeDialog}
-          className="dialog-button bg-slate-300 text-black"
-        >
-          {cancelText ?? 'Cancel'}
         </SimpleButton>
       </div>
     </div>

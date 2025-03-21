@@ -74,6 +74,13 @@ function NewItemDialog({handleConfirm, closeDialog}) {
 
         <div className="flex gap-4 justify-between mt-2">
           <SimpleButton
+            onClick={closeDialog}
+            className="dialog-button bg-slate-300 text-black"
+          >
+            Cancel
+          </SimpleButton>
+
+          <SimpleButton
             onClick={() => handleConfirm({
               title: dialogInput.current.value,
               selectedDays: selectedDays
@@ -82,13 +89,6 @@ function NewItemDialog({handleConfirm, closeDialog}) {
             className="dialog-button bg-blue-500 disabled:text-blue-700"
           >
             Add
-          </SimpleButton>
-
-          <SimpleButton
-            onClick={closeDialog}
-            className="dialog-button bg-slate-300 text-black"
-          >
-            Cancel
           </SimpleButton>
         </div>
       </div>

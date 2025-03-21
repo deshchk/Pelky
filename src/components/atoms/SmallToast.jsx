@@ -17,8 +17,11 @@ function Toast({handleClose, message, type}) {
     <div className={`small-toast ${type} -translate-y-[200%] [&.open]:translate-y-9 transition-transform duration-300 pointer-events-auto`}
       onClick={handleClose} ref={toastEl}
     >
-      <Success className="size-4"/>
-      <span className="text-sm">Saved</span>
+      {
+        type === 'success' ? <Success className="size-4"/>
+          : <Error className="size-4"/>
+      }
+      <span className="text-sm">{message}</span>
     </div>
   )
 }
