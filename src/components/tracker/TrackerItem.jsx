@@ -77,15 +77,10 @@ function TrackerItem({children, item, data, itemIndex}) {
   }
 
   function onScroll(e) {
-    itemExtended.current = e.target.scrollLeft === e.target.clientWidth || (e.target.scrollWidth - e.target.scrollLeft) / 2 === e.target.clientWidth
+    itemExtended.current = e.target.scrollLeft === e.target.children[0].clientWidth || e.target.clientWidth + e.target.children[0].clientWidth*2
 
     if (e.target.scrollLeft > e.target.scrollWidth - e.target.clientWidth*1.5 && touchEnded && !deleting && !pinning) {
       deleteItem()
-    }
-
-    if (e.target.scrollLeft < e.target.clientWidth/2 && touchEnded && !deleting && !pinning) {
-      console.log('pin on scroll')
-      pinItem()
     }
   }
 
@@ -116,7 +111,7 @@ function TrackerItem({children, item, data, itemIndex}) {
       if (promise) {
         del()
       } else {
-        scrollEl.current.scrollTo({left: scrollEl.current.clientWidth + scrollEl.current.children[1].clientWidth})
+        scrollEl.current.scrollTo({left: scrollEl.current.children[0].clientWidth})
         setDeleting(false)
         setTouchEnded(false)
       }
@@ -153,15 +148,13 @@ function TrackerItem({children, item, data, itemIndex}) {
 
 
   function pinItem() {
-    console.log('pin func start')
     setPinning(true)
     const updatedItems = getSortedItems(items.map(i => i.id === item.id ? {...i, pinned: !i.pinned} : {...i}),assessments)
 
     setItems(updatedItems)
     saveItems(updatedItems)
 
-    scrollEl.current.scrollTo({left: scrollEl.current.clientWidth + scrollEl.current.children[1].clientWidth})
-    console.log('pin function post scroll')
+    scrollEl.current.scrollTo({left: scrollEl.current.children[0].clientWidth, behavior: 'instant'})
 
     setTimeout(() => {
       setPinning(false)
@@ -170,7 +163,6 @@ function TrackerItem({children, item, data, itemIndex}) {
 
   function onSetPinned() {
     pinItem()
-    console.log('onSetPinned')
   }
 
   function onNameChangeFocus() {
@@ -237,7 +229,7 @@ function TrackerItem({children, item, data, itemIndex}) {
     }
     if (itemExtended.current) {
       itemExtended.current = false
-      scrollEl.current.scrollTo({left: scrollEl.current.clientWidth + scrollEl.current.children[1].clientWidth})
+      scrollEl.current.scrollTo({left: scrollEl.current.children[0].clientWidth})
     }
   }, itemEl, {item, setItems})
 
@@ -295,12 +287,10 @@ function TrackerItem({children, item, data, itemIndex}) {
       <div className="hide-able group/hide grid-rows-[1fr] overflow-hidden rounded-lg" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} ref={itemEl}>
 
         <div className={`
-            grid grid-cols-[100%_auto_100%_auto_100%] group-[:not(.hiding-animation)]/hide:min-h-[80px]
+            grid grid-cols-[auto_100%_auto_100%] group-[:not(.hiding-animation)]/hide:min-h-[80px]
             overflow-x-scroll overflow-y-hidden invisible-scroll scroll-smooth snap-x snap-mandatory
           `} onScroll={onScroll} ref={scrollEl}
         >
-          <div className="bg-sky-800 snap-start flex px-4"></div>
-
           <div className="relative flex snap-start snap-always">
             <div onClick={onSetPinned} className="bg-sky-800 w-24 grid place-items-center sticky left-0"
                  ref={leftParallaxEl}>
@@ -361,7 +351,7 @@ function TrackerItem({children, item, data, itemIndex}) {
 
           <div className="relative flex snap-end snap-always">
             <div className="bg-sky-50 w-24 grid place-items-center">
-              <List className="size-8 text-slate-900"/>
+              <List className="size-8 text-slate-950"/>
             </div>
 
             <div onClick={deleteItem} className="bg-red-500 w-24 grid place-items-center sticky right-0" ref={rightParallaxEl}>
