@@ -77,14 +77,13 @@ function TrackerItem({children, item, data, itemIndex}) {
   }
 
   function onScroll(e) {
-    itemExtended.current = e.target.scrollLeft === e.target.clientWidth || (e.target.scrollWidth - e.target.scrollLeft) / 2 === e.target.clientWidth
+    itemExtended.current = e.target.scrollLeft === e.target.clientWidth || (e.target.scrollWidth - e.target.scrollLeft) / 2 === e.target.clientWidth;
 
     if (e.target.scrollLeft > e.target.scrollWidth - e.target.clientWidth*1.5 && touchEnded && !deleting && !pinning) {
       deleteItem()
     }
 
     if (e.target.scrollLeft < e.target.clientWidth/2 && touchEnded && !deleting && !pinning) {
-      console.log('pin on scroll')
       pinItem()
     }
   }
@@ -153,7 +152,6 @@ function TrackerItem({children, item, data, itemIndex}) {
 
 
   function pinItem() {
-    console.log('pin func start')
     setPinning(true)
     const updatedItems = getSortedItems(items.map(i => i.id === item.id ? {...i, pinned: !i.pinned} : {...i}),assessments)
 
@@ -161,7 +159,6 @@ function TrackerItem({children, item, data, itemIndex}) {
     saveItems(updatedItems)
 
     scrollEl.current.scrollTo({left: scrollEl.current.clientWidth + scrollEl.current.children[1].clientWidth})
-    console.log('pin function post scroll')
 
     setTimeout(() => {
       setPinning(false)
@@ -170,7 +167,6 @@ function TrackerItem({children, item, data, itemIndex}) {
 
   function onSetPinned() {
     pinItem()
-    console.log('onSetPinned')
   }
 
   function onNameChangeFocus() {
@@ -256,6 +252,7 @@ function TrackerItem({children, item, data, itemIndex}) {
       }
     }
     itemContainer.current.classList.remove('hiding-animation')
+    scrollEl.current.scrollTo({left: scrollEl.current.clientWidth + scrollEl.current.children[1].clientWidth})
   }, [assessments, item, item.reminderDays, deleting])
 
   const assessmentProps = {
