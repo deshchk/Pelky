@@ -252,7 +252,10 @@ function TrackerItem({children, item, data, itemIndex}) {
       }
     }
     itemContainer.current.classList.remove('hiding-animation')
-    console.log('useEffect')
+
+    if (scrollEl.current.scrollLeft < 10) {
+      scrollEl.current.scrollTo({left: scrollEl.current.clientWidth + scrollEl.current.children[1].clientWidth})
+    }
   }, [assessments, item, item.reminderDays, deleting])
 
   const assessmentProps = {
