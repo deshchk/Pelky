@@ -275,12 +275,10 @@ function TrackerItem({children, item, data, itemIndex}) {
 
       <div className={`group grid [transition:opacity_.4s,grid-template-rows_.2s] ${assessmentOptions ? 'grid-rows-[1fr] opacity-100' : 'collapsing-animation pointer-events-none opacity-0'}`}>
         <div className="grid grid-cols-2 gap-3 overflow-hidden mb-0 group-[:not(.collapsing-animation)]:mb-3 transition-[margin-bottom_2s]">
-          <div onClick={addNoteToAssessment}
-               className="flex justify-center items-center gap-2 pr-0.5 bg-lime-600 py-1 rounded-lg">
+          <div onClick={addNoteToAssessment} className="flex justify-center items-center gap-2 pr-0.5 bg-lime-600 py-1 rounded-lg">
             <Pen className="size-4 stroke-2"/> Add a note
           </div>
-          <div onClick={cancelAssessment}
-               className="flex justify-center items-center gap-1 pr-1.5 bg-red-500 py-1 rounded-lg">
+          <div onClick={cancelAssessment} className="flex justify-center items-center gap-1 pr-1.5 bg-red-500 py-1 rounded-lg">
             <Xmark className="size-6"/> Cancel
           </div>
         </div>
@@ -297,7 +295,7 @@ function TrackerItem({children, item, data, itemIndex}) {
             overflow-x-scroll overflow-y-hidden invisible-scroll scroll-smooth snap-x snap-mandatory
           `} onScroll={onScroll} ref={scrollEl}
         >
-          <div className="bg-sky-800 snap-end flex px-4 relative"></div>
+          <div className="bg-sky-800 snap-start flex px-4"></div>
 
           <div className="relative flex snap-start snap-always">
             <div onClick={onSetPinned} className="bg-sky-800 w-24 grid place-items-center sticky left-0"
@@ -367,7 +365,7 @@ function TrackerItem({children, item, data, itemIndex}) {
             </div>
           </div>
 
-          <div className="bg-red-500 snap-end flex px-4 relative"></div>
+          <div className="bg-red-500 snap-end flex px-4"></div>
         </div>
       </div>
     </li>

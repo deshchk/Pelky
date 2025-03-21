@@ -50,7 +50,7 @@ button {
     scrollbar-width: none;
   }
 
-  -webkit-overflow-scrolling: auto;
+  -webkit-overflow-scrolling: touch;
   & ::-webkit-scrollbar {
     @apply !hidden;
   }
@@ -126,7 +126,7 @@ button {
 }
 
 .assessment-scroller-overlay {
-  @apply absolute inset-0 grid grid-rows-[0fr] pointer-events-none z-0;
+  @apply absolute inset-0 grid grid-rows-[0fr] pointer-events-none;
   transition: grid-template-rows 0s;
 
   & .assessment-progress-bar {

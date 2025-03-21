@@ -194,13 +194,12 @@ function AssessmentScroller(props) {
 
 
   return (
-    <div className={`[container-type:size] relative w-24 border-l flex size-full ${borderColorClasses} pointer-events-none [&.scrollable]:pointer-events-auto ${!itemExtended.current && 'scrollable'}`}>
-      <div className={`w-full h-[100cqh] assessment-scroller invisible-scroll [&.stopped]:!overflow-hidden ${colorClasses} ${itemExtended.current && 'stopped'}`} onScroll={onScroll} ref={scroller}>
+    <div className={`[container-type:size] relative w-24 border-l flex size-full ${borderColorClasses} pointer-events-none [&.scrollable]:pointer-events-auto ${!itemExtended.current ? 'scrollable' : ''}`}>
+      <div className={`w-full h-[100cqh] assessment-scroller invisible-scroll [&.stopped]:!overflow-hidden ${colorClasses} ${itemExtended.current ? 'stopped' : ''}`} onScroll={onScroll} ref={scroller}>
         {[-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5].reverse().map(mark => (
           <div key={mark} ref={mark === 0 ? middleEl : null} className={`
             grid place-items-center snap-center ${mark === 0 && 'snap-always'} font-medium text-xl
-          `.trim()}
-          >
+          `.trim()}>
             <span className="relative z-20">{mark}</span>
           </div>
         ))}
