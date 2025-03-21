@@ -33,11 +33,6 @@ function NewItemDialog({handleConfirm, closeDialog}) {
 
   useEffect(() => {
     dialogInput.current.focus()
-    setTimeout(() => {
-      if (dialogInput.current !== document.activeElement) {
-        dialogInput.current.focus()
-      }
-    })
   }, [])
 
   useOutsideClick(closeDialog, dialogEl)
