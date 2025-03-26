@@ -17,8 +17,18 @@ const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'
 const todayString = new Intl.DateTimeFormat("en-US", {weekday: "long"}).format(new Date()).toLowerCase()
 export const todayNum = days.indexOf(todayString) // 0-6
 
-export const isItToday = (date) => date.split(',')[0] === new Intl.DateTimeFormat("en-AU", {
-  day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date())
+export const isItToday = (date) => date ? date.split(',')[0] === new Intl.DateTimeFormat("en-AU", {
+  day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date()) : false
+
+export const formatWhenDate = date => {
+  const preparedDate = new Date(date.split(',')[0].split('/').reverse().join('-'))
+
+  const dateByDay = new Intl.DateTimeFormat("en-AU", {dateStyle: 'full'}).format(new Date(preparedDate)).split(' ')[0]
+  const fullDate = new Intl.DateTimeFormat("en-AU", {day: 'numeric', month: 'long', year: 'numeric'}).format(preparedDate)
+  const daysDiff = Math.floor(Math.abs(preparedDate - new Date()) / (1000 * 60 * 60 * 24))
+
+  return daysDiff === 0 ? 'Today' : daysDiff === 1 ? 'Yesterday' : daysDiff < 7 ? dateByDay : fullDate
+}
 
 export const debounce = (func, wait) => {
   let timeout

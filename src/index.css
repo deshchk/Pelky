@@ -110,54 +110,19 @@ button {
 }
 
 .small-toast {
-  @apply flex items-center self-center gap-2 pl-4 pr-5 py-2 rounded;
+  @apply flex items-center self-center gap-2 pl-4 pr-5 py-2 rounded backdrop-blur;
 
   &.success {
-    @apply text-green-200 bg-green-700/40;
+    @apply text-green-200 bg-green-600/60;
   }
 
   &.error {
-    @apply text-red-200 bg-red-700/40;
+    @apply text-red-200 bg-red-600/60;
   }
 }
 
-.assessment-scroller {
-  @apply grid grid-rows-[repeat(11,100%)] overflow-y-scroll scroll-smooth snap-y snap-mandatory outline-sky-500/50 -outline-offset-2 focus:outline-2;
-}
-
-.assessment-scroller-overlay {
-  @apply absolute inset-0 grid grid-rows-[0fr] pointer-events-none;
-  transition: grid-template-rows 0s;
-
-  & .assessment-progress-bar {
-    @apply bg-black/25;
-  }
-
-  &.animate {
-    @apply grid-rows-[1fr];
-    transition: grid-template-rows 2.5s linear;
-  }
-}
-
-.tracker-item {
-  @apply outline-2 outline-offset-2 outline-transparent;
-
-  &:after {
-    content: '';
-    @apply absolute text-[11px] font-medium align-super left-4 top-0 -translate-y-[55%] px-2 text-center rounded opacity-0 transition-opacity duration-300;
-  }
-
-  &.reminder{
-    @apply outline-yellow-500/30;
-
-    &:after {
-      content: 'TODO';
-      @apply absolute text-[11px] font-medium text-black align-super left-4 top-0 -translate-y-[55%] bg-yellow-500 px-2 text-center rounded opacity-100;
-    }
-  }
-  &.last-assessed {
-    @apply outline-4 outline-green-500/30;
-  }
+.scroller-input {
+  @apply [container-type:size] absolute inset-0 overflow-y-scroll scroll-smooth snap-y snap-mandatory touch-manipulation z-20;
 }
 
 .drop-drop-shadow {
