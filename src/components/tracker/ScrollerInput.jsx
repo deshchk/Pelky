@@ -22,14 +22,18 @@ export default function ScrollerInput ({options, item, items, assessments, sette
   const wrapperWrapper = useRef(null)
 
   const getMinMax = () => {
-    switch (item.scale.type) {
-      case 'positive':
-        return { min: 0, max: item.scale.max }
-      case 'negative':
-        return { min: -item.scale.max, max: 0 }
-      case 'both':
-      default:
-        return { min: -item.scale.max, max: item.scale.max }
+    if (item.scale) {
+      switch (item.scale.type) {
+        case 'positive':
+          return { min: 0, max: item.scale.max }
+        case 'negative':
+          return { min: -item.scale.max, max: 0 }
+        case 'both':
+        default:
+          return { min: -item.scale.max, max: item.scale.max }
+      }
+    } else {
+      return { min: -10, max: 10 }
     }
   }
 
@@ -97,9 +101,9 @@ export default function ScrollerInput ({options, item, items, assessments, sette
     const currentIndex = getMarkIndex(e.target.scrollTop)
     currentAssessment.current = scaleValues[currentIndex]
 
-    const colorPercent = item.scale.type === 'both' ? Math.abs(currentIndex - Math.abs(min))/max*100 : (Math.abs(max-currentIndex)/max)*100
+    const colorPercent = item.scale.type === 'both' || !item.scale ? Math.abs(currentIndex - Math.abs(min))/max*100 : (Math.abs(max-currentIndex)/max)*100
     wrapperWrapper.current.style.backgroundColor = `
-      color-mix(in oklab, transparent ${100-colorPercent}%, var(${(item.scale.type === 'both' && currentIndex > scaleValues.length/2) ? tint[0] : tint[1]}) ${colorPercent}%)
+      color-mix(in oklab, transparent ${100-colorPercent}%, var(${((item.scale?.type === 'both' || !item.scale) && currentIndex > scaleValues.length/2) ? tint[0] : tint[1]}) ${colorPercent}%)
     `.trim()
 
     clearTimeout(countdownTimeout.current)
@@ -181,14 +185,14 @@ export default function ScrollerInput ({options, item, items, assessments, sette
     if (scrollerWrapper.current && !animating) {
       wrapperWrapper.current.style.backgroundColor = 'transparent'
       scrollerWrapper.current.scrollTo({
-        top: item.scale.type === 'both' ? ((scaleValues.length/2) * scrollerWrapper.current.clientHeight) - scrollerWrapper.current.clientHeight/2 : scrollerWrapper.current.scrollHeight,
+        top: item.scale?.type === 'both' || !item.scale ? ((scaleValues.length/2) * scrollerWrapper.current.clientHeight) - scrollerWrapper.current.clientHeight/2 : scrollerWrapper.current.scrollHeight,
         behavior: 'instant'
       })
       setTimeout(() => {
         dontHandleScroll.current = false
       }, 50)
     }
-  }, [refresher.current, item.pinned, item.reminderDays, item.index, item.scale.type, cancelAssessment.current, noteAssessment.current, scaleValues.length])
+  }, [refresher.current, item.pinned, item.reminderDays, item.index, cancelAssessment.current, noteAssessment.current, scaleValues.length])
 
   useEffect(() => {
     const ac = new AbortController()
