@@ -192,13 +192,13 @@ export default function ScrollerInput ({item, scale, scaleDirection, setters, op
     if (cancelAssessment.current) {
       cancelCurrentAssessment()
     }
-  }, [cancelAssessment])
+  }, [cancelAssessment.current])
 
   useEffect(() => {
     if (noteAssessment.current) {
       noteCurrentAssessment()
     }
-  }, [noteAssessment])
+  }, [noteAssessment.current])
 
   return (
       <div className="relative h-full w-18 border-l border-dashed border-slate-700 text-xl bg-slate-900" ref={wrapperWrapper}>
