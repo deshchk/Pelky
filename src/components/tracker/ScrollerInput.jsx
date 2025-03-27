@@ -1,11 +1,13 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react"
 import { handleSmallToast, newID } from "@/utils"
 import useDialog from "@/hooks/useDialog"
+import { getSortedItems } from "@/data"
 
-export default function ScrollerInput ({item, scale, scaleDirection, setters, options}) {
+export default function ScrollerInput ({scale, scaleDirection, options, item, items, assessments, setters}) {
   const {
     setAnimationsInProgress,
     setSwipingBlocked,
+    setLoadingItem,
     setToastData,
     setDialogData,
     setAssessments,
@@ -113,6 +115,7 @@ export default function ScrollerInput ({item, scale, scaleDirection, setters, op
     }, 1000)
     savingTimeout.current = setTimeout(() => {
       if (!cancelAssessment.current) {
+
         saveCurrentAssessment(currentAssessment.current)
 
         resetScroller()
@@ -155,7 +158,17 @@ export default function ScrollerInput ({item, scale, scaleDirection, setters, op
           past: []
         })
 
-    setAssessments(prev => newAssessments(prev))
+    const nextItems = getSortedItems(items.map(i => i.id === item.id ? {...i, pinned: !i.pinned} : i), assessments)
+    const nextIndex = nextItems.indexOf(nextItems.find(i => i.id === item.id))
+
+    if (Math.abs(nextIndex-item.index) > 0) {
+      setLoadingItem(true)
+      setTimeout(async () => {
+        setAssessments(prev => newAssessments(prev))
+      }, 200)
+    } else {
+      setAssessments(prev => newAssessments(prev))
+    }
 
     setShowAssessmentOptions(false)
 

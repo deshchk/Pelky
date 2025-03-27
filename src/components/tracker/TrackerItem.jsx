@@ -1,16 +1,24 @@
 import { useEffect, useRef, useState } from 'react'
 import { useOutsideClick } from "@/hooks/useOutsideClick"
 import { deleteItem, pinItem } from "@/components/tracker/itemActions"
-import useDialog from "@/hooks/useDialog"
+import { firstUpper } from "@/utils"
+import { getSortedItems } from "@/data"
+import ItemBody from "@/components/tracker/ItemBody"
 import ScrollerInput from "@/components/tracker/ScrollerInput"
+import ItemAction from "@/components/tracker/ItemAction"
+import useDialog from "@/hooks/useDialog"
+import DaySelector from "@/components/atoms/DaySelector"
 import Trash from "@/assets/trash.svg?react"
+import Clock from "@/assets/clock.svg?react"
 import Pen from "@/assets/pen.svg?react"
 import Xmark from "@/assets/x-mark.svg?react"
 
-export default function TrackerItem({index, item, body, leftActions, rightActions, assessments, setters}) {
+
+
+export default function TrackerItem({index, item, items, assessments, setters}) {
   const {
     setItems,
-    setDialogData
+    setDialogData,
   } = setters
 
   const itemWrapper = useRef(null)
@@ -24,6 +32,7 @@ export default function TrackerItem({index, item, body, leftActions, rightAction
 
   const [wasMoving, setWasMoving] = useState(false)
   const [swipingBlocked, setSwipingBlocked] = useState(false)
+  const [loadingItem, setLoadingItem] = useState(false)
 
   const [shouldLeftAction, setShouldLeftAction] = useState(false)
   const [shouldRightAction, setShouldRightAction] = useState(false)
@@ -43,6 +52,64 @@ export default function TrackerItem({index, item, body, leftActions, rightAction
     shouldRightAction,
     wasMoving,
     swipingBlocked,
+  }
+
+
+  // ---------- ACTION FUNCTIONS ----------
+  // pinning the item
+  function actionPinItem() {
+    const nextItems = getSortedItems(items.map(i => i.id === item.id ? {...i, pinned: !i.pinned} : i), assessments)
+    const nextIndex = nextItems.indexOf(nextItems.find(i => i.id === item.id))+1
+
+    if (Math.abs(nextIndex-index) > 1) {
+      setLoadingItem(true)
+      setTimeout(async () => {
+        pinItem(item, assessments, setItems).then(() => setShouldLeftAction(false))
+      }, 200)
+    } else {
+      pinItem(item, assessments, setItems).then(() => setShouldLeftAction(false))
+    }
+  }
+
+  // deleting the item
+  const deleteDialog = useDialog(setDialogData,{
+    Icon: Trash,
+    title: `Deleting "${item.title}"`,
+    message: 'This item and it\'s data will be deleted. Delete anyway?'
+  })
+  function actionDeleteItem() {
+    deleteItem(item, assessments, setItems, deleteDialog).then(() => setShouldRightAction(false))
+  }
+
+  // setting reminders for the item
+  const [selectedDays, setSelectedDays] = useState(item.reminderDays)
+  const reminderDialog = useDialog(setDialogData,{
+    Icon: Clock,
+    title: firstUpper(item.title),
+    message: 'On which days would you like to be reminded about this?',
+    confirmText: 'Save',
+    confirmBg: 'bg-blue-500',
+    dataCollector: () => selectedDays,
+    Custom: () => <DaySelector selectedDays={selectedDays} setSelectedDays={setSelectedDays} />
+  })
+  async function actionReminderItem() {
+    const promise = await reminderDialog()
+
+    if (promise) {
+      const nextItems = getSortedItems(items.map(i => i.id === item.id ? {...i, reminderDays: promise} : i), assessments)
+      const nextIndex = nextItems.indexOf(nextItems.find(i => i.id === item.id))+1
+
+      if (Math.abs(nextIndex-index) > 1) {
+        setLoadingItem(true)
+        setTimeout(async () => {
+          setItems(prev => getSortedItems(prev.map(i => i.id === item.id ? {...i, reminderDays: promise} : {...i}), assessments))
+        }, 200)
+      } else {
+        setItems(prev => getSortedItems(prev.map(i => i.id === item.id ? {...i, reminderDays: promise} : {...i}), assessments))
+      }
+    } else {
+      setSelectedDays(item.reminderDays)
+    }
   }
 
 
@@ -86,11 +153,7 @@ export default function TrackerItem({index, item, body, leftActions, rightAction
     setShouldRightAction(tX < -(itemWrapper.current.clientWidth/1.8))
   }
 
-  const deleteDialog = useDialog(setDialogData,{
-    Icon: Trash,
-    title: `Deleting "${item.title}"`,
-    message: 'This item and it\'s data will be deleted. Delete anyway?'
-  })
+
 
   async function handleEndMovement() {
     const currentMTX = stateRef.current.mainTranslateX
@@ -100,11 +163,11 @@ export default function TrackerItem({index, item, body, leftActions, rightAction
 
     if (shouldDoLeftAction || shouldDoRightAction) {
       if (shouldDoLeftAction) {
-        await pinItem(item, assessments, setItems).then(() => setShouldLeftAction(false))
+        actionPinItem()
       }
 
       if (shouldDoRightAction) {
-        await deleteItem(item, assessments, setItems, deleteDialog).then(() => setShouldRightAction(false))
+        actionDeleteItem()
       }
     } else {
       setWasMoving(true)
@@ -155,6 +218,11 @@ export default function TrackerItem({index, item, body, leftActions, rightAction
     return () => ac.abort()
   }, [])
 
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      setLoadingItem(false)
+    })
+  }, [index])
 
 
   // scroller assessment options
@@ -163,7 +231,7 @@ export default function TrackerItem({index, item, body, leftActions, rightAction
   const noteAssessment = useRef(false)
   const [showAssessmentOptions, setShowAssessmentOptions] = useState(false)
 
-  function handleNotingAsessment() {
+  function handleNotingAssessment() {
     noteAssessment.current = true
     setShowAssessmentOptions(false)
   }
@@ -176,10 +244,11 @@ export default function TrackerItem({index, item, body, leftActions, rightAction
   return (
     <li
       ref={itemWrapper}
-      className="group/item relative grid grid-cols-2 w-full max-h-26 overflow-hidden border-b first:border-y border-slate-700"
+      className="group/item relative grid grid-cols-2 w-full max-h-26 overflow-hidden border-y -mt-px first:border-y border-slate-700 touch-manipulation"
       style={{
-        transform: 'translateZ(0)',
-        transition: `opacity .3s, outline-color .4s, margin .4s, grid-template-rows .2s, translate .${700-(index*100)}s`
+        transform: `translateZ(0) ${loadingItem ? 'translateX(-100%)' : 'translateX(0)'}`,
+        transition: `opacity .2s ease-in-out, transform .2s`,
+        opacity: loadingItem ? '0' : 1,
       }}
     >
       <div
@@ -193,7 +262,7 @@ export default function TrackerItem({index, item, body, leftActions, rightAction
         }}
       >
         <div className="relative overflow-hidden">
-          {body}
+          <ItemBody item={{...item, index}} setters={{...setters, setLoadingItem}} {...{items, assessments}} />
 
           <div
             ref={assessmentOptions}
@@ -207,7 +276,7 @@ export default function TrackerItem({index, item, body, leftActions, rightAction
               <div onClick={handleCancelAssessment} className="w-10 h-full bg-red-500 grid place-items-center">
                 <Xmark className="size-6"/>
               </div>
-              <div onClick={handleNotingAsessment} className="w-10 h-full bg-lime-600 grid place-items-center">
+              <div onClick={handleNotingAssessment} className="w-10 h-full bg-lime-600 grid place-items-center">
                 <Pen className="size-6 stroke-2 p-1"/>
               </div>
             </div>
@@ -216,7 +285,9 @@ export default function TrackerItem({index, item, body, leftActions, rightAction
 
         <ScrollerInput
           item={{...item, index}}
-          setters={{...setters, setSwipingBlocked}}
+          items={items}
+          assessments={assessments}
+          setters={{...setters, setSwipingBlocked, setLoadingItem}}
           options={{cancelAssessment, noteAssessment, setShowAssessmentOptions}}
           scale={10}
           scaleDirection="both"
@@ -232,20 +303,25 @@ export default function TrackerItem({index, item, body, leftActions, rightAction
           transition: wasMoving ? 'width .2s' : 'grid-template-columns .15s'
         }}
       >
-        {leftActions.length > 0 &&
-          leftActions.map(action => (
-            <li
-              key={action.name}
-              className={`grid select-none overflow-hidden ${action.color}`}
-              style={{
-                alignContent: 'center',
-                justifyItems: shouldLeftAction ? 'end' : 'center',
-              }}
-            >
-              {action.body}
-            </li>
-          ))
-        }
+        <li
+          className="grid select-none overflow-hidden bg-sky-700"
+          style={{
+            alignContent: 'center',
+            justifyItems: shouldLeftAction ? 'end' : 'center',
+          }}
+        >
+          <ItemAction type="pin" action={actionPinItem} />
+        </li>
+
+        <li
+          className="grid select-none overflow-hidden bg-yellow-500"
+          style={{
+            alignContent: 'center',
+            justifyItems: 'center',
+          }}
+        >
+          <ItemAction type="reminder" action={actionReminderItem} />
+        </li>
       </ul>
 
       <ul
@@ -257,19 +333,25 @@ export default function TrackerItem({index, item, body, leftActions, rightAction
           transition: wasMoving ? 'width .2s' : 'grid-template-columns .15s'
         }}
       >
-        {rightActions.length > 0 &&
-          rightActions.map(action => (
-            <li key={action.name}
-              className={`grid select-none overflow-hidden ${action.color}`}
-              style={{
-                alignContent: 'center',
-                justifyItems: shouldRightAction ? 'start' : 'center',
-              }}
-            >
-              {action.body}
-            </li>
-          ))
-        }
+        <li
+          className="grid select-none overflow-hidden bg-lime-500"
+          style={{
+            alignContent: 'center',
+            justifyItems: 'center',
+          }}
+        >
+          <ItemAction type="details" />
+        </li>
+
+        <li
+          className="grid select-none overflow-hidden bg-red-500"
+          style={{
+            alignContent: 'center',
+            justifyItems: shouldRightAction ? 'start' : 'center',
+          }}
+        >
+          <ItemAction type="delete" action={actionDeleteItem} />
+        </li>
       </ul>
     </li>
   )

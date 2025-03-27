@@ -83,18 +83,6 @@ export const getLastPastAssDiff = (item_id, assessments) => getLastAssessment(it
 
 
 
-export function loadItemsInNeed(condition, itemEl, itemLoader, setAnimationsInProgress) {
-  if (condition) {
-    itemEl.current.classList.add('loading-animation')
-    itemLoader.current.classList.remove('loading-animation')
-    setTimeout(() => {
-      setAnimationsInProgress(false)
-      itemLoader.current.classList.add('loading-animation')
-      itemEl.current.classList.remove('loading-animation')
-    },1000)
-  }
-}
-
 export const handleBigToast = (type, messageCode, setToastData, time = 5000) => {
   const toastID = newID()
   const toast = {

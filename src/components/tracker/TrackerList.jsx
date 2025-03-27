@@ -2,8 +2,6 @@ import { useEffect, useRef } from "react"
 import Droplets from "@/assets/droplets.svg?react"
 import { setRandomInterval } from "@/utils"
 import TrackerItem from "@/components/tracker/TrackerItem"
-import ItemAction from "@/components/tracker/ItemAction"
-import ItemBody from "@/components/tracker/ItemBody"
 
 function TrackerList({items, data}) {
   const listContainer = useRef(null)
@@ -55,6 +53,7 @@ function TrackerList({items, data}) {
             {items.map((item, i) => {
               const props = {
                 item,
+                items,
                 setters: {
                   setItems: data.setItems,
                   setAssessments: data.setAssessments,
@@ -69,15 +68,6 @@ function TrackerList({items, data}) {
               <TrackerItem
                 key={item.id} index={i+1}
                 {...props}
-                body={<ItemBody items={items} {...props} />}
-                leftActions={[
-                  {name: 'pin', color: 'bg-sky-700', body: <ItemAction action='pin' {...props} />},
-                  {name: 'reminder', color: 'bg-yellow-500', body: <ItemAction action='reminder' {...props} />}
-                ]}
-                rightActions={[
-                  {name: 'details', color: 'bg-lime-500', body: <ItemAction action='details' {...props} />},
-                  {name: 'delete', color: 'bg-red-500', body: <ItemAction action='delete' {...props} />}
-                ]}
               />
             )})}
           </ul>
