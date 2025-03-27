@@ -1,5 +1,5 @@
 import { useRef } from "react"
-import { getSortedItems, saveItems } from "@/data"
+import { getSortedItems } from "@/data"
 import { formatWhenDate, getLastPastAssDiff, handleBigToast, handleSmallToast, isItToday, nbsps, todayNum } from "@/utils"
 import PinFill from "@/assets/pin-fill.svg?react"
 import ClockFill from "@/assets/clock-fill.svg?react"

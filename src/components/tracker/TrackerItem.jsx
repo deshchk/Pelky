@@ -51,8 +51,6 @@ export default function TrackerItem({index, item, body, leftActions, rightAction
     startPos.current.x = e.touches[0].clientX
     startPos.current.y = e.touches[0].clientY
     snapWidth.current = (14*4)*2 // w-14 per one
-
-    setSwipingBlocked(e.target.closest('.scroller-input'))
   }
 
   function handleWhileMovement(e) {
@@ -84,8 +82,8 @@ export default function TrackerItem({index, item, body, leftActions, rightAction
     setLeftWidth(tX)
     setRightWidth(-tX)
 
-    setShouldLeftAction(tX > itemWrapper.current.clientWidth/2)
-    setShouldRightAction(tX < -(itemWrapper.current.clientWidth/2))
+    setShouldLeftAction(tX > itemWrapper.current.clientWidth/1.8)
+    setShouldRightAction(tX < -(itemWrapper.current.clientWidth/1.8))
   }
 
   const deleteDialog = useDialog(setDialogData,{
@@ -116,10 +114,12 @@ export default function TrackerItem({index, item, body, leftActions, rightAction
 
   function snapSwipe() {
     if (direction.current === 'right') {
+      setShouldLeftAction(prev => prev ? !prev : prev)
       setMainTranslateX(snapWidth.current)
       setLeftWidth(snapWidth.current)
       isAfterSnapLeft.current = true
     } else {
+      setShouldRightAction(prev => prev ? !prev : prev)
       setMainTranslateX(-snapWidth.current)
       setRightWidth(snapWidth.current)
       isAfterSnapRight.current = true
@@ -196,12 +196,12 @@ export default function TrackerItem({index, item, body, leftActions, rightAction
           {body}
 
           <div
-              ref={assessmentOptions}
-              className="absolute top-1/2 right-0 grid place-items-center bg-slate-700/20 backdrop-blur-[2px]"
-              style={{
-                transform: !showAssessmentOptions ? 'translateX(200%) translateY(-50%)' : 'translateX(0) translateY(-50%)',
-                transition: 'transform .3s',
-              }}
+            ref={assessmentOptions}
+            className="absolute top-1/2 right-0 grid place-items-center bg-slate-700/20 backdrop-blur-[2px]"
+            style={{
+              transform: !showAssessmentOptions ? 'translateX(200%) translateY(-50%)' : 'translateX(0) translateY(-50%)',
+              transition: 'transform .3s',
+            }}
           >
             <div className="flex gap-4 h-16 p-3 pr-5">
               <div onClick={handleCancelAssessment} className="w-10 h-full bg-red-500 grid place-items-center">
@@ -215,27 +215,28 @@ export default function TrackerItem({index, item, body, leftActions, rightAction
         </div>
 
         <ScrollerInput
-            item={{...item, index}}
-            setters={setters}
-            options={{cancelAssessment, noteAssessment, setShowAssessmentOptions}}
-            scale={10}
-            scaleDirection="both"
+          item={{...item, index}}
+          setters={{...setters, setSwipingBlocked}}
+          options={{cancelAssessment, noteAssessment, setShowAssessmentOptions}}
+          scale={10}
+          scaleDirection="both"
         />
       </div>
 
       <ul
-          ref={leftActionsWrapper}
-          className="row-start-1 row-end-2 col-start-1 col-end-2 h-full grid overflow-hidden"
-          style={{
-            width: leftWidth,
-            gridTemplateColumns: shouldLeftAction ? '1fr 0fr' : '1fr 1fr',
-            transition: wasMoving ? 'width .2s' : 'grid-template-columns .1s'
-          }}
+        ref={leftActionsWrapper}
+        className="row-start-1 row-end-2 col-start-1 col-end-2 h-full grid overflow-hidden"
+        style={{
+          width: leftWidth,
+          gridTemplateColumns: shouldLeftAction ? '1fr 0fr' : '1fr 1fr',
+          transition: wasMoving ? 'width .2s' : 'grid-template-columns .15s'
+        }}
       >
         {leftActions.length > 0 &&
-            leftActions.map(action => (
-                <li key={action.name}
-                    className={`grid select-none overflow-hidden ${action.color}`}
+          leftActions.map(action => (
+            <li
+              key={action.name}
+              className={`grid select-none overflow-hidden ${action.color}`}
               style={{
                 alignContent: 'center',
                 justifyItems: shouldLeftAction ? 'end' : 'center',
@@ -253,17 +254,17 @@ export default function TrackerItem({index, item, body, leftActions, rightAction
         style={{
           width: rightWidth,
           gridTemplateColumns: shouldRightAction ? '0fr 1fr' : '1fr 1fr',
-          transition: wasMoving ? 'width .2s' : 'grid-template-columns .1s'
+          transition: wasMoving ? 'width .2s' : 'grid-template-columns .15s'
         }}
       >
         {rightActions.length > 0 &&
           rightActions.map(action => (
             <li key={action.name}
               className={`grid select-none overflow-hidden ${action.color}`}
-                style={{
-                  alignContent: 'center',
-                  justifyItems: shouldRightAction ? 'start' : 'center',
-                }}
+              style={{
+                alignContent: 'center',
+                justifyItems: shouldRightAction ? 'start' : 'center',
+              }}
             >
               {action.body}
             </li>

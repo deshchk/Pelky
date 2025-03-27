@@ -2,7 +2,7 @@ import SimpleButton from "./atoms/SimpleButton"
 import useDialog from "@/hooks/useDialog"
 import { handleBigToast, nbsps, newID } from "@/utils"
 import { memo } from "react"
-import { getSortedItems, saveItems } from "@/data"
+import { getSortedItems } from "@/data"
 import Stars from "@/assets/stars.svg?react"
 
 function Nav({items, setItems, setToastData, setDialogData, assessments}) {

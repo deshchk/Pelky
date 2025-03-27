@@ -5,6 +5,7 @@ import useDialog from "@/hooks/useDialog"
 export default function ScrollerInput ({item, scale, scaleDirection, setters, options}) {
   const {
     setAnimationsInProgress,
+    setSwipingBlocked,
     setToastData,
     setDialogData,
     setAssessments,
@@ -53,7 +54,7 @@ export default function ScrollerInput ({item, scale, scaleDirection, setters, op
     cancelAssessment.current = false
     noteAssessment.current = false
 
-    refresher.current = !refresher.current
+    refresher.current = newID()
   }
 
 
@@ -86,6 +87,7 @@ export default function ScrollerInput ({item, scale, scaleDirection, setters, op
 
   function handleScroll(e) {
     if (dontHandleScroll.current) return
+    setSwipingBlocked(true)
 
     const currentIndex = getMarkIndex(e.target.scrollTop)
     const currentValue = scaleValues[currentIndex]
@@ -106,6 +108,7 @@ export default function ScrollerInput ({item, scale, scaleDirection, setters, op
       if (!cancelAssessment.current) {
         setAnimating(true)
         setAnimationsInProgress(true)
+        setSwipingBlocked(false)
       }
     }, 1000)
     savingTimeout.current = setTimeout(() => {
@@ -174,14 +177,14 @@ export default function ScrollerInput ({item, scale, scaleDirection, setters, op
         dontHandleScroll.current = false
       }, 50)
     }
-  }, [refresher.current, item.pinned, item.reminderDays, item.index, cancelAssessment.current, noteAssessment.current, scaleValues.length])
+  }, [refresher.current, item.pinned, item.reminderDays, item.index, animating, cancelAssessment.current, noteAssessment.current, scaleValues.length])
 
   useEffect(() => {
     const ac = new AbortController()
     scrollerWrapper.current?.addEventListener("scroll", handleScroll, { passive: false, signal: ac.signal })
     setTimeout(() => {
       dontHandleScroll.current = false
-    }, 50)
+    }, 69)
     return () => ac.abort()
   }, [])
 
@@ -189,13 +192,13 @@ export default function ScrollerInput ({item, scale, scaleDirection, setters, op
     if (cancelAssessment.current) {
       cancelCurrentAssessment()
     }
-  }, [cancelAssessment.current])
+  }, [cancelAssessment])
 
   useEffect(() => {
     if (noteAssessment.current) {
       noteCurrentAssessment()
     }
-  }, [noteAssessment.current])
+  }, [noteAssessment])
 
   return (
       <div className="relative h-full w-18 border-l border-dashed border-slate-700 text-xl bg-slate-900" ref={wrapperWrapper}>

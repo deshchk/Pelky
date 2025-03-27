@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { getSortedItems, saveItems } from "@/data"
+import { getSortedItems } from "@/data"
 import { deleteItem, pinItem } from "@/components/tracker/itemActions"
 import { firstUpper } from "@/utils"
 import useDialog from "@/hooks/useDialog"
