@@ -26,7 +26,7 @@ function TrackerList({items, data}) {
         setTimeout(() => {
           eyesEl.current?.style.setProperty("--blinkPercent", '100%')
         },100)
-      }, 3500, 12500, 0.1)
+      }, 3500, 12500, 0.01)
     }
 
   }, [items.length])
@@ -86,10 +86,10 @@ function TrackerList({items, data}) {
                   <p>No items here yet</p>
                 </div>
 
-                <div className="absolute right-10 sm:right-20 bottom-30 px-5 py-2 bg-slate-800 text-slate-200 rounded-tl-md rounded-tr-md rounded-bl-md shadow-xl shadow-slate-950/20 opacity-90">
+                <div className="absolute left-1/2 -translate-x-1/2 sm:right-20 bottom-30 px-5 py-2 bg-slate-800 text-slate-200 rounded-md shadow-xl shadow-slate-950/20 opacity-90">
                   Add a new one!
                   <div className={`
-                    absolute right-0 bottom-0 translate-y-full border-t-12 border-slate-800 [border-left:24px_solid_transparent]
+                    absolute left-1/2 -translate-x-1/2 bottom-0 translate-y-full border-t-24 border-slate-800 [border-inline:12px_solid_transparent]
                   `}></div>
                 </div>
               </div>

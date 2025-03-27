@@ -74,11 +74,11 @@ button {
 }
 
 .dialog-container {
-  @apply fixed top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-full p-4 grid place-items-center z-30;
+  @apply fixed top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-full px-4 py-8 grid place-items-center z-30;
 }
 
 .dialog-input {
-  @apply bg-slate-900 border-b border-slate-500 px-3.5 py-2.5 focus:border-slate-100 focus:outline-none focus:placeholder:opacity-40;
+  @apply bg-slate-900 border-t rounded-b border-slate-700 px-3.5 py-2.5 focus:outline-none focus:placeholder:opacity-30;
 }
 
 .dialog-button {

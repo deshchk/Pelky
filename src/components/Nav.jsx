@@ -24,12 +24,17 @@ function Nav({items, setItems, setToastData, setDialogData, assessments}) {
           pinned: false,
           group: null,
           reminderDays: promise.selectedDays,
+          scale: {
+            type: promise.scaleType,
+            max: promise.scaleMax
+          },
           status: {
             lastAssessed: false,
+            newestItem: true,
           },
         }
 
-        setItems(prev => getSortedItems(prev.concat([newItem]), assessments))
+        setItems(prev => getSortedItems(prev.concat([newItem]).map(i => i.id !== newItem.id ? {...i, status: {...i.status, newestItem: false}} : {...i}), assessments))
       } else {
         handleBigToast('error', 1, setToastData)
       }

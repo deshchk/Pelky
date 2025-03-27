@@ -199,6 +199,9 @@ export default function TrackerItem({index, item, items, assessments, setters}) 
 
   useOutsideClick(() => {
     resetSwipe()
+    if (item.status.lastAssessed || item.status.newestItem) {
+      setItems(prev => prev.map(i => i.id === item.id ? {...i, status: {lastAssessed: false, newestItem: false}} : {...i}))
+    }
   }, itemWrapper)
 
   useEffect(() => {
@@ -253,7 +256,7 @@ export default function TrackerItem({index, item, items, assessments, setters}) 
     >
       <div
         ref={mainContent}
-        className="row-start-1 row-end-2 col-span-full min-h-20 grid grid-cols-[1fr_auto] select-none z-10 bg-slate-900"
+        className={`row-start-1 row-end-2 col-span-full min-h-20 grid grid-cols-[1fr_auto] select-none z-10 ${item.status.lastAssessed ? 'bg-lime-500/5' : item.status.newestItem ? 'bg-sky-500/5' : 'bg-slate-900'}`}
         style={{
           transform: `translateX(${mainTranslateX}px)`,
           transition: wasMoving ? `transform .1s` : 'none',
@@ -289,8 +292,6 @@ export default function TrackerItem({index, item, items, assessments, setters}) 
           assessments={assessments}
           setters={{...setters, setSwipingBlocked, setLoadingItem}}
           options={{cancelAssessment, noteAssessment, setShowAssessmentOptions}}
-          scale={10}
-          scaleDirection="both"
         />
       </div>
 

@@ -1,15 +1,16 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react"
-import { handleSmallToast, newID } from "@/utils"
+import {useEffect, useLayoutEffect, useRef, useState} from "react"
+import {handleSmallToast, newID} from "@/utils"
 import useDialog from "@/hooks/useDialog"
-import { getSortedItems } from "@/data"
+import {getSortedItems} from "@/data"
 
-export default function ScrollerInput ({scale, scaleDirection, options, item, items, assessments, setters}) {
+export default function ScrollerInput ({options, item, items, assessments, setters}) {
   const {
     setAnimationsInProgress,
     setSwipingBlocked,
     setLoadingItem,
     setToastData,
     setDialogData,
+    setItems,
     setAssessments,
   } = setters
 
@@ -21,14 +22,14 @@ export default function ScrollerInput ({scale, scaleDirection, options, item, it
   const wrapperWrapper = useRef(null)
 
   const getMinMax = () => {
-    switch (scaleDirection) {
+    switch (item.scale.type) {
       case 'positive':
-        return { min: 0, max: scale };
+        return { min: 0, max: item.scale.max }
       case 'negative':
-        return { min: -scale, max: 0 };
+        return { min: -item.scale.max, max: 0 }
       case 'both':
       default:
-        return { min: -scale, max: scale };
+        return { min: -item.scale.max, max: item.scale.max }
     }
   }
 
@@ -51,12 +52,12 @@ export default function ScrollerInput ({scale, scaleDirection, options, item, it
   function resetScroller() {
     setAnimationsInProgress(false)
     setAnimating(false)
-
     setShowAssessmentOptions(false)
-    cancelAssessment.current = false
-    noteAssessment.current = false
 
     refresher.current = newID()
+
+    cancelAssessment.current = false
+    noteAssessment.current = false
   }
 
 
@@ -90,22 +91,19 @@ export default function ScrollerInput ({scale, scaleDirection, options, item, it
   function handleScroll(e) {
     if (dontHandleScroll.current) return
     setSwipingBlocked(true)
+    setAnimating(false)
+    setShowAssessmentOptions(true)
 
     const currentIndex = getMarkIndex(e.target.scrollTop)
-    const currentValue = scaleValues[currentIndex]
-    // const zeroScrollTop = ((scaleValues.length/2) * scrollerWrapper.current?.clientHeight) - scrollerWrapper.current?.clientHeight/2
-    const colorPercent = Math.abs(currentIndex - Math.abs(min))/max*100
+    currentAssessment.current = scaleValues[currentIndex]
 
+    const colorPercent = item.scale.type === 'both' ? Math.abs(currentIndex - Math.abs(min))/max*100 : (Math.abs(max-currentIndex)/max)*100
     wrapperWrapper.current.style.backgroundColor = `
-        color-mix(in oklab, transparent ${100-colorPercent}%, var(${currentIndex > scaleValues.length/2 ? tint[0] : tint[1]}) ${colorPercent}%)
-      `.trim()
+      color-mix(in oklab, transparent ${100-colorPercent}%, var(${(item.scale.type === 'both' && currentIndex > scaleValues.length/2) ? tint[0] : tint[1]}) ${colorPercent}%)
+    `.trim()
 
     clearTimeout(countdownTimeout.current)
     clearTimeout(savingTimeout.current)
-    setAnimating(false)
-    setShowAssessmentOptions(true)
-    currentAssessment.current = currentValue
-
     countdownTimeout.current = setTimeout(() => {
       if (!cancelAssessment.current) {
         setAnimating(true)
@@ -115,9 +113,7 @@ export default function ScrollerInput ({scale, scaleDirection, options, item, it
     }, 1000)
     savingTimeout.current = setTimeout(() => {
       if (!cancelAssessment.current) {
-
         saveCurrentAssessment(currentAssessment.current)
-
         resetScroller()
       }
     }, 3600)
@@ -158,16 +154,18 @@ export default function ScrollerInput ({scale, scaleDirection, options, item, it
           past: []
         })
 
-    const nextItems = getSortedItems(items.map(i => i.id === item.id ? {...i, pinned: !i.pinned} : i), assessments)
-    const nextIndex = nextItems.indexOf(nextItems.find(i => i.id === item.id))
+    const nextItems = getSortedItems(items, newAssessments(assessments))
+    const nextIndex = nextItems.indexOf(nextItems.find(i => i.id === item.id))+1
 
-    if (Math.abs(nextIndex-item.index) > 0) {
+    if (Math.abs(nextIndex-item.index) > 1) {
       setLoadingItem(true)
       setTimeout(async () => {
         setAssessments(prev => newAssessments(prev))
+        setItems(prev => prev.map(i => i.id === item.id ? {...i, status: {...i.status, lastAssessed: true}} : {...i, status: {...i.status, lastAssessed: false}}))
       }, 200)
     } else {
       setAssessments(prev => newAssessments(prev))
+      setItems(prev => prev.map(i => i.id === item.id ? {...i, status: {...i.status, lastAssessed: true}} : {...i, status: {...i.status, lastAssessed: false}}))
     }
 
     setShowAssessmentOptions(false)
@@ -183,14 +181,14 @@ export default function ScrollerInput ({scale, scaleDirection, options, item, it
     if (scrollerWrapper.current && !animating) {
       wrapperWrapper.current.style.backgroundColor = 'transparent'
       scrollerWrapper.current.scrollTo({
-        top: ((scaleValues.length/2) * scrollerWrapper.current.clientHeight) - scrollerWrapper.current.clientHeight/2,
+        top: item.scale.type === 'both' ? ((scaleValues.length/2) * scrollerWrapper.current.clientHeight) - scrollerWrapper.current.clientHeight/2 : scrollerWrapper.current.scrollHeight,
         behavior: 'instant'
       })
       setTimeout(() => {
         dontHandleScroll.current = false
       }, 50)
     }
-  }, [refresher.current, item.pinned, item.reminderDays, item.index, animating, cancelAssessment.current, noteAssessment.current, scaleValues.length])
+  }, [refresher.current, item.pinned, item.reminderDays, item.index, item.scale.type, cancelAssessment.current, noteAssessment.current, scaleValues.length])
 
   useEffect(() => {
     const ac = new AbortController()
