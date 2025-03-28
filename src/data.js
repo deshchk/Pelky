@@ -63,11 +63,14 @@ export const getSortedItems = (items, assessments) => items.toSorted((a, b) => {
   // Helper functions
   const isTodoItem = item =>
     item.reminderDays.includes(todayNum) &&
-    !assessments.some(ass => ass.item_id === item.id && isItToday(ass.last.date))
+    !assessments.some(ass => ass.item_id === item.id && (ass.last && isItToday(ass.last.date)))
 
-  const getPastCount = item =>
-    assessments.find(ass => ass.item_id === item.id)?.past.length +
-    (assessments.find(ass => ass.item_id === item.id)?.last.id && 1) || 0
+  const getPastCount = item => assessments.find(ass => ass.item_id === item.id) ?
+      Number(
+        assessments.find(ass => ass.item_id === item.id).past.length
+          + (assessments.find(ass => ass.item_id === item.id).last ? 1 : 0)
+      )
+    : 0
 
   // Priority grouping
   const aTodo = isTodoItem(a)

@@ -1,9 +1,9 @@
 import {useEffect, useLayoutEffect, useRef, useState} from "react"
 import {handleSmallToast, newID} from "@/utils"
 import useDialog from "@/hooks/useDialog"
-import {getSortedItems} from "@/data"
+import {getSortedItems, loadData} from "@/data"
 
-export default function ScrollerInput ({options, item, items, assessments, setters}) {
+export default function ScrollerInput ({options, item, listIndex, items, setters}) {
   const {
     setAnimationsInProgress,
     setSwipingBlocked,
@@ -103,16 +103,20 @@ export default function ScrollerInput ({options, item, items, assessments, sette
 
     const colorPercent = item.scale.type === 'both' || !item.scale ? Math.abs(currentIndex - Math.abs(min))/max*100 : (Math.abs(max-currentIndex)/max)*100
     wrapperWrapper.current.style.backgroundColor = `
-      color-mix(in oklab, transparent ${100-colorPercent}%, var(${((item.scale?.type === 'both' || !item.scale) && currentIndex > scaleValues.length/2) ? tint[0] : tint[1]}) ${colorPercent}%)
+      color-mix(in oklab, transparent ${100-colorPercent}%, var(${((item.scale.type === 'both' || !item.scale) && currentIndex > scaleValues.length/2) ? tint[0] : tint[1]}) ${colorPercent}%)
     `.trim()
 
     clearTimeout(countdownTimeout.current)
     clearTimeout(savingTimeout.current)
+
+    setTimeout(() => {
+      setSwipingBlocked(false)
+    }, 900)
+
     countdownTimeout.current = setTimeout(() => {
       if (!cancelAssessment.current) {
         setAnimating(true)
         setAnimationsInProgress(true)
-        setSwipingBlocked(false)
       }
     }, 1000)
     savingTimeout.current = setTimeout(() => {
@@ -125,51 +129,48 @@ export default function ScrollerInput ({options, item, items, assessments, sette
 
 
 
-  function saveCurrentAssessment(assessment) {
-    const newAssessments = (prev) => prev.some(ass => ass.item_id === item.id) ?
-        prev.map(ass =>
-            ass.item_id === item.id ? ({
-              ...ass,
-              last: {
-                id: newID(),
-                value: assessment,
-                date: new Intl.DateTimeFormat("en-AU", {
-                  day: "2-digit", month: "2-digit", year: "numeric",
-                  hour: "numeric", minute: "numeric"
-                }).format(new Date()).toUpperCase(),
-                note: currentNote.current || null
-              },
-              past: [...ass.past, ass.last]
-            }) : ass
-        )
-        :
-        prev.concat({
-          item_id: item.id,
-          group_id: null,
-          last: {
-            id: newID(),
-            value: assessment,
-            date: new Intl.DateTimeFormat("en-AU", {
-              day: "2-digit", month: "2-digit", year: "numeric",
-              hour: "numeric", minute: "numeric"
-            }).format(new Date()).toUpperCase(),
-            note: currentNote.current || null
-          },
-          past: []
-        })
+  async function saveCurrentAssessment(assessment) {
+    const { assessments } = await loadData()
 
-    const nextItems = getSortedItems(items, newAssessments(assessments))
-    const nextIndex = nextItems.indexOf(nextItems.find(i => i.id === item.id))+1
+    const newAssessments = assessments.map(ass =>
+      ass.item_id === item.id ? ({
+        ...ass,
+        last: {
+          id: newID(),
+          value: assessment,
+          date: new Intl.DateTimeFormat("en-AU", {
+            day: "2-digit", month: "2-digit", year: "numeric",
+            hour: "numeric", minute: "numeric"
+          }).format(new Date()).toUpperCase(),
+          note: currentNote.current || null
+        },
+        past: ass.last ? [...ass.past, ass.last] : []
+      }) : ass
+    )
+
+    function saveChanges() {
+      const newIndex = (currentArray, object) => {
+        const newArray = getSortedItems(currentArray, newAssessments)
+        return currentArray.length-newArray.indexOf(newArray.find(y => y.id === object.id))
+      }
+
+      setAssessments(newAssessments)
+      setItems(prev => getSortedItems(prev.map(i => i.id === item.id
+        ? {...i, status: {...i.status, lastAssessed: true}, index: newIndex(prev, i)}
+        : {...i, status: {...i.status, lastAssessed: false}, index: newIndex(prev, i)}
+      ), newAssessments))
+    }
+
+    const nextItems = getSortedItems(items, newAssessments)
+    const nextIndex = nextItems.length-nextItems.indexOf(nextItems.find(i => i.id === item.id))
 
     if (Math.abs(nextIndex-item.index) > 1) {
       setLoadingItem(true)
-      setTimeout(async () => {
-        setAssessments(prev => newAssessments(prev))
-        setItems(prev => prev.map(i => i.id === item.id ? {...i, status: {...i.status, lastAssessed: true}} : {...i, status: {...i.status, lastAssessed: false}}))
+      setTimeout(() => {
+        saveChanges()
       }, 200)
     } else {
-      setAssessments(prev => newAssessments(prev))
-      setItems(prev => prev.map(i => i.id === item.id ? {...i, status: {...i.status, lastAssessed: true}} : {...i, status: {...i.status, lastAssessed: false}}))
+      saveChanges()
     }
 
     setShowAssessmentOptions(false)
@@ -185,14 +186,14 @@ export default function ScrollerInput ({options, item, items, assessments, sette
     if (scrollerWrapper.current && !animating) {
       wrapperWrapper.current.style.backgroundColor = 'transparent'
       scrollerWrapper.current.scrollTo({
-        top: item.scale?.type === 'both' || !item.scale ? ((scaleValues.length/2) * scrollerWrapper.current.clientHeight) - scrollerWrapper.current.clientHeight/2 : scrollerWrapper.current.scrollHeight,
+        top: item.scale.type === 'both' || !item.scale ? ((scaleValues.length/2) * scrollerWrapper.current.clientHeight) - scrollerWrapper.current.clientHeight/2 : scrollerWrapper.current.scrollHeight,
         behavior: 'instant'
       })
       setTimeout(() => {
         dontHandleScroll.current = false
-      }, 50)
+      }, 69)
     }
-  }, [refresher.current, item.pinned, item.reminderDays, item.index, cancelAssessment.current, noteAssessment.current, scaleValues.length])
+  }, [refresher.current, item.pinned, item.reminderDays, item.index, listIndex, cancelAssessment.current, noteAssessment.current])
 
   useEffect(() => {
     const ac = new AbortController()

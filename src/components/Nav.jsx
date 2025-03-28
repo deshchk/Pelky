@@ -5,7 +5,7 @@ import { memo } from "react"
 import { getSortedItems } from "@/data"
 import Stars from "@/assets/stars.svg?react"
 
-function Nav({items, setItems, setToastData, setDialogData, assessments}) {
+function Nav({items, setItems, setToastData, setDialogData, assessments, setAssessments}) {
 
   const addDialog = useDialog(setDialogData, {
     id: newID(),
@@ -18,8 +18,10 @@ function Nav({items, setItems, setToastData, setDialogData, assessments}) {
 
     if (promise) {
       if (!items.some(item => item.title.replace(/\s/g, "").toLowerCase() === promise.title.replace(/\s/g, "").toLowerCase())) {
+        const newItemID = newID()
+
         const newItem = {
-          id: newID(),
+          id: newItemID,
           title: nbsps(promise.title),
           pinned: false,
           group: null,
@@ -34,7 +36,21 @@ function Nav({items, setItems, setToastData, setDialogData, assessments}) {
           },
         }
 
-        setItems(prev => getSortedItems(prev.concat([newItem]).map(i => i.id !== newItem.id ? {...i, status: {...i.status, newestItem: false}} : {...i}), assessments))
+        setItems(
+          prev => getSortedItems(prev.concat([newItem]).map(i => i.id !== newItem.id
+            ? {...i, index: prev.concat([newItem]).length-getSortedItems(prev.concat([newItem]), assessments).indexOf(i), status: {...i.status, newestItem: false}}
+            : {...i, index: prev.concat([newItem]).length-getSortedItems(prev.concat([newItem]), assessments).indexOf(i)}), assessments)
+        )
+
+        const newAssessmentItem = {
+          item_id: newItemID,
+          group_id: null,
+          last: null,
+          past: []
+        }
+
+        setAssessments(prev => prev.concat([newAssessmentItem]))
+
       } else {
         handleBigToast('error', 1, setToastData)
       }

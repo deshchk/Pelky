@@ -15,7 +15,7 @@ import Xmark from "@/assets/x-mark.svg?react"
 
 
 
-export default function TrackerItem({index, item, items, assessments, setters}) {
+export default function TrackerItem({item, listIndex, items, assessments, listScrolling, setters}) {
   const {
     setItems,
     setDialogData,
@@ -59,15 +59,17 @@ export default function TrackerItem({index, item, items, assessments, setters}) 
   // pinning the item
   function actionPinItem() {
     const nextItems = getSortedItems(items.map(i => i.id === item.id ? {...i, pinned: !i.pinned} : i), assessments)
-    const nextIndex = nextItems.indexOf(nextItems.find(i => i.id === item.id))+1
+    const nextIndex = nextItems.length-nextItems.indexOf(nextItems.find(i => i.id === item.id))
 
-    if (Math.abs(nextIndex-index) > 1) {
+    if (Math.abs(nextIndex-item.index) > 1) {
       setLoadingItem(true)
       setTimeout(async () => {
-        pinItem(item, assessments, setItems).then(() => setShouldLeftAction(false))
+        pinItem(item, assessments, setItems)
+        setShouldLeftAction(false)
       }, 200)
     } else {
-      pinItem(item, assessments, setItems).then(() => setShouldLeftAction(false))
+      pinItem(item, assessments, setItems)
+      setShouldLeftAction(false)
     }
   }
 
@@ -97,15 +99,28 @@ export default function TrackerItem({index, item, items, assessments, setters}) 
 
     if (promise) {
       const nextItems = getSortedItems(items.map(i => i.id === item.id ? {...i, reminderDays: promise} : i), assessments)
-      const nextIndex = nextItems.indexOf(nextItems.find(i => i.id === item.id))+1
+      const nextIndex = nextItems.length-nextItems.indexOf(nextItems.find(i => i.id === item.id))
 
-      if (Math.abs(nextIndex-index) > 1) {
+      function saveChanges() {
+        const newIndex = (currentArray, object) => {
+          const newArray = getSortedItems(currentArray.map(x => x.id === item.id ? {...x, reminderDays: promise} : x), assessments)
+          return currentArray.length-newArray.indexOf(newArray.find(y => y.id === object.id))
+        }
+
+        setItems(prev => getSortedItems(prev.map(i => i.id === item.id
+          ? {...i, reminderDays: promise, index: newIndex(prev, i)}
+          : {...i, index: newIndex(prev, i)}),
+          assessments)
+        )
+      }
+
+      if (Math.abs(nextIndex-item.index) > 1) {
         setLoadingItem(true)
         setTimeout(async () => {
-          setItems(prev => getSortedItems(prev.map(i => i.id === item.id ? {...i, reminderDays: promise} : {...i}), assessments))
+          saveChanges()
         }, 200)
       } else {
-        setItems(prev => getSortedItems(prev.map(i => i.id === item.id ? {...i, reminderDays: promise} : {...i}), assessments))
+        saveChanges()
       }
     } else {
       setSelectedDays(item.reminderDays)
@@ -127,7 +142,7 @@ export default function TrackerItem({index, item, items, assessments, setters}) 
     const diffX = currentPos.x - startPos.current.x
     const diffY = currentPos.y - startPos.current.y
 
-    if (Math.abs(diffY) > Math.abs(diffX) || stateRef.current.swipingBlocked || document.activeElement.getAttribute('contenteditable') === 'true') {
+    if (Math.abs(diffY) > Math.abs(diffX) || listScrolling.current || stateRef.current.swipingBlocked || document.activeElement.getAttribute('contenteditable') === 'true') {
       return
     } else if (e.cancelable) {
       e.preventDefault()
@@ -200,7 +215,7 @@ export default function TrackerItem({index, item, items, assessments, setters}) 
   useOutsideClick(() => {
     resetSwipe()
     if (item.status.lastAssessed || item.status.newestItem) {
-      setItems(prev => prev.map(i => i.id === item.id ? {...i, status: {lastAssessed: false, newestItem: false}} : {...i}))
+      setItems(prev => prev.map(i => i.id === item.id ? {...i, status: {lastAssessed: false, newestItem: false}} : i))
     }
   }, itemWrapper)
 
@@ -225,7 +240,7 @@ export default function TrackerItem({index, item, items, assessments, setters}) 
     requestAnimationFrame(() => {
       setLoadingItem(false)
     })
-  }, [index])
+  }, [item.index])
 
 
   // scroller assessment options
@@ -259,13 +274,13 @@ export default function TrackerItem({index, item, items, assessments, setters}) 
         className={`row-start-1 row-end-2 col-span-full min-h-20 grid grid-cols-[1fr_auto] select-none z-10 ${item.status.lastAssessed ? 'bg-lime-500/5' : item.status.newestItem ? 'bg-sky-500/5' : 'bg-slate-900'}`}
         style={{
           transform: `translateX(${mainTranslateX}px)`,
-          transition: wasMoving ? `transform .1s` : 'none',
+          transition: `${wasMoving ? 'transform .1s, ' : ''}background-color .2s`,
           willChange: 'transform',
           backfaceVisibility: 'hidden'
         }}
       >
         <div className="relative overflow-hidden">
-          <ItemBody item={{...item, index}} setters={{...setters, setLoadingItem}} {...{items, assessments}} />
+          <ItemBody item={item} setters={{...setters, setLoadingItem}} {...{items, assessments}} />
 
           <div
             ref={assessmentOptions}
@@ -287,9 +302,9 @@ export default function TrackerItem({index, item, items, assessments, setters}) 
         </div>
 
         <ScrollerInput
-          item={{...item, index}}
+          item={item}
+          listIndex={listIndex}
           items={items}
-          assessments={assessments}
           setters={{...setters, setSwipingBlocked, setLoadingItem}}
           options={{cancelAssessment, noteAssessment, setShowAssessmentOptions}}
         />

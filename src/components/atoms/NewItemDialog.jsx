@@ -23,7 +23,9 @@ function NewItemDialog({handleConfirm, closeDialog}) {
       if (e.key === "Enter") {
         handleConfirm({
           title: dialogInput.current.value,
-          selectedDays: selectedDays
+          selectedDays: selectedDays,
+          scaleMax: scaleMaxValue,
+          scaleType: scaleType
         })
       }
     }

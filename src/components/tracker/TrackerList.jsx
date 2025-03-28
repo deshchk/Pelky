@@ -11,9 +11,34 @@ function TrackerList({items, data}) {
   const dropLogoBlur = useRef(null)
   const eyesEl = useRef(null)
 
+  const startPos = useRef({x: 0, y: 0})
+  const listScrolling = useRef(false)
+  const listScrollingTimeout = useRef(null)
+
+  function onTouchStart(e) {
+    startPos.current.x = e.touches[0].clientX
+    startPos.current.y = e.touches[0].clientY
+  }
+
   function onScroll(e) {
+    const currentPos = e.touches ? {x: e.touches[0].clientX, y: e.touches[0].clientY} : {x: 0, y: 0}
+    const diffX = Math.abs(currentPos.x - startPos.current.x)
+    const diffY = Math.abs(currentPos.y - startPos.current.y)
+
     const stPercent = Math.min(100, e.target.scrollTop)
     topGradient.current.style.setProperty("opacity", stPercent + "%")
+
+    listScrollingTimeout.current && clearTimeout(listScrollingTimeout.current)
+    listScrolling.current = true
+    setTimeout(() => {
+      if (diffY > diffX+2) {
+        listScrolling.current = false
+      }
+    }, 100)
+  }
+
+  function onTouchEnd() {
+    listScrolling.current = false
   }
 
   useEffect(() => {
@@ -33,10 +58,15 @@ function TrackerList({items, data}) {
 
   useEffect(() => {
     listContainer.current?.scrollTo({top: listContainer.current.scrollHeight, behavior: 'instant'})
+    setTimeout(() => {
+      listScrolling.current = false
+    }, 100)
   }, [])
 
   return (
-      <div className="grid grid-cols-1 h-full empty:!hidden overflow-y-auto invisible-scroll pt-5 sm:pt-10" onScroll={onScroll} ref={listContainer}>
+      <div className="grid grid-cols-1 h-full empty:!hidden overflow-y-auto invisible-scroll pt-5 sm:pt-10"
+           onTouchStart={onTouchStart} onScroll={onScroll} onTouchEnd={onTouchEnd}
+      ref={listContainer}>
 
         <div className={`
             fixed -left-60 top-0 w-[calc(100%+480px)] z-20 h-30 bg-radial-[at_50%_150%] from-transparent from-0% via-transparent via-40% to-slate-900 to-60%
@@ -54,6 +84,8 @@ function TrackerList({items, data}) {
               const props = {
                 item,
                 items,
+                assessments: data.assessments,
+                listScrolling,
                 setters: {
                   setItems: data.setItems,
                   setAssessments: data.setAssessments,
@@ -61,12 +93,12 @@ function TrackerList({items, data}) {
                   setToastData: data.setToastData,
                   setAnimationsInProgress: data.setAnimationsInProgress
                 },
-                assessments: data.assessments
               }
 
               return (
               <TrackerItem
-                key={item.id} index={i+1}
+                key={item.id}
+                listIndex={i+1}
                 {...props}
               />
             )})}

@@ -36,7 +36,8 @@ function App() {
     setItems,
     setToastData,
     setDialogData,
-    assessments
+    assessments,
+    setAssessments,
   }
 
   const initialLoad = useRef(true)
@@ -80,7 +81,7 @@ function App() {
         setItems(sorted)
       }
     }
-  }, [assessments, animationsInProgress])
+  }, [items, assessments, animationsInProgress])
 
 
 
