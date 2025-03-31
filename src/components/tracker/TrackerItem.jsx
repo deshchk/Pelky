@@ -84,7 +84,10 @@ export default function TrackerItem({item, listIndex, items, assessments, listSc
   function actionDeleteItem() {
     setLoadingItem(true)
     setTimeout(() => {
-      deleteItem(item, assessments, setItems, deleteDialog).then(() => setShouldRightAction(false))
+      deleteItem(item, assessments, setItems, deleteDialog).then(() => {
+        setShouldRightAction(false)
+        setLoadingItem(false)
+      })
     }, 200)
   }
 
@@ -253,7 +256,7 @@ export default function TrackerItem({item, listIndex, items, assessments, listSc
     requestAnimationFrame(() => {
       setLoadingItem(false)
     })
-  }, [item.index])
+  }, [item.index, assessments])
 
 
   // scroller assessment options
