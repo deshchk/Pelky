@@ -59,7 +59,6 @@ export default function TrackerItem({item, listIndex, items, assessments, listSc
     const nextItems = getSortedItems(items.map(i => i.id === item.id ? {...i, pinned: !i.pinned} : i), assessments)
     const nextIndex = nextItems.length-nextItems.indexOf(nextItems.find(i => i.id === item.id))
 
-    console.log(item.index, nextIndex)
     if (Math.abs(nextIndex-item.index) > 1) {
       setLoadingItem(true)
       setTimeout(async () => {

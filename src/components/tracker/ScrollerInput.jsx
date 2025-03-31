@@ -163,7 +163,6 @@ export default function ScrollerInput ({options, item, listIndex, items, setters
     const nextItems = getSortedItems(items, newAssessments).toReversed()
     const nextIndex = nextItems.length-nextItems.indexOf(nextItems.find(i => i.id === item.id))
 
-    console.log(nextIndex, item.index)
     if (Math.abs(nextIndex-item.index) > 1) {
       setLoadingItem(true)
       setTimeout(() => {
@@ -193,14 +192,11 @@ export default function ScrollerInput ({options, item, listIndex, items, setters
         dontHandleScroll.current = false
       }, 69)
     }
-  }, [refresher.current, item.pinned, item.reminderDays, item.index, listIndex, cancelAssessment.current, noteAssessment.current])
+  }, [refresher.current, animating, item.pinned, item.reminderDays, item.index, listIndex, cancelAssessment.current, noteAssessment.current])
 
   useEffect(() => {
     const ac = new AbortController()
     scrollerWrapper.current?.addEventListener("scroll", handleScroll, { passive: false, signal: ac.signal })
-    setTimeout(() => {
-      dontHandleScroll.current = false
-    }, 69)
     return () => ac.abort()
   }, [])
 
