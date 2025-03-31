@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { newID } from "@/services/utils"
 
-function useDialog (setter, props) {
+function useDialog (setter, getProps) {
   const [promise, setPromise] = useState(null)
-
   const id = useRef(newID()).current
 
   const confirm = () => new Promise((resolve) => {
@@ -22,15 +21,17 @@ function useDialog (setter, props) {
   }, [promise, closeDialog])
 
   useEffect(() => {
-    const dialog = ({
+    const currentProps = typeof getProps === "function" ? getProps() : getProps
+
+    const dialog = {
       id,
-      props,
+      props: currentProps,
       handleConfirm,
       closeDialog
-    })
+    }
 
     promise !== null && setter(prev => prev !== dialog ? dialog : prev)
-  }, [closeDialog, handleConfirm, promise, props, setter])
+  }, [closeDialog, handleConfirm, promise, getProps, setter, id])
 
   return confirm
 }

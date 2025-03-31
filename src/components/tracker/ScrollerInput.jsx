@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useLayoutEffect, useRef, useState } from "react"
 import { getSortedItems, loadData } from "@/services/data"
 import { handleSmallToast, newID } from "@/services/utils"
 import useDialog from "@/hooks/useDialog"
@@ -71,15 +71,13 @@ export default function ScrollerInput ({options, item, listIndex, items, setters
     resetScroller()
   }
 
+  const noteDialogProps = () => ({
+    type: 'add-note-dialog',
+    item: item,
+    assessment: currentAssessment.current
+  })
 
-  const noteDialog = useDialog(
-    setDialogData,
-    useMemo(() => ({
-      type: 'add-note-dialog',
-      item: item,
-      assessment: currentAssessment.current
-    }), [item])
-  )
+  const noteDialog = useDialog(setDialogData, noteDialogProps)
 
   async function noteCurrentAssessment() {
     countdownTimeout.current && clearTimeout(countdownTimeout.current)
