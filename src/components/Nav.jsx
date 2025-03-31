@@ -67,7 +67,10 @@ function Nav() {
   }
 
   function goBack() {
-    navigate('/')
+    navigate('/', { replace: true })
+    setTimeout(() => {
+      setter.items(prev => getSortedItems([...prev], data.assessments))
+    })
   }
 
   return (
