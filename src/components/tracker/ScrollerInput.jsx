@@ -1,11 +1,10 @@
-import {useEffect, useLayoutEffect, useRef, useState} from "react"
-import {handleSmallToast, newID} from "@/utils"
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
+import { getSortedItems, loadData } from "@/services/data"
+import { handleSmallToast, newID } from "@/services/utils"
 import useDialog from "@/hooks/useDialog"
-import {getSortedItems, loadData} from "@/data"
 
 export default function ScrollerInput ({options, item, listIndex, items, setters}) {
   const {
-    setAnimationsInProgress,
     setSwipingBlocked,
     setLoadingItem,
     setToastData,
@@ -54,7 +53,6 @@ export default function ScrollerInput ({options, item, listIndex, items, setters
 
 
   function resetScroller() {
-    setAnimationsInProgress(false)
     setAnimating(false)
     setShowAssessmentOptions(false)
 
@@ -74,11 +72,14 @@ export default function ScrollerInput ({options, item, listIndex, items, setters
   }
 
 
-  const noteDialog = useDialog(setDialogData,{
-    type: 'add-note-dialog',
-    item: item,
-    assessment: currentAssessment.current
-  })
+  const noteDialog = useDialog(
+    setDialogData,
+    useMemo(() => ({
+      type: 'add-note-dialog',
+      item: item,
+      assessment: currentAssessment.current
+    }), [item])
+  )
 
   async function noteCurrentAssessment() {
     countdownTimeout.current && clearTimeout(countdownTimeout.current)
@@ -103,7 +104,7 @@ export default function ScrollerInput ({options, item, listIndex, items, setters
 
     const colorPercent = item.scale.type === 'both' || !item.scale ? Math.abs(currentIndex - Math.abs(min))/max*100 : (Math.abs(max-currentIndex)/max)*100
     wrapperWrapper.current.style.backgroundColor = `
-      color-mix(in oklab, transparent ${100-colorPercent}%, var(${((item.scale.type === 'both' || !item.scale) && currentIndex > scaleValues.length/2) ? tint[0] : tint[1]}) ${colorPercent}%)
+      color-mix(in oklab, transparent ${100-colorPercent}%, var(${((item.scale.type === 'both' || !item.scale) && currentIndex > scaleValues.length/2) ? tint[0] : tint[1]}) ${colorPercent/2}%)
     `.trim()
 
     clearTimeout(countdownTimeout.current)
@@ -116,7 +117,6 @@ export default function ScrollerInput ({options, item, listIndex, items, setters
     countdownTimeout.current = setTimeout(() => {
       if (!cancelAssessment.current) {
         setAnimating(true)
-        setAnimationsInProgress(true)
       }
     }, 1000)
     savingTimeout.current = setTimeout(() => {
@@ -135,7 +135,7 @@ export default function ScrollerInput ({options, item, listIndex, items, setters
     const newAssessments = assessments.map(ass =>
       ass.item_id === item.id ? ({
         ...ass,
-        last: {
+        entries: [{
           id: newID(),
           value: assessment,
           date: new Intl.DateTimeFormat("en-AU", {
@@ -143,8 +143,7 @@ export default function ScrollerInput ({options, item, listIndex, items, setters
             hour: "numeric", minute: "numeric"
           }).format(new Date()).toUpperCase(),
           note: currentNote.current || null
-        },
-        past: ass.last ? [...ass.past, ass.last] : []
+        }].concat(ass.entries),
       }) : ass
     )
 
@@ -161,9 +160,10 @@ export default function ScrollerInput ({options, item, listIndex, items, setters
       ), newAssessments))
     }
 
-    const nextItems = getSortedItems(items, newAssessments)
+    const nextItems = getSortedItems(items, newAssessments).toReversed()
     const nextIndex = nextItems.length-nextItems.indexOf(nextItems.find(i => i.id === item.id))
 
+    console.log(nextIndex, item.index)
     if (Math.abs(nextIndex-item.index) > 1) {
       setLoadingItem(true)
       setTimeout(() => {
@@ -217,31 +217,31 @@ export default function ScrollerInput ({options, item, listIndex, items, setters
   }, [noteAssessment.current])
 
   return (
-      <div className="relative h-full w-18 border-l border-dashed border-slate-700 text-xl bg-slate-900" ref={wrapperWrapper}>
-        <div
-          ref={scrollerWrapper}
-          className="scroller-input invisible-scroll"
-        >
-          {
-            scaleValues.reverse().map(mark => (
-              <div
-                key={String(mark)}
-                className={`h-[100cqh] grid place-items-center snap-center ${mark === 0 ? 'snap-always' : ''}`}
-              >
-                {mark}
-              </div>
-            ))
-          }
-        </div>
-        <div
-          className="absolute inset-0 grid pointer-events-none z-10"
-          style={{
-            gridTemplateRows: animating ? '1fr' : '0fr',
-            transition: animating ? 'grid-template-rows 2.5s linear' : 'none',
-          }}
-        >
-          <div className="bg-black/35"></div>
-        </div>
+    <div className="relative h-full w-18 border-l border-dashed border-slate-700 text-xl bg-slate-900" ref={wrapperWrapper}>
+      <div
+        ref={scrollerWrapper}
+        className="scroller-input invisible-scroll"
+      >
+        {
+          scaleValues.reverse().map(mark => (
+            <div
+              key={String(mark)}
+              className={`h-[100cqh] grid place-items-center snap-center ${mark === 0 ? 'snap-always' : ''}`}
+            >
+              {mark}
+            </div>
+          ))
+        }
       </div>
+      <div
+        className="absolute inset-0 grid pointer-events-none z-10"
+        style={{
+          gridTemplateRows: animating ? '1fr' : '0fr',
+          transition: animating ? 'grid-template-rows 2.5s linear' : 'none',
+        }}
+      >
+        <div className="bg-black/35"></div>
+      </div>
+    </div>
   )
 }

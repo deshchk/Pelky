@@ -1,7 +1,7 @@
-import SimpleButton from "@/components/atoms/SimpleButton"
 import { useEffect, useRef, useState } from "react"
-import { nbsps } from "@/utils"
 import { useOutsideClick } from "@/hooks/useOutsideClick"
+import { nbsps } from "@/services/utils"
+import SimpleButton from "@/components/atoms/SimpleButton"
 
 function Dialog({props, handleConfirm, closeDialog}) {
   const {

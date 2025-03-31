@@ -165,19 +165,36 @@ export const saveAssessments = async (assessments) => {
   })
 }
 
-export const deleteAssessment = async (itemId) => {
+export const deleteAssessment = async (itemID, entryID) => {
   const db = await initDB()
   return new Promise((resolve, reject) => {
     const transaction = db.transaction(STORES.ASSESSMENTS, 'readwrite')
     const store = transaction.objectStore(STORES.ASSESSMENTS)
-    const request = store.delete(itemId)
+    const request = store.get(itemID)
 
-    request.onsuccess = () => {
-      resolve()
+    request.onsuccess = (e) => {
+      const assessment = e.target.result
+
+      if (!assessment) {
+        reject(`Assessment with item_id: ${itemID} not found`)
+        return
+      }
+
+      assessment.entries = assessment.entries.filter(entry => entry.id !== entryID)
+
+      const updateRequest = store.put(assessment)
+
+      updateRequest.onsuccess = () => {
+        resolve()
+      }
+
+      updateRequest.onerror = (e) => {
+        reject(`Assessment couldn't be updated: ${e.target.error}`)
+      }
     }
 
     request.onerror = (event) => {
-      reject(`Error deleting assessment: ${event.target.errorCode}`)
+      reject(`Error deleting assessment entry: ${event.target.errorCode}`)
     }
   })
 }

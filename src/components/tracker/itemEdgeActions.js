@@ -1,4 +1,4 @@
-import { deleteItemAndAssessments, getSortedItems } from "@/data"
+import { deleteItemAndAssessments, getSortedItems } from "@/services/data"
 
 export async function deleteItem(item, assessments, setItems, promise) {
   function saveChanges() {
@@ -8,7 +8,7 @@ export async function deleteItem(item, assessments, setItems, promise) {
     ))
   }
 
-  if (!assessments.find(ass => ass.item_id === item.id)) {
+  if (!assessments.find(ass => ass.item_id === item.id && (ass.entries.length > 0))) {
     saveChanges()
     await deleteItemAndAssessments(item.id)
   } else {

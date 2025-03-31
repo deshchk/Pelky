@@ -1,19 +1,18 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useNavigate } from "react-router"
 import { useOutsideClick } from "@/hooks/useOutsideClick"
-import { deleteItem, pinItem } from "@/components/tracker/itemActions"
-import { firstUpper } from "@/utils"
-import { getSortedItems } from "@/data"
+import { getSortedItems } from "@/services/data"
+import { firstUpper } from "@/services/utils"
+import { deleteItem, pinItem } from "@/components/tracker/itemEdgeActions"
 import ItemBody from "@/components/tracker/ItemBody"
 import ScrollerInput from "@/components/tracker/ScrollerInput"
 import ItemAction from "@/components/tracker/ItemAction"
 import useDialog from "@/hooks/useDialog"
-import DaySelector from "@/components/atoms/DaySelector"
+import DaySelector from "@/components/dialogs/insides/DaySelector"
 import Trash from "@/assets/trash.svg?react"
 import Clock from "@/assets/clock.svg?react"
 import Pen from "@/assets/pen.svg?react"
 import Xmark from "@/assets/x-mark.svg?react"
-
-
 
 export default function TrackerItem({item, listIndex, items, assessments, listScrolling, setters}) {
   const {
@@ -21,10 +20,9 @@ export default function TrackerItem({item, listIndex, items, assessments, listSc
     setDialogData,
   } = setters
 
+  const navigate = useNavigate()
   const itemWrapper = useRef(null)
   const mainContent = useRef(null)
-  const leftActionsWrapper = useRef(null)
-  const rightActionsWrapper = useRef(null)
 
   const [mainTranslateX, setMainTranslateX] = useState(0)
   const [leftWidth, setLeftWidth] = useState(0)
@@ -57,10 +55,11 @@ export default function TrackerItem({item, listIndex, items, assessments, listSc
 
   // ---------- ACTION FUNCTIONS ----------
   // pinning the item
-  function actionPinItem() {
+  const actionPinItem = useCallback(() => {
     const nextItems = getSortedItems(items.map(i => i.id === item.id ? {...i, pinned: !i.pinned} : i), assessments)
     const nextIndex = nextItems.length-nextItems.indexOf(nextItems.find(i => i.id === item.id))
 
+    console.log(item.index, nextIndex)
     if (Math.abs(nextIndex-item.index) > 1) {
       setLoadingItem(true)
       setTimeout(async () => {
@@ -71,30 +70,39 @@ export default function TrackerItem({item, listIndex, items, assessments, listSc
       pinItem(item, assessments, setItems)
       setShouldLeftAction(false)
     }
-  }
+  }, [assessments, item, items, setItems])
 
   // deleting the item
-  const deleteDialog = useDialog(setDialogData,{
-    Icon: Trash,
-    title: `Deleting "${item.title}"`,
-    message: 'This item and it\'s data will be deleted. Delete anyway?'
-  })
+  const deleteDialog = useDialog(
+    setDialogData,
+    useMemo(() => ({
+      Icon: Trash,
+      title: `Deleting "${item.title}"`,
+      message: 'This item and it\'s data will be deleted. Delete anyway?'
+    }), [item.title])
+  )
   function actionDeleteItem() {
-    deleteItem(item, assessments, setItems, deleteDialog).then(() => setShouldRightAction(false))
+    setLoadingItem(true)
+    setTimeout(() => {
+      deleteItem(item, assessments, setItems, deleteDialog).then(() => setShouldRightAction(false))
+    }, 200)
   }
 
   // setting reminders for the item
   const [selectedDays, setSelectedDays] = useState(item.reminderDays)
-  const reminderDialog = useDialog(setDialogData,{
-    Icon: Clock,
-    title: firstUpper(item.title),
-    message: 'On which days would you like to be reminded about this?',
-    confirmText: 'Save',
-    confirmBg: 'bg-blue-500',
-    dataCollector: () => selectedDays,
-    Custom: () => <DaySelector selectedDays={selectedDays} setSelectedDays={setSelectedDays} />
-  })
-  async function actionReminderItem() {
+  const reminderDialog = useDialog(
+    setDialogData,
+    useMemo(() => ({
+      Icon: Clock,
+      title: firstUpper(item.title),
+      message: 'On which days would you like to be reminded about this?',
+      confirmText: 'Save',
+      confirmBg: 'bg-blue-500',
+      dataCollector: () => selectedDays,
+      Custom: () => <DaySelector selectedDays={selectedDays} setSelectedDays={setSelectedDays} />
+    }), [item.title, selectedDays])
+  )
+  const actionReminderItem = useCallback(async () => {
     const promise = await reminderDialog()
 
     if (promise) {
@@ -125,6 +133,11 @@ export default function TrackerItem({item, listIndex, items, assessments, listSc
     } else {
       setSelectedDays(item.reminderDays)
     }
+  }, [assessments, item.id, item.index, item.reminderDays, items, reminderDialog, setItems])
+
+  // navigating to item assessment details
+  function actionDetailsItem() {
+    navigate(`/ass/${item.id}`)
   }
 
 
@@ -132,7 +145,7 @@ export default function TrackerItem({item, listIndex, items, assessments, listSc
   function handleStartMovement(e) {
     startPos.current.x = e.touches[0].clientX
     startPos.current.y = e.touches[0].clientY
-    snapWidth.current = (14*4)*2 // w-14 per one
+    snapWidth.current = (18*4)*2 // w-18 per one
   }
 
   function handleWhileMovement(e) {
@@ -311,18 +324,16 @@ export default function TrackerItem({item, listIndex, items, assessments, listSc
       </div>
 
       <ul
-        ref={leftActionsWrapper}
         className="row-start-1 row-end-2 col-start-1 col-end-2 h-full grid overflow-hidden"
         style={{
           width: leftWidth,
           gridTemplateColumns: shouldLeftAction ? '1fr 0fr' : '1fr 1fr',
-          transition: wasMoving ? 'width .2s' : 'grid-template-columns .15s'
+          transition: wasMoving ? 'width .1s' : 'grid-template-columns .15s'
         }}
       >
         <li
           className="grid select-none overflow-hidden bg-sky-700"
           style={{
-            alignContent: 'center',
             justifyItems: shouldLeftAction ? 'end' : 'center',
           }}
         >
@@ -332,7 +343,6 @@ export default function TrackerItem({item, listIndex, items, assessments, listSc
         <li
           className="grid select-none overflow-hidden bg-yellow-500"
           style={{
-            alignContent: 'center',
             justifyItems: 'center',
           }}
         >
@@ -341,28 +351,25 @@ export default function TrackerItem({item, listIndex, items, assessments, listSc
       </ul>
 
       <ul
-        ref={rightActionsWrapper}
         className="row-start-1 row-end-2 col-start-2 col-end-3 justify-self-end grid h-full overflow-hidden"
         style={{
           width: rightWidth,
           gridTemplateColumns: shouldRightAction ? '0fr 1fr' : '1fr 1fr',
-          transition: wasMoving ? 'width .2s' : 'grid-template-columns .15s'
+          transition: wasMoving ? 'width .1s' : 'grid-template-columns .15s'
         }}
       >
         <li
-          className="grid select-none overflow-hidden bg-lime-500"
+          className="grid select-none overflow-hidden bg-slate-700"
           style={{
-            alignContent: 'center',
             justifyItems: 'center',
           }}
         >
-          <ItemAction type="details" />
+          <ItemAction type="details" action={actionDetailsItem} />
         </li>
 
         <li
           className="grid select-none overflow-hidden bg-red-500"
           style={{
-            alignContent: 'center',
             justifyItems: shouldRightAction ? 'start' : 'center',
           }}
         >

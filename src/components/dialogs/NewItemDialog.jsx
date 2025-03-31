@@ -1,9 +1,10 @@
-import SimpleButton from "@/components/atoms/SimpleButton"
 import { useEffect, useRef, useState } from "react"
 import { useOutsideClick } from "@/hooks/useOutsideClick"
+import SimpleButton from "@/components/atoms/SimpleButton"
+import DaySelector from "@/components/dialogs/insides/DaySelector"
 import Chevron from "@/assets/chevron.svg?react"
 import Add from "@/assets/add.svg?react"
-import DaySelector from "@/components/atoms/DaySelector"
+
 
 function NewItemDialog({handleConfirm, closeDialog}) {
   const dialogEl = useRef(null)
@@ -43,8 +44,8 @@ function NewItemDialog({handleConfirm, closeDialog}) {
 
   return (
       <div className="px-6 py-8 w-full max-w-md rounded-lg bg-slate-800 border border-slate-700 text-white flex flex-col gap-6" ref={dialogEl}>
-        <Add className="size-10"/>
-        <div className="text-xl font-semibold text-pretty mt-2">
+        <div className="flex items-center gap-4 text-xl font-semibold text-pretty mt-2">
+          <Add className="size-10"/>
           Adding new item
         </div>
 

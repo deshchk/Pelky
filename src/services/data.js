@@ -1,4 +1,4 @@
-import { isItToday, todayNum } from "@/utils"
+import { isItToday, todayNum } from "@/services/utils"
 import * as db from "@/services/indexedDB"
 
 export const loadData = async () => {
@@ -20,6 +20,17 @@ export const loadData = async () => {
       items: JSON.parse(localStorage.getItem('items')) || [],
       assessments: JSON.parse(localStorage.getItem('assessments')) || []
     }
+  }
+}
+
+export const fetchAssessment = async (item_id) => {
+  try {
+    await db.initDB()
+    let assessments = await db.getAllAssessments() || []
+
+    return assessments.find(ass => ass.item_id === item_id)
+  } catch (error) {
+    console.error("Error loading assessment from IndexedDB:", error)
   }
 }
 
@@ -63,14 +74,10 @@ export const getSortedItems = (items, assessments) => items.toSorted((a, b) => {
   // Helper functions
   const isTodoItem = item =>
     item.reminderDays.includes(todayNum) &&
-    !assessments.some(ass => ass.item_id === item.id && (ass.last && isItToday(ass.last.date)))
+    !assessments.some(ass => ass.item_id === item.id && (ass.entries[0] && isItToday(ass.entries[0].date)))
 
   const getPastCount = item => assessments.find(ass => ass.item_id === item.id) ?
-      Number(
-        assessments.find(ass => ass.item_id === item.id).past.length
-          + (assessments.find(ass => ass.item_id === item.id).last ? 1 : 0)
-      )
-    : 0
+    assessments.find(ass => ass.item_id === item.id).entries.length : 0
 
   // Priority grouping
   const aTodo = isTodoItem(a)

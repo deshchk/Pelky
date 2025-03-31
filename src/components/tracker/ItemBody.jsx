@@ -1,6 +1,6 @@
 import { useRef } from "react"
-import { getSortedItems } from "@/data"
-import { formatWhenDate, getLastPastAssDiff, handleBigToast, handleSmallToast, isItToday, nbsps, todayNum } from "@/utils"
+import { getSortedItems } from "@/services/data"
+import { formatWhenDate, getLastPastAssDiff, handleBigToast, handleSmallToast, isItToday, nbsps, todayNum } from "@/services/utils"
 import PinFill from "@/assets/pin-fill.svg?react"
 import ClockFill from "@/assets/clock-fill.svg?react"
 
@@ -104,32 +104,32 @@ export default function ItemBody({item, items, setters, assessments}) {
               <PinFill className="size-4 text-sky-500" />
             }
             {item.reminderDays.includes(todayNum) &&
-              <div className={`flex items-center border p-px text-xs font-medium rounded-full pr-1.5 transition-colors ${assessments.find(ass => ass.item_id === item.id).last && isItToday(assessments.find(ass => ass.item_id === item.id).last.date) ? 'text-lime-500 border-lime-500/50' : 'text-yellow-500 border-yellow-500/50'}`}>
+              <div className={`flex items-center border p-px text-xs font-medium rounded-full pr-1.5 transition-colors ${assessments.find(ass => ass.item_id === item.id).entries[0] && isItToday(assessments.find(ass => ass.item_id === item.id).entries[0].date) ? 'text-lime-500 border-lime-500/50' : 'text-yellow-500 border-yellow-500/50'}`}>
                 <ClockFill
-                  className={`size-4 text-yellow-500 [&:not(.done)]:mr-1 [&.done]:w-0 overflow-hidden ${assessments.find(ass => ass.item_id === item.id).last && isItToday(assessments.find(ass => ass.item_id === item.id).last.date) ? 'done pr-1.5' : ''}`}
+                  className={`size-4 text-yellow-500 [&:not(.done)]:mr-1 [&.done]:w-0 overflow-hidden ${assessments.find(ass => ass.item_id === item.id).entries[0] && isItToday(assessments.find(ass => ass.item_id === item.id).entries[0].date) ? 'done pr-1.5' : ''}`}
                   style={{
                     transition: 'width .1s'
                   }}
                 />
                 <span
-                  className={`w-[1.5ch] [&.done]:w-0 overflow-hidden ${assessments.find(ass => ass.item_id === item.id).last && isItToday(assessments.find(ass => ass.item_id === item.id).last.date) ? 'done' : ''}`}
+                  className={`w-[1.5ch] [&.done]:w-0 overflow-hidden ${assessments.find(ass => ass.item_id === item.id).entries[0] && isItToday(assessments.find(ass => ass.item_id === item.id).entries[0].date) ? 'done' : ''}`}
                   style={{
                     transition: 'width .1s'
                   }}
                 >to</span>
                 <span>do</span>
                 <span
-                  className={`w-[2ch] [&.done]:w-0 overflow-hidden ${assessments.find(ass => ass.item_id === item.id).last && isItToday(assessments.find(ass => ass.item_id === item.id).last.date) ? '' : 'done'}`}
+                  className={`w-[2ch] [&.done]:w-0 overflow-hidden ${assessments.find(ass => ass.item_id === item.id).entries[0] && isItToday(assessments.find(ass => ass.item_id === item.id).entries[0].date) ? '' : 'done'}`}
                   style={{
                     transition: 'width .1s'
                   }}
                 >ne</span>
               </div>
             }
-            {assessments.find(ass => ass.item_id === item.id).last &&
-              <span>{formatWhenDate(assessments.find(ass => ass.item_id === item.id).last.date)}</span>
+            {assessments.find(ass => ass.item_id === item.id).entries.length > 0 &&
+              <span>{formatWhenDate(assessments.find(ass => ass.item_id === item.id).entries[0].date)}</span>
             }
-            {assessments.find(ass => ass.item_id === item.id).past.length > 0 && getLastPastAssDiff(item.id, assessments) !== 0 &&
+            {assessments.find(ass => ass.item_id === item.id).entries.length > 1 && getLastPastAssDiff(item.id, assessments) !== 0 &&
               <div className={`ml-auto rounded-full ${
                 getLastPastAssDiff(item.id, assessments) < 0 ? 'text-red-500' :
                 getLastPastAssDiff(item.id, assessments) > 0 ? 'text-green-600' : ''

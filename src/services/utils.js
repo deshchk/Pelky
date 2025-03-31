@@ -1,4 +1,4 @@
-import { errorCodes, successCodes } from "@/data"
+import { errorCodes, successCodes } from "@/services/data"
 
 export const nbsps = el => el.replace(/(\s)([aAwWiIzZoOuU])(\s)/g, '$1$2\xa0')
 
@@ -72,10 +72,9 @@ export const setRandomInterval = (callback, minDelay, maxDelay, density = 0.5) =
 
 
 
-export const getLastAssessment = (item_id, assessments) => assessments.find(ass => ass.item_id === item_id)?.last.value
+export const getLastAssessment = (item_id, assessments) => assessments.find(ass => ass.item_id === item_id).entries[0].value
 export const getLastPastAssessment = (item_id, assessments) => {
-  const pastAssessments = assessments.find(ass => ass.item_id === item_id).past || []
-  return pastAssessments[pastAssessments.length-1].value
+  return assessments.find(ass => ass.item_id === item_id).entries[1].value
 }
 export const getLastPastAssDiff = (item_id, assessments) => getLastAssessment(item_id, assessments) - getLastPastAssessment(item_id, assessments)
 

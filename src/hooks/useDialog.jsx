@@ -1,8 +1,10 @@
-import { useCallback, useEffect, useState } from "react"
-import { newID } from "@/utils"
+import { useCallback, useEffect, useRef, useState } from "react"
+import { newID } from "@/services/utils"
 
 function useDialog (setter, props) {
   const [promise, setPromise] = useState(null)
+
+  const id = useRef(newID()).current
 
   const confirm = () => new Promise((resolve) => {
     setPromise({ resolve })
@@ -21,7 +23,7 @@ function useDialog (setter, props) {
 
   useEffect(() => {
     const dialog = ({
-      id: newID(),
+      id,
       props,
       handleConfirm,
       closeDialog

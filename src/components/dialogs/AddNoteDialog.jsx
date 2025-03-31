@@ -1,7 +1,7 @@
-import SimpleButton from "@/components/atoms/SimpleButton"
 import { useEffect, useRef, useState } from "react"
-import { nbsps } from "@/utils"
 import { useOutsideClick } from "@/hooks/useOutsideClick"
+import { nbsps } from "@/services/utils"
+import SimpleButton from "@/components/atoms/SimpleButton"
 import Pen from "@/assets/pen.svg?react"
 
 function AddNoteDialog({props, handleConfirm, closeDialog}) {
@@ -42,17 +42,19 @@ function AddNoteDialog({props, handleConfirm, closeDialog}) {
           <span className="ml-2">
             {nbsps(item.title)}
           </span>
-          <span className={`inline-block ml-2 px-2  rounded ${assessment < 0 ? 'bg-red-900' : assessment > 0 ? 'bg-green-900' : ''}`}>
+          <span className={`inline-block ml-2 px-2 rounded ${assessment < 0 ? 'bg-red-900' : assessment > 0 ? 'bg-green-900' : ''}`.trim()}>
             {assessment}
           </span>
         </div>
 
         <div className="text-slate-200">
-          You can <em className="text-sky-300 font-medium">add a note</em> to your assessment or <em className="text-slate-400 font-medium tracking-wide">cancel</em> and save without it.
+          You can <em className="text-sky-300 font-medium">add a note</em> to your assessment or <em
+            className="text-slate-400 font-medium tracking-wide">cancel</em> and save without it.
         </div>
 
         <div className="flex flex-col gap-1">
-          <textarea name="note-dialog-input" rows="3" maxLength="280" onInput={onInput} onKeyDown={onKeyDown} ref={dialogInput}
+          <textarea ref={dialogInput}
+            name="note-dialog-input" rows="3" maxLength="280" onInput={onInput} onKeyDown={onKeyDown}
             className="resize-none size-full px-2 py-1.5 bg-slate-900 rounded outline-none">
           </textarea>
           <small className={`self-end font-medium ${inputValue.length === 280 ? 'text-amber-400' : ''}`.trim()}>{inputValue.length}/280</small>

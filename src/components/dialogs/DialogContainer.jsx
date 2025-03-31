@@ -1,10 +1,10 @@
-import { DialogContext } from "@/ctxs"
 import { useContext, useEffect, useRef } from "react"
 import { createPortal } from "react-dom"
-import Shadow from "@/components/atoms/Shadow"
-import Dialog from "@/components/atoms/Dialog"
-import NewItemDialog from "@/components/atoms/NewItemDialog"
-import AddNoteDialog from "@/components/atoms/AddNoteDialog"
+import { DialogContext } from "@/services/ctxs"
+import Shadow from "@/components/layouts/Shadow"
+import Dialog from "@/components/dialogs/Dialog"
+import NewItemDialog from "@/components/dialogs/NewItemDialog"
+import AddNoteDialog from "@/components/dialogs/AddNoteDialog"
 
 function DialogContainer() {
   const dialog = useContext(DialogContext)
@@ -15,7 +15,7 @@ function DialogContainer() {
   useEffect(() => {
     if (d) {
       setTimeout(() => {
-        dialogContainer.current.classList.add("open")
+        dialogContainer.current && dialogContainer.current.classList.add("open")
       }, 10)
     }
   }, [d])

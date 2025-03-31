@@ -1,11 +1,8 @@
-import { useContext, useEffect, useRef } from "react"
-import { AppContext } from "@/services/ctxs"
+import { useEffect, useRef } from "react"
 import { setRandomInterval } from "@/services/utils"
-import TrackerItem from "@/components/tracker/TrackerItem"
+import AssessmentItem from "@/components/tracker/AssessmentItem"
 
-function TrackerList() {
-  const { data, setter } = useContext(AppContext)
-
+function AssessmentList({ item, assessments, setter }) {
   const listContainer = useRef(null)
   const listEl = useRef(null)
   const eyesEl = useRef(null)
@@ -63,10 +60,9 @@ function TrackerList() {
         },100)
       }, 3500, 12500, 0.01)
     }
-  }, [data.items.length])
+  }, [assessments.entries.length])
 
   useEffect(() => {
-    listContainer.current?.scrollTo({top: listContainer.current.scrollHeight, behavior: 'instant'})
     updateGradient()
     setTimeout(() => {
       listScrolling.current = false
@@ -75,10 +71,10 @@ function TrackerList() {
 
   return (
     <div ref={listContainer}
-      className="grid grid-cols-1 h-full empty:!hidden overflow-y-auto invisible-scroll overscroll-none"
-      onTouchStart={onTouchStart} onScroll={onScroll} onTouchEnd={onTouchEnd}
+       className="grid grid-cols-1 h-full empty:!hidden overflow-y-auto invisible-scroll overscroll-none"
+       onTouchStart={onTouchStart} onScroll={onScroll} onTouchEnd={onTouchEnd}
     >
-      <div className="pointer-events-none fixed -left-60 top-0 w-[calc(100%+480px)] z-20 h-30">
+      <div className="pointer-events-none fixed -left-60 top-63 w-[calc(100%+480px)] z-20 h-30">
         <div ref={topGradientRadial} className="absolute top-0 left-0 w-full h-30 bg-radial-[at_50%_150%] from-transparent from-0% via-transparent via-40% to-slate-900 to-60% opacity-0 transition-opacity duration-500"></div>
         <div ref={topGradientLinear} className="absolute top-0 left-0 w-full h-10 bg-linear-to-b from-slate-900 to-transparent opacity-0 transition-opacity duration-500"></div>
       </div>
@@ -88,31 +84,20 @@ function TrackerList() {
         <div ref={botGradientLinear} className="absolute bottom-0 left-0 w-full h-10 bg-linear-to-t from-slate-900 to-transparent opacity-0 transition-opacity duration-500"></div>
       </div>
 
-      {data.items.length > 0 ? (
-        <ul className="self-end grid grid-cols-1 place-items-center pt-30" ref={listEl}>
-          {data.items.map((item, i) => {
-            const props = {
-              item,
-              items: data.items,
-              assessments: data.assessments,
-              listScrolling,
-              setters: {
-                setItems: setter.items,
-                setAssessments: setter.assessments,
-                setDialogData: setter.dialog,
-                setToastData: setter.toast,
-              },
-            }
-
-            return (
-              <TrackerItem
-                key={item.id}
+      {assessments.entries.length > 0 ?
+        (
+          <ul className="self-end grid grid-cols-1 place-items-center pt-px" ref={listEl}>
+            {assessments.entries.map((ass, i) => (
+              <AssessmentItem
+                key={ass.id}
+                item={item}
+                ass={ass}
                 listIndex={i + 1}
-                {...props}
+                listScrolling={listScrolling}
+                setter={setter}
               />
-            )
-          })}
-        </ul>
+            ))}
+          </ul>
         )
         :
         (
@@ -122,12 +107,7 @@ function TrackerList() {
                 <p ref={eyesEl}
                    className="text-center text-3xl mb-2 motion-safe:animate-[left-right_5s_ease-in-out_infinite] [--blinkPercent:100%] [mask-image:_linear-gradient(to_top,black_var(--blinkPercent),_transparent_var(--blinkPercent))]"
                 > 👀 </p>
-                <p>No items here yet</p>
-              </div>
-
-              <div className="absolute left-1/2 -translate-x-1/2 sm:right-20 bottom-44 px-5 py-2 bg-slate-800 text-slate-200 rounded-md shadow-xl shadow-slate-950/20 opacity-90">
-                Add a new one!
-                <div className="absolute left-1/2 -translate-x-1/2 bottom-0 translate-y-full border-t-24 border-slate-800 [border-inline:12px_solid_transparent]" />
+                <p>No assessments for this item yet</p>
               </div>
             </div>
           </div>
@@ -137,4 +117,4 @@ function TrackerList() {
   )
 }
 
-export default TrackerList
+export default AssessmentList

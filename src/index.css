@@ -12,6 +12,7 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: var(--color-slate-900);
 }
 
 * {
@@ -86,7 +87,7 @@ button {
 }
 
 .toast {
-  @apply relative top-9 flex flex-col p-4 pb-6 rounded overflow-hidden;
+  @apply relative top-6 flex flex-col p-4 pb-6 rounded overflow-hidden;
 
   .toast-progress-container {
     @apply flex absolute bottom-0 left-0 right-0;
@@ -152,5 +153,17 @@ button {
   }
   100% {
     transform: scaleX(1);
+  }
+}
+
+@keyframes bobbing {
+  0% {
+    transform: translateY(50%)
+  }
+  50% {
+    transform: translateY(-100%)
+  }
+  100% {
+    transform: translateY(50%)
   }
 }
