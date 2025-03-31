@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react"
+import {useCallback, useEffect, useLayoutEffect, useRef, useState} from "react"
 import { getSortedItems, loadData } from "@/services/data"
 import { handleSmallToast, newID } from "@/services/utils"
 import useDialog from "@/hooks/useDialog"
@@ -71,11 +71,11 @@ export default function ScrollerInput ({options, item, listIndex, items, setters
     resetScroller()
   }
 
-  const noteDialogProps = () => ({
+  const noteDialogProps = useCallback(() => ({
     type: 'add-note-dialog',
     item: item,
     assessment: currentAssessment.current
-  })
+  }), [item, currentAssessment])
 
   const noteDialog = useDialog(setDialogData, noteDialogProps)
 
