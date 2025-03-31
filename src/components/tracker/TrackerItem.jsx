@@ -176,8 +176,8 @@ export default function TrackerItem({item, listIndex, items, assessments, listSc
     }
 
     setMainTranslateX(isAfterSnapLeft.current ? Math.max(tX, 0) : isAfterSnapRight.current ? Math.min(tX, 0) : tX)
-    setLeftWidth(tX)
-    setRightWidth(-tX)
+    setLeftWidth(isAfterSnapLeft.current ? Math.max(tX, 0) : isAfterSnapRight.current ? Math.min(tX, 0) : tX)
+    setRightWidth(isAfterSnapLeft.current ? Math.max(-tX, 0) : isAfterSnapRight.current ? Math.min(-tX, 0) : -tX)
 
     setShouldLeftAction(tX > itemWrapper.current.clientWidth/1.8)
     setShouldRightAction(tX < -(itemWrapper.current.clientWidth/1.8))
