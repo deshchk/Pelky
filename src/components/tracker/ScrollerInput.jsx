@@ -26,7 +26,7 @@ export default function ScrollerInput ({options, item, listIndex, items, setters
         case 'positive':
           return { min: 0, max: item.scale.max }
         case 'negative':
-          return { min: -item.scale.max, max: 0 }
+          return { min: 0, max: item.scale.max }
         case 'both':
         default:
           return { min: -item.scale.max, max: item.scale.max }
@@ -102,7 +102,7 @@ export default function ScrollerInput ({options, item, listIndex, items, setters
 
     const colorPercent = item.scale.type === 'both' || !item.scale ? Math.abs(currentIndex - Math.abs(min))/max*100 : (Math.abs(max-currentIndex)/max)*100
     wrapperWrapper.current.style.backgroundColor = `
-      color-mix(in oklab, transparent ${100-colorPercent}%, var(${((item.scale.type === 'both' || !item.scale) && currentIndex > scaleValues.length/2) ? tint[0] : tint[1]}) ${colorPercent/2}%)
+      color-mix(in oklab, transparent ${100-colorPercent}%, var(${((item.scale.type === 'both' || !item.scale) && currentIndex > scaleValues.length/2) ? tint[0] : item.scale.type === 'negative' ? tint[0] : tint[1]}) ${colorPercent/2}%)
     `.trim()
 
     clearTimeout(countdownTimeout.current)

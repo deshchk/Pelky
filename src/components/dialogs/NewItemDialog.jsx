@@ -50,79 +50,111 @@ function NewItemDialog({handleConfirm, closeDialog}) {
         </div>
 
         <div className="flex flex-col">
-          <div className="relative flex items-center gap-2 font-semibold px-3 py-3 bg-slate-900/40 rounded-t touch-manipulation collapsed">
-            <div className="flex items-center gap-1 basis-3/11 bg-slate-900 px-1.5 py-0.5 rounded-sm border border-transparent has-focus:border-slate-700">
-              <span className="text-sm shrink-0">Max:</span>
-              <input
-                type="number"
-                min="1" max="10"
-                value={String(scaleMaxValue)}
-                onBeforeInput={e => e.target.value.length === 2 && e.preventDefault()}
-                onChange={e => setScaleMaxValue(Number(e.target.value))}
-                inputMode="numeric"
-                pattern="\d*"
-                className="!appearance-none font-normal outline-0 text-center flex-1"
-              />
+          <div>
+            <div
+                className="peer group flex items-center justify-between text-sm px-3 py-2 bg-slate-900/50 [&:not(.collapsed)]:bg-slate-900 [&:not(.collapsed)]:rounded touch-manipulation collapsed"
+                onClick={onCollapse}
+            >
+              <span className="font-semibold pointer-events-none">Scale</span>
+              <em className="text-xs tracking-wide pointer-events-none"><strong>{scaleMaxValue}</strong> – {scaleType === 'both'? 'both ways' : scaleType}</em>
+              <Chevron className="group-[:not(.collapsed)]:scale-y-[-1] size-4 stroke-2 pointer-events-none"/>
             </div>
 
-            <div className="flex-1 grid grid-cols-2 gap-2 text-sm">
-              <label htmlFor="scale-both" className="py-1 text-center text-slate-50 font-normal bg-slate-700 rounded has-checked:bg-slate-200 has-checked:text-slate-900">
-                <input id="scale-both" name="scale-type" type="radio" className="sr-only" onChange={() => setScaleType('both')} defaultChecked/> -{scaleMaxValue} to {scaleMaxValue}
-              </label>
+            <div className="hide-able grid-rows-[1fr] peer-[.collapsed]:grid-rows-[0fr] peer-[:not(.collapsed)]:mt-4 peer-[:not(.collapsed)]:mb-5">
+              <div className="flex flex-col items-center gap-y-4 font-semibold px-3 touch-manipulation overflow-hidden">
+                <div className="self-stretch grid grid-cols-3 gap-x-3 mt-2">
+                  <label htmlFor="scale-both" className="h-6 bg-linear-to-r from-lime-700 from-20% to-80% to-orange-600 rounded outline-offset-2 opacity-50 has-checked:outline has-checked:outline-late-50 has-checked:opacity-100 transition-opacity">
+                    <input id="scale-both" name="scale-type" type="radio" className="sr-only" onChange={() => setScaleType('both')} defaultChecked/>
+                  </label>
 
-              <label htmlFor="scale-positive" className="py-1 text-center text-slate-50 font-normal bg-slate-700 rounded has-checked:bg-slate-200 has-checked:text-slate-900">
-                <input id="scale-positive" name="scale-type" type="radio" className="sr-only" onChange={() => setScaleType('positive')} /> 0 to {scaleMaxValue}
-              </label>
+                  <label htmlFor="scale-positive" className="h-6 bg-linear-to-r from-slate-700 to-80% to-lime-700 rounded outline-offset-2 opacity-50 has-checked:outline has-checked:outline-late-50 has-checked:opacity-100 transition-opacity">
+                    <input id="scale-positive" name="scale-type" type="radio" className="sr-only" onChange={() => setScaleType('positive')}/>
+                  </label>
+
+                  <label htmlFor="scale-negative" className="h-6 bg-linear-to-r from-slate-700 to-80% to-orange-600 rounded outline-offset-2 opacity-50 has-checked:outline has-checked:outline-late-50 has-checked:opacity-100 transition-opacity">
+                    <input id="scale-negative" name="scale-type" type="radio" className="sr-only" onChange={() => setScaleType('negative')}/>
+                  </label>
+                </div>
+
+                <div className={`h-8 flex justify-between items-center px-3 w-10/12 rounded-md transition-colors duration-300 bg-linear-to-r ${
+                  scaleType === 'both' ? 'from-lime-700 from-20% to-80% to-orange-600'
+                    : scaleType === 'positive' ? 'from-slate-700 to-80% to-lime-700' : 'from-slate-700 to-80% to-orange-600'
+                }`}>
+                  <span>
+                    {scaleType === 'both' ? `-${scaleMaxValue}` : 0}
+                  </span>
+                  <span>
+                    {scaleMaxValue}
+                  </span>
+                </div>
+
+                <div className="self-stretch grid grid-cols-3 gap-x-3">
+                  <label htmlFor="scale-one" className="h-6 grid place-items-center text-xs font-medium rounded opacity-50 bg-slate-700 has-checked:bg-slate-200 has-checked:text-slate-900 has-checked:opacity-100 transition-opacity">
+                    <input id="scale-one" name="scale-max" type="radio" className="sr-only" onChange={() => setScaleMaxValue(1)}/>
+                    1
+                  </label>
+
+                  <label htmlFor="scale-five" className="h-6 grid place-items-center text-xs font-medium rounded opacity-50 bg-slate-700 has-checked:bg-slate-200 has-checked:text-slate-900 has-checked:opacity-100 transition-opacity">
+                    <input id="scale-five" name="scale-max" type="radio" className="sr-only" onChange={() => setScaleMaxValue(5)} defaultChecked/>
+                    5
+                  </label>
+
+                  <label htmlFor="scale-ten" className="h-6 grid place-items-center text-xs font-medium rounded opacity-50 bg-slate-700 has-checked:bg-slate-200 has-checked:text-slate-900 has-checked:opacity-100 transition-opacity">
+                    <input id="scale-ten" name="scale-max" type="radio" className="sr-only" onChange={() => setScaleMaxValue(10)}/>
+                    10
+                  </label>
+                </div>
+              </div>
             </div>
           </div>
 
-          <input
-            className="dialog-input"
-            type="text" placeholder="Item's name"
-            name="item-name"
-            aria-label="Item's name"
-            autoComplete="off"
-            onInput={onInput}
-            onKeyDown={onKeyDown}
-            value={inputValue}
-            ref={dialogInput}
-          />
-
-          <div className="mt-4">
+          <div className="mt-1">
             <div
-              className="peer group flex items-center text-sm font-semibold px-3 py-2 bg-slate-900/50 [&:not(.collapsed)]:bg-slate-900 rounded touch-manipulation collapsed"
-              onClick={onCollapse}
+                className="peer group flex items-center text-sm font-semibold px-3 py-2 bg-slate-900/50 [&:not(.collapsed)]:bg-slate-900 [&:not(.collapsed)]:rounded touch-manipulation collapsed"
+                onClick={onCollapse}
             >
-              Set reminders
+              <span className="pointer-events-none">Reminders</span>
               <Chevron className="group-[:not(.collapsed)]:scale-y-[-1] ml-auto size-4 stroke-2 pointer-events-none"/>
             </div>
 
             <div className="hide-able grid-rows-[1fr] peer-[.collapsed]:grid-rows-[0fr] peer-[:not(.collapsed)]:mt-6 peer-[:not(.collapsed)]:mb-1">
               <DaySelector
-                selectedDays={selectedDays}
-                setSelectedDays={setSelectedDays}
+                  selectedDays={selectedDays}
+                  setSelectedDays={setSelectedDays}
               />
             </div>
           </div>
+
+          <input
+              className="dialog-input"
+              type="text" placeholder="Item's name"
+              name="item-name"
+              aria-label="Item's name"
+              autoComplete="off"
+              onInput={onInput}
+              onKeyDown={onKeyDown}
+              value={inputValue}
+              ref={dialogInput}
+          />
         </div>
 
         <div className="flex gap-4 justify-between mt-2">
           <SimpleButton
-            onClick={closeDialog}
-            className="dialog-button bg-slate-300 text-black"
+              onClick={closeDialog}
+              className="dialog-button bg-slate-300 text-black"
           >
             Cancel
           </SimpleButton>
 
           <SimpleButton
-            onClick={() => handleConfirm({
-              title: dialogInput.current.value,
-              selectedDays: selectedDays,
-              scaleMax: scaleMaxValue,
-              scaleType: scaleType
-            })}
-            disabled={!inputValue.replaceAll(" ", "")}
-            className="dialog-button bg-blue-500 disabled:text-blue-700"
+              onClick={() => handleConfirm({
+                title: dialogInput.current.value,
+                selectedDays: selectedDays,
+                scaleMax: scaleMaxValue,
+                scaleType: scaleType
+              })}
+              disabled={!inputValue.replaceAll(" ", "")}
+              className="dialog-button bg-blue-500 disabled:text-blue-700"
           >
             Add
           </SimpleButton>
