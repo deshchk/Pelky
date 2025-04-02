@@ -137,7 +137,7 @@ export default function AssessmentItem({item, ass, listScrolling, setter}) {
     setMainTranslateX(Math.min(tX, 0))
     setRightWidth(-tX)
 
-    setShouldRightAction(tX < -(itemWrapper.current.clientWidth/1.8))
+    setShouldRightAction(tX < -(itemWrapper.current.clientWidth/2))
   }
 
 

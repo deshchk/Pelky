@@ -83,8 +83,8 @@ function TrackerList() {
         <div ref={topGradientLinear} className="absolute top-0 left-0 w-full h-10 bg-linear-to-b from-slate-900 to-transparent opacity-0 transition-opacity duration-500"></div>
       </div>
 
-      <div className="pointer-events-none fixed -left-60 bottom-32 w-[calc(100%+480px)] z-20 h-30">
-        <div ref={botGradientRadial} className="absolute bottom-0 left-0 w-full h-30 bg-radial-[at_50%_150%] from-transparent from-0% via-transparent via-40% to-slate-900 to-60% opacity-0 transition-opacity duration-500 scale-y-[-1]"></div>
+      <div className="pointer-events-none fixed -left-60 bottom-32 w-[calc(100%+480px)] z-20 h-10">
+        <div ref={botGradientRadial} className="absolute bottom-0 left-0 w-full h-10 bg-radial-[at_50%_150%] from-transparent from-0% via-transparent via-40% to-slate-900 to-60% opacity-0 transition-opacity duration-500 scale-y-[-1]"></div>
         <div ref={botGradientLinear} className="absolute bottom-0 left-0 w-full h-10 bg-linear-to-t from-slate-900 to-transparent opacity-0 transition-opacity duration-500"></div>
       </div>
 
