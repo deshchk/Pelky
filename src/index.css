@@ -79,7 +79,7 @@ button {
 }
 
 .dialog-input {
-  @apply mt-4 bg-slate-900 border-b border-slate-700 px-3.5 py-2.5 focus:outline-none focus:border-slate-500 focus:placeholder:opacity-30;
+  @apply my-4 bg-slate-900 rounded border-slate-700 px-3.5 py-2.5 focus:outline-1 outline-offset-2 focus:outline-slate-500 focus:placeholder:opacity-30;
 }
 
 .dialog-button {

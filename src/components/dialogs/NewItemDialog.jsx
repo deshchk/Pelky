@@ -52,7 +52,7 @@ function NewItemDialog({handleConfirm, closeDialog}) {
         <div className="flex flex-col">
           <div>
             <div
-                className="peer group flex items-center justify-between text-sm px-3 py-2 bg-slate-900/50 [&:not(.collapsed)]:bg-slate-900 [&:not(.collapsed)]:rounded touch-manipulation collapsed"
+                className="peer group flex items-center justify-between text-sm px-3 py-2 bg-slate-900/50 [&:not(.collapsed)]:bg-slate-900 rounded touch-manipulation collapsed"
                 onClick={onCollapse}
             >
               <span className="font-semibold pointer-events-none">Scale</span>
@@ -108,9 +108,21 @@ function NewItemDialog({handleConfirm, closeDialog}) {
             </div>
           </div>
 
-          <div className="mt-1">
+          <input
+              className="dialog-input"
+              type="text" placeholder="Item's name"
+              name="item-name"
+              aria-label="Item's name"
+              autoComplete="off"
+              onInput={onInput}
+              onKeyDown={onKeyDown}
+              value={inputValue}
+              ref={dialogInput}
+          />
+
+          <div>
             <div
-                className="peer group flex items-center text-sm font-semibold px-3 py-2 bg-slate-900/50 [&:not(.collapsed)]:bg-slate-900 [&:not(.collapsed)]:rounded touch-manipulation collapsed"
+                className="peer group flex items-center text-sm font-semibold px-3 py-2 bg-slate-900/50 [&:not(.collapsed)]:bg-slate-900 rounded touch-manipulation collapsed"
                 onClick={onCollapse}
             >
               <span className="pointer-events-none">Reminders</span>
@@ -124,18 +136,6 @@ function NewItemDialog({handleConfirm, closeDialog}) {
               />
             </div>
           </div>
-
-          <input
-              className="dialog-input"
-              type="text" placeholder="Item's name"
-              name="item-name"
-              aria-label="Item's name"
-              autoComplete="off"
-              onInput={onInput}
-              onKeyDown={onKeyDown}
-              value={inputValue}
-              ref={dialogInput}
-          />
         </div>
 
         <div className="flex gap-4 justify-between mt-2">
