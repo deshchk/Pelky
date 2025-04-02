@@ -55,6 +55,7 @@ export default function ScrollerInput ({options, item, listIndex, items, setters
   function resetScroller() {
     setAnimating(false)
     setShowAssessmentOptions(false)
+    setSwipingBlocked(false)
 
     refresher.current = newID()
 
