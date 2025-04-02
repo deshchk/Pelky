@@ -179,8 +179,8 @@ export default function ScrollerInput ({options, item, listIndex, items, setters
 
 
   useLayoutEffect(() => {
-    dontHandleScroll.current = true
     if (scrollerWrapper.current && !animating) {
+      dontHandleScroll.current = true
       wrapperWrapper.current.style.backgroundColor = 'transparent'
       scrollerWrapper.current.scrollTo({
         top: item.scale.type === 'both' || !item.scale ? ((scaleValues.length/2) * scrollerWrapper.current.clientHeight) - scrollerWrapper.current.clientHeight/2 : scrollerWrapper.current.scrollHeight,
