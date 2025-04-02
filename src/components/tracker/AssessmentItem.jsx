@@ -61,7 +61,7 @@ export default function AssessmentItem({item, ass, listScrolling, setter}) {
         return prev.map(a => a.item_id === item.id ? {...a, entries: a.entries.filter(x => x.id !== ass.id)} : a)
       })
       navigate(`/ass/${item.id}`, { replace: true })
-    }, 200)
+    }, 100)
   }
 
   // adding OR changing note

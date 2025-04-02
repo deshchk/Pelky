@@ -87,7 +87,7 @@ export default function TrackerItem({item, listIndex, items, assessments, listSc
         setShouldRightAction(false)
         setLoadingItem(false)
       })
-    }, 200)
+    }, 100)
   }
 
   // setting reminders for the item
