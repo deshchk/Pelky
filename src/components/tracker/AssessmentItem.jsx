@@ -37,7 +37,7 @@ export default function AssessmentItem({item, ass, listScrolling, setter}) {
         case 'positive':
           return { min: 0, max: item.scale.max }
         case 'negative':
-          return { min: -item.scale.max, max: 0 }
+          return { min: 0, max: item.scale.max }
         case 'both':
         default:
           return { min: -item.scale.max, max: item.scale.max }
@@ -49,7 +49,7 @@ export default function AssessmentItem({item, ass, listScrolling, setter}) {
 
   const { min, max } = getMinMax()
   const scaleValues = Array.from({ length: max - min + 1 }, (_, i) => min + i)
-  const colorPercent = item.scale.type === 'both' || !item.scale ? Math.abs(scaleValues.indexOf(ass.value) - Math.abs(min))/max*100 : (Math.abs(max-scaleValues.indexOf(ass.value))/max)*100
+  const colorPercent = item.scale.type === 'both' || !item.scale ? Math.abs(scaleValues.indexOf(ass.value) - Math.abs(min))/max*100 : (Math.abs(scaleValues.indexOf(ass.value))/max)*100
 
 
   // ---------- ACTION FUNCTIONS ----------
@@ -253,7 +253,8 @@ export default function AssessmentItem({item, ass, listScrolling, setter}) {
 
         <div
           style={{
-            backgroundColor: ass.value === 0 ? 'color-mix(in oklab, transparent, var(--color-slate-950) 50%' : `color-mix(in oklab, transparent ${100 - colorPercent}%, var(${((item.scale.type === 'both' || !item.scale) && scaleValues.indexOf(ass.value) > scaleValues.length / 2) ? '--color-green-500' : '--color-red-500'}) ${colorPercent / 2.5}%)`,
+            backgroundColor: ass.value === 0 ? 'color-mix(in oklab, transparent, var(--color-slate-950) 50%'
+                : `color-mix(in oklab, transparent ${100-colorPercent}%, var(${((item.scale.type === 'both' || !item.scale) && scaleValues.indexOf(ass.value) > scaleValues.length/2) ? '--color-red-500' : item.scale.type === 'negative' ? '--color-red-500' : '--color-green-500'}) ${colorPercent/2}%)`,
           }}
           className="h-full w-18 grid place-items-center text-xl"
         >
