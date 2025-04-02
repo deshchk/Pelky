@@ -91,6 +91,7 @@ export default function AssessmentItem({item, ass, listScrolling, setter}) {
     e.target.classList.remove('active')
 
     if ((ass.note && e.target.textContent.trim() === ass.note.trim()) || (!ass.note && e.target.textContent.trim() === '')) {
+      e.target.textContent = ''
       return
     } else {
       setter.assessments(prev => {
@@ -190,7 +191,7 @@ export default function AssessmentItem({item, ass, listScrolling, setter}) {
   return (
     <li
       ref={itemWrapper}
-      className="group/item relative grid grid-cols-1 grid-rows-1 w-full overflow-hidden border-y -mt-px first:border-y border-slate-700 bg-red-500 touch-manipulation"
+      className="group/item relative grid grid-cols-1 grid-rows-1 w-full overflow-hidden border-y -mt-px first:border-y border-slate-950 bg-red-500 touch-manipulation"
       style={{
         transform: `translateZ(0) ${loadingItem ? 'translateX(-100%)' : 'translateX(0)'}`,
         transition: `opacity .2s ease-in-out, transform .2s`,
@@ -211,26 +212,27 @@ export default function AssessmentItem({item, ass, listScrolling, setter}) {
           <div className="flex-1 relative flex items-center gap-2">
             <div className="flex-1 flex flex-col gap-2 m-2">
               <div className="flex items-center justify-between">
-                <div className="px-1.5 py-0.5 text-sm font-medium">
+                <div className="px-1.5 py-0.5 text-xs font-medium">
                   {!parseInt(formatWhenDate(ass.date)) ?
                     <span>
-                      <span>{formatWhenDate(ass.date)}</span>
+                      <span className="text-sm">{formatWhenDate(ass.date)}</span>
                       <span className="ml-2 text-slate-400">{ass.date.split(',')[1]}</span>
                     </span>
                     :
                     <span>
-                      <span>{ass.date.split(',')[0]}</span>
+                      <span className="text-sm">{ass.date.split(',')[0]}</span>
                       <span className="ml-2 text-slate-400">{ass.date.split(',')[1]}</span>
                     </span>
                   }
                 </div>
-                <small className={`font-medium mr-1.5 ${inputValue.length < 200 ? 'text-slate-400' : inputValue.length === 280 ? 'text-amber-400' : ''}`.trim()}>{inputValue.length}/280</small>
+                <small className={`text-xs mr-1.5 ${inputValue.length < 200 ? 'text-slate-400' : inputValue.length === 280 ? 'text-amber-400' : ''}`.trim()}>{inputValue.length}/280</small>
               </div>
 
               <div className="mx-1 inline-block">
                 <div
                   contentEditable={true}
-                  className="px-2 py-1 rounded bg-slate-950 flex min-h-7 items-center gap-3 text-slate-200 text-sm focus:outline-none focus:bg-black/30"
+                  placeholder="add a note"
+                  className="px-2 py-1 rounded bg-slate-950/30 flex min-h-7 items-center gap-3 text-slate-200 text-sm focus:outline-none focus:bg-slate-950"
                   onBeforeInput={onNoteChangeBeforeInput}
                   onInput={onNoteChangeInput}
                   onBlur={onNoteChangeBlur}
