@@ -108,10 +108,6 @@ export default function ScrollerInput ({options, item, listIndex, items, setters
     clearTimeout(countdownTimeout.current)
     clearTimeout(savingTimeout.current)
 
-    setTimeout(() => {
-      setSwipingBlocked(false)
-    }, 900)
-
     countdownTimeout.current = setTimeout(() => {
       if (!cancelAssessment.current) {
         setAnimating(true)
@@ -123,6 +119,12 @@ export default function ScrollerInput ({options, item, listIndex, items, setters
         resetScroller()
       }
     }, 3600)
+  }
+
+  function handleTouchEnd() {
+    setTimeout(() => {
+      setSwipingBlocked(false)
+    }, 500)
   }
 
 
@@ -195,6 +197,7 @@ export default function ScrollerInput ({options, item, listIndex, items, setters
   useEffect(() => {
     const ac = new AbortController()
     scrollerWrapper.current?.addEventListener("scroll", handleScroll, { passive: false, signal: ac.signal })
+    scrollerWrapper.current?.addEventListener("touchend", handleTouchEnd, { signal: ac.signal })
     return () => ac.abort()
   }, [])
 
