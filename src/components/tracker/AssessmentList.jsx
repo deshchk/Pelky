@@ -81,13 +81,13 @@ function AssessmentList({ item, assessments, collapseTitle, setter }) {
        onTouchStart={onTouchStart} onScroll={onScroll} onTouchEnd={onTouchEnd}
     >
       <div
-        className="pointer-events-none fixed -left-60 top-63 w-[calc(100%+480px)] z-20 h-30"
+        className="pointer-events-none fixed -left-60 top-63 w-[calc(100%+480px)] z-20 h-10"
         style={{
           top: collapseTitle ? '6.53rem' : '15.75rem',
           transition: collapseTitle ? 'none' : 'top .2s ease-in-out',
         }}
       >
-        <div ref={topGradientRadial} className="absolute top-0 left-0 w-full h-30 bg-radial-[at_50%_150%] from-transparent from-0% via-transparent via-40% to-slate-900 to-60% opacity-0 transition-opacity duration-500"></div>
+        <div ref={topGradientRadial} className="absolute top-0 left-0 w-full h-10 bg-radial-[at_50%_150%] from-transparent from-0% via-transparent via-40% to-slate-900 to-60% opacity-0 transition-opacity duration-500"></div>
         <div ref={topGradientLinear} className="absolute top-0 left-0 w-full h-10 bg-linear-to-b from-slate-900 to-transparent opacity-0 transition-opacity duration-500"></div>
       </div>
 
@@ -98,7 +98,7 @@ function AssessmentList({ item, assessments, collapseTitle, setter }) {
 
       {assessments.entries.length > 0 ?
         (
-          <ul className="self-end grid grid-cols-1 place-items-center pt-px" ref={listEl}>
+          <ul className={`self-end grid grid-cols-1 place-items-center pt-px ${assessments.entries.length > 5 ? 'pb-34' : ''}`} ref={listEl}>
             {assessments.entries.map((ass, i) => (
               <AssessmentItem
                 key={ass.id}

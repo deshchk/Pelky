@@ -253,7 +253,7 @@ export default function AssessmentItem({item, ass, listScrolling, setter}) {
 
         <div
           style={{
-            backgroundColor: `color-mix(in oklab, transparent ${100 - colorPercent}%, var(${((item.scale.type === 'both' || !item.scale) && scaleValues.indexOf(ass.value) > scaleValues.length / 2) ? '--color-green-500' : '--color-red-500'}) ${colorPercent / 2.5}%)`,
+            backgroundColor: ass.value === 0 ? 'color-mix(in oklab, transparent, var(--color-slate-950) 50%' : `color-mix(in oklab, transparent ${100 - colorPercent}%, var(${((item.scale.type === 'both' || !item.scale) && scaleValues.indexOf(ass.value) > scaleValues.length / 2) ? '--color-green-500' : '--color-red-500'}) ${colorPercent / 2.5}%)`,
           }}
           className="h-full w-18 grid place-items-center text-xl"
         >

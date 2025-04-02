@@ -79,12 +79,12 @@ function Nav() {
         <ul className="py-6 flex justify-center mb-6">
           {!location.pathname.includes('ass') ?
             <li className="relative" onClick={addItem}>
-              <Plus className="size-14 text-slate-200 p-2 bg-sky-600 rounded-full" />
+              <Plus className="size-14 text-slate-200 p-2 bg-sky-600/90 rounded-full" />
               {data.items.length === 0 &&
                 <Stars className="absolute -top-1.5 -left-5 size-8 scale-x-[-1] text-yellow-500"/>}
             </li>
             :
-            <li className="h-14 flex gap-2 items-center text-slate-200 font-medium pl-3 pr-6 bg-slate-600 rounded-full" onClick={goBack}>
+            <li className="h-14 flex gap-2 items-center text-slate-200 font-medium pl-3 pr-6 bg-slate-800 rounded-full" onClick={goBack}>
               <Chevron className="size-7 stroke-2 rotate-90" />
               Back
             </li>
