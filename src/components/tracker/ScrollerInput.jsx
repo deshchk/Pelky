@@ -1,6 +1,6 @@
-import {useCallback, useEffect, useLayoutEffect, useRef, useState} from "react"
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { getSortedItems, loadData } from "@/services/data"
-import { handleSmallToast, newID } from "@/services/utils"
+import { handleSmallToast, nbsps, newID } from "@/services/utils"
 import useDialog from "@/hooks/useDialog"
 
 export default function ScrollerInput ({options, item, listIndex, items, setters}) {
@@ -142,7 +142,7 @@ export default function ScrollerInput ({options, item, listIndex, items, setters
             day: "2-digit", month: "2-digit", year: "numeric",
             hour: "numeric", minute: "numeric"
           }).format(new Date()).toUpperCase(),
-          note: currentNote.current || null
+          note: nbsps(currentNote.current) || null
         }].concat(ass.entries),
       }) : ass
     )

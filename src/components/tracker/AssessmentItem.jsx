@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router"
 import { useOutsideClick } from "@/hooks/useOutsideClick"
-import { formatWhenDate, handleSmallToast } from "@/services/utils"
+import {formatWhenDate, handleSmallToast, nbsps} from "@/services/utils"
 import ItemAction from "@/components/tracker/ItemAction"
 
 export default function AssessmentItem({item, ass, listScrolling, setter}) {
@@ -94,7 +94,7 @@ export default function AssessmentItem({item, ass, listScrolling, setter}) {
       return
     } else {
       setter.assessments(prev => {
-        return prev.map(a => a.item_id === item.id ? {...a, entries: a.entries.map(x => x.id === ass.id ? {...x, note: e.target.textContent.trim()} : x)} : a)
+        return prev.map(a => a.item_id === item.id ? {...a, entries: a.entries.map(x => x.id === ass.id ? {...x, note: nbsps(e.target.textContent.trim())} : x)} : a)
       })
 
       document.activeElement.blur()
