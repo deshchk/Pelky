@@ -60,7 +60,7 @@ function NewItemDialog({handleConfirm, closeDialog}) {
               <Chevron className="group-[:not(.collapsed)]:scale-y-[-1] size-4 stroke-2 pointer-events-none"/>
             </div>
 
-            <div className="hide-able grid-rows-[1fr] peer-[.collapsed]:grid-rows-[0fr] peer-[:not(.collapsed)]:mt-4 peer-[:not(.collapsed)]:mb-1">
+            <div className="hide-able grid-rows-[1fr] peer-[.collapsed]:grid-rows-[0fr] peer-[:not(.collapsed)]:mt-4 peer-[:not(.collapsed)]:mb-1 transition-[margin_.2s]">
               <div className="flex flex-col items-center gap-y-4 font-semibold px-3 touch-manipulation overflow-hidden">
                 <div className="self-stretch grid grid-cols-3 gap-x-3 mt-2">
                   <label htmlFor="scale-both" className="h-6 bg-linear-to-r from-red-500 from-20% to-80% to-green-700 rounded outline-offset-2 opacity-50 has-checked:outline has-checked:outline-late-50 has-checked:opacity-100 transition-opacity">
@@ -76,7 +76,7 @@ function NewItemDialog({handleConfirm, closeDialog}) {
                   </label>
                 </div>
 
-                <div className={`h-8 flex justify-between items-center px-3 w-10/12 rounded-md transition-colors duration-300 bg-linear-to-r ${
+                <div className={`h-8 flex justify-between items-center px-3 w-10/12 rounded-md transition-colors duration-300 bg-linear-to-r overflow-hidden ${
                   scaleType === 'both' ? 'from-red-500 from-20% to-80% to-green-700'
                     : scaleType === 'positive' ? 'from-slate-700 to-80% to-green-700' : 'from-slate-700 to-80% to-red-500'
                 }`}>
