@@ -274,7 +274,7 @@ export default function AssessmentItem({item, ass, listScrolling, setter}) {
         <div
           style={{
             backgroundColor: ass.value === 0 ? 'color-mix(in oklab, transparent, var(--color-slate-950) 50%'
-                : `color-mix(in oklab, transparent ${100-colorPercent}%, var(${((item.scale.type === 'both' || !item.scale) && scaleValues.indexOf(ass.value) < scaleValues.length/2) ? '--color-red-500' : item.scale.type === 'negative' ? '--color-red-500' : '--color-green-500'}) ${colorPercent/2}%)`,
+              : `color-mix(in oklab, transparent ${100-colorPercent}%, var(${((item.scale.type === 'both' || !item.scale) && scaleValues.indexOf(ass.value) < scaleValues.length/2) ? '--color-red-500' : item.scale.type === 'negative' ? '--color-red-500' : '--color-green-500'}) ${colorPercent/2}%)`,
           }}
           className="h-full w-18 grid place-items-center text-xl"
         >

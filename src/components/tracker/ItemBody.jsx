@@ -131,10 +131,10 @@ export default function ItemBody({item, items, setters, assessments}) {
             }
             {assessments.find(ass => ass.item_id === item.id).entries.length > 1 && getLastPastAssDiff(item.id, assessments) !== 0 &&
               <div className={`ml-auto rounded-full ${
-                getLastPastAssDiff(item.id, assessments) < 0 ? 'text-red-500' :
-                getLastPastAssDiff(item.id, assessments) > 0 ? 'text-green-600' : ''
+                getLastPastAssDiff(item.id, assessments) < 0 ? item.scale.type === 'negative' ? 'text-green-600' : 'text-red-500':
+                getLastPastAssDiff(item.id, assessments) > 0 ? item.scale.type === 'negative' ? 'text-red-500' : 'text-green-600' : ''
               }`}>
-                {getLastPastAssDiff(item.id, assessments)}
+                {Math.abs(getLastPastAssDiff(item.id, assessments))}
                 {getLastPastAssDiff(item.id, assessments) < 0 && <span>↓</span>}
                 {getLastPastAssDiff(item.id, assessments) > 0 && <span>↑</span>}
               </div>
