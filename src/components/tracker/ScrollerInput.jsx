@@ -161,9 +161,10 @@ export default function ScrollerInput ({options, item, listIndex, items, setters
       ), newAssessments))
     }
 
-    const nextItems = getSortedItems(items, newAssessments).toReversed()
+    const nextItems = getSortedItems(items, newAssessments)
     const nextIndex = nextItems.length-nextItems.indexOf(nextItems.find(i => i.id === item.id))
 
+    console.log(item.index, nextIndex)
     if (Math.abs(nextIndex-item.index) > 1) {
       setLoadingItem(true)
       setTimeout(() => {
