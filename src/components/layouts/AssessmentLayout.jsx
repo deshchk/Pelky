@@ -34,7 +34,7 @@ function AssessmentLayout() {
           style={{
             marginTop: collapseTitle ? '0' : '2.5rem',
             height: collapseTitle ? '0' : '1.75rem',
-            transition: 'height .2s ease-in-out, margin-top .2s ease-in-out',
+            transition: 'height .1s ease-in-out, margin-top .2s ease-in-out',
           }}
         />
       </div>

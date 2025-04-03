@@ -28,7 +28,7 @@ function AssessmentList({ item, assessments, collapseTitle, setter }) {
 
     updateGradient()
 
-    if (e.target.scrollHeight > e.target.clientHeight + 104 && e.target.scrollTop > 0) {
+    if (e.target.scrollHeight > e.target.clientHeight + 136 && e.target.scrollTop > 0) {
       setter.collapseTitle(true)
     } else if (e.target.scrollTop === 0) {
       setter.collapseTitle(false)
@@ -84,7 +84,7 @@ function AssessmentList({ item, assessments, collapseTitle, setter }) {
         className="pointer-events-none fixed -left-60 top-63 w-[calc(100%+480px)] z-20 h-10"
         style={{
           top: collapseTitle ? '6.53rem' : '15.75rem',
-          transition: collapseTitle ? 'none' : 'top .2s ease-in-out',
+          transition: 'top .2s ease-in',
         }}
       >
         <div ref={topGradientRadial} className="absolute top-0 left-0 w-full h-10 bg-radial-[at_50%_150%] from-transparent from-0% via-transparent via-40% to-slate-900 to-60% opacity-0 transition-opacity duration-500"></div>

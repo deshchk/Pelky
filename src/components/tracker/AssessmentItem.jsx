@@ -15,6 +15,7 @@ export default function AssessmentItem({item, ass, listScrolling, setter}) {
 
   const [wasMoving, setWasMoving] = useState(false)
   const [loadingItem, setLoadingItem] = useState(false)
+  const [inputFocused, setInputFocused] = useState(null)
 
   const [shouldRightAction, setShouldRightAction] = useState(false)
 
@@ -69,13 +70,22 @@ export default function AssessmentItem({item, ass, listScrolling, setter}) {
   const changingNote = useRef(false)
   const [inputValue, setInputValue] = useState(ass.note ?? '')
 
+  function onNoteChangeFocus() {
+    setInputFocused(true)
+  }
+
   function onNoteChangeBeforeInput(e) {
-    if (e.target.textContent.trim().length === 280) {
+    if (e.target.textContent.trim().length >= 280) {
       e.preventDefault()
+      e.target.textContent = String(e.target.textContent).slice(0,280)
     }
   }
 
   function onNoteChangeInput(e) {
+    if (e.target.textContent.trim().length >= 280 && e.nativeEvent.inputType === 'insertFromPaste') {
+      e.preventDefault()
+      e.target.textContent = String(e.target.textContent).slice(0,280)
+    }
     changingNote.current = true
     setInputValue(e.target.textContent)
   }
@@ -88,9 +98,11 @@ export default function AssessmentItem({item, ass, listScrolling, setter}) {
   }
 
   function onNoteChangeBlur(e) {
-    e.target.classList.remove('active')
+    setInputFocused(false)
 
-    if ((ass.note && e.target.textContent.trim() === ass.note.trim()) || (!ass.note && e.target.textContent.trim() === '')) {
+    if (ass.note && e.target.textContent.trim() === ass.note.trim()) {
+      return
+    } else if(!ass.note && e.target.textContent.trim() === '') {
       e.target.textContent = ''
       return
     } else {
@@ -225,7 +237,14 @@ export default function AssessmentItem({item, ass, listScrolling, setter}) {
                     </span>
                   }
                 </div>
-                <small className={`text-xs mr-1.5 ${inputValue.length < 200 ? 'text-slate-400' : inputValue.length === 280 ? 'text-amber-400' : ''}`.trim()}>{inputValue.length}/280</small>
+                <small
+                  className={`text-xs mr-1.5 transition-opacity duration-200 ${inputValue.length < 200 ? 'text-slate-400' : inputValue.length === 280 ? 'text-amber-400' : ''}`.trim()}
+                  style={{
+                    opacity: inputFocused ? '100%' : '0%',
+                  }}
+                >
+                  {inputValue.length}/280
+                </small>
               </div>
 
               <div className="mx-1 inline-block">
@@ -233,6 +252,7 @@ export default function AssessmentItem({item, ass, listScrolling, setter}) {
                   contentEditable={true}
                   placeholder="add a note"
                   className="px-2 py-1 rounded bg-slate-950/30 flex min-h-7 items-center gap-3 text-slate-200 text-sm focus:outline-none focus:bg-slate-950"
+                  onFocus={onNoteChangeFocus}
                   onBeforeInput={onNoteChangeBeforeInput}
                   onInput={onNoteChangeInput}
                   onBlur={onNoteChangeBlur}
