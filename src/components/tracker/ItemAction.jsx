@@ -12,7 +12,7 @@ export default function ItemAction({type, action}) {
     : type === 'reminder' ?
         <Clock className="size-7" />
     : type === 'delete' ?
-        <Trash className="size-7.5" />
+        <Trash className="size-7" />
     : type === 'details' ?
         <List className="size-7" />
     : type === 'edit' ?

@@ -51,30 +51,35 @@ function Dialog({props, handleConfirm, closeDialog}) {
 
   return (
     <div className="px-6 py-8 w-full max-w-md rounded-lg bg-slate-800 border border-slate-700 text-white flex flex-col gap-6" ref={dialogEl}>
-      {Icon &&
-        <Icon className="size-10"/>
-      }
-      {title &&
-        <div className="text-xl font-semibold text-pretty mt-2">
-          {nbsps(title)}
+      <div className="relative flex">
+        <div className="flex flex-col gap-2">
+          {title &&
+            <div className="text-xl font-semibold text-pretty">
+              {nbsps(title)}
+            </div>
+          }
+          {message &&
+            <div className="text-slate-200 text-sm text-balance">
+              {message}
+            </div>
+          }
         </div>
-      }
-      {message &&
-        <div className="text-slate-200">
-          {message}
-        </div>
-      }
+        {Icon &&
+          <Icon className={`absolute top-1/2 -translate-y-1/2 right-0 ${message && title ? 'size-19.5' : 'size-11'} stroke-1 text-slate-700 shrink-0`} />
+        }
+      </div>
+
       {input &&
-        <input
-          className="dialog-input"
-          type="text" placeholder={input.placeholder}
-          name={input.name}
-          aria-label={input.placeholder}
-          autoComplete="off"
-          onInput={onInput}
-          onKeyDown={onKeyDown}
-          value={inputValue}
-          ref={dialogInput}
+          <input
+              className="dialog-input"
+              type="text" placeholder={input.placeholder}
+              name={input.name}
+              aria-label={input.placeholder}
+              autoComplete="off"
+              onInput={onInput}
+              onKeyDown={onKeyDown}
+              value={inputValue}
+              ref={dialogInput}
         />
       }
       {Custom &&

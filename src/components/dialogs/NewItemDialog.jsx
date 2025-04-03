@@ -44,9 +44,9 @@ function NewItemDialog({handleConfirm, closeDialog}) {
 
   return (
       <div className="px-6 py-8 w-full max-w-md rounded-lg bg-slate-800 border border-slate-700 text-white flex flex-col gap-6" ref={dialogEl}>
-        <div className="flex items-center gap-4 text-xl font-semibold text-pretty mt-2">
-          <Add className="size-10"/>
+        <div className="flex items-center justify-between gap-4 text-xl font-semibold text-pretty">
           Adding new item
+          <Add className="size-10 text-slate-700"/>
         </div>
 
         <div className="flex flex-col">

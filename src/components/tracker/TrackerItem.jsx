@@ -96,8 +96,8 @@ export default function TrackerItem({item, listIndex, items, assessments, listSc
     setDialogData,
     useMemo(() => ({
       Icon: Clock,
-      title: firstUpper(item.title),
-      message: 'On which days would you like to be reminded about this?',
+      title: `${firstUpper(item.title)}`,
+      message: 'On which days would you like to be reminded to asses it?',
       confirmText: 'Save',
       confirmBg: 'bg-blue-500',
       dataCollector: () => selectedDays,
