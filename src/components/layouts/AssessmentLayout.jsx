@@ -17,11 +17,11 @@ function AssessmentLayout() {
   return (
     <div className="grid grid-cols-1 h-full empty:!hidden overflow-y-auto invisible-scroll">
       <div
-        className="grid place-items-center h-fit px-10 pt-20 pb-14"
+        className="grid place-items-center h-fit px-10"
         style={{
           paddingTop: collapseTitle ? '2.5rem' : '5rem',
           paddingBottom: collapseTitle ? '1rem' : '3.5rem',
-          transition: 'padding .2s ease-in-out',
+          transition: 'padding .2s linear',
         }}
       >
         <div className="flex flex-col gap-1">
@@ -30,7 +30,7 @@ function AssessmentLayout() {
         </div>
 
         <Chevron
-          className="size-7 motion-safe:animate-[bobbing_2.5s_ease-in-out_infinite] overflow-hidden"
+          className="w-7 motion-safe:animate-[bobbing_2.5s_ease-in-out_infinite] overflow-hidden"
           style={{
             marginTop: collapseTitle ? '0' : '2.5rem',
             height: collapseTitle ? '0' : '1.75rem',

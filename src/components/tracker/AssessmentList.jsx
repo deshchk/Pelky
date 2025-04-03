@@ -28,9 +28,9 @@ function AssessmentList({ item, assessments, collapseTitle, setter }) {
 
     updateGradient()
 
-    if (e.target.scrollTop > 10) {
+    if (e.target.scrollHeight > e.target.clientHeight + 104 && e.target.scrollTop > 0) {
       setter.collapseTitle(true)
-    } else {
+    } else if (e.target.scrollTop === 0) {
       setter.collapseTitle(false)
     }
 
@@ -77,8 +77,8 @@ function AssessmentList({ item, assessments, collapseTitle, setter }) {
 
   return (
     <div ref={listContainer}
-       className="grid grid-cols-1 h-full empty:!hidden overflow-y-auto invisible-scroll overscroll-none"
-       onTouchStart={onTouchStart} onScroll={onScroll} onTouchEnd={onTouchEnd}
+      className="grid grid-cols-1 h-full empty:!hidden overflow-y-auto invisible-scroll overscroll-none"
+      onTouchStart={onTouchStart} onScroll={onScroll} onTouchEnd={onTouchEnd}
     >
       <div
         className="pointer-events-none fixed -left-60 top-63 w-[calc(100%+480px)] z-20 h-10"
@@ -98,7 +98,10 @@ function AssessmentList({ item, assessments, collapseTitle, setter }) {
 
       {assessments.entries.length > 0 ?
         (
-          <ul className={`self-end grid grid-cols-1 place-items-center pt-px ${assessments.entries.length > 5 ? 'pb-34' : ''}`} ref={listEl}>
+          <ul
+            className="self-end grid grid-cols-1 place-items-center pt-px"
+            ref={listEl}
+          >
             {assessments.entries.map((ass, i) => (
               <AssessmentItem
                 key={ass.id}
