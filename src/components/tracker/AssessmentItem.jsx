@@ -191,7 +191,7 @@ export default function AssessmentItem({item, ass, listScrolling, setter}) {
   return (
     <li
       ref={itemWrapper}
-      className="group/item relative grid grid-cols-1 grid-rows-1 w-full overflow-hidden border-y -mt-px first:border-y border-slate-950 bg-red-500 touch-manipulation"
+      className="group/item relative grid grid-cols-1 grid-rows-1 w-full overflow-hidden border-y -mt-px first:border-y border-slate-700 bg-red-500 touch-manipulation"
       style={{
         transform: `translateZ(0) ${loadingItem ? 'translateX(-100%)' : 'translateX(0)'}`,
         transition: `opacity .2s ease-in-out, transform .2s`,

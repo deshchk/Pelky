@@ -215,7 +215,7 @@ export default function ScrollerInput ({options, item, listIndex, items, setters
   }, [noteAssessment.current])
 
   return (
-    <div className="relative h-full w-18 border-l border-slate-950 text-xl bg-slate-900" ref={wrapperWrapper}>
+    <div className="relative h-full w-18 border-l border-slate-700 text-xl bg-slate-900" ref={wrapperWrapper}>
       <div
         ref={scrollerWrapper}
         className="scroller-input invisible-scroll"

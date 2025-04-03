@@ -277,7 +277,7 @@ export default function TrackerItem({item, listIndex, items, assessments, listSc
   return (
     <li
       ref={itemWrapper}
-      className="group/item relative grid grid-cols-2 w-full max-h-26 overflow-hidden border-y -mt-px first:border-y border-slate-950 touch-manipulation"
+      className="group/item relative grid grid-cols-2 w-full max-h-26 overflow-hidden border-y -mt-px first:border-y border-slate-700 touch-manipulation"
       style={{
         transform: `translateZ(0) ${loadingItem ? 'translateX(-100%)' : 'translateX(0)'}`,
         transition: `opacity .2s ease-in-out, transform .2s`,
