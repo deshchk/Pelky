@@ -103,7 +103,8 @@ export default function ScrollerInput ({options, item, listIndex, items, setters
 
     const colorPercent = item.scale.type === 'both' || !item.scale ? Math.abs(currentIndex - Math.abs(min))/max*100 : (Math.abs(max-currentIndex)/max)*100
     wrapperWrapper.current.style.backgroundColor = `
-      color-mix(in oklab, transparent ${100-colorPercent}%, var(${((item.scale.type === 'both' || !item.scale) && currentIndex > scaleValues.length/2) ? tint[0] : item.scale.type === 'negative' ? tint[0] : tint[1]}) ${colorPercent/2}%)
+      color-mix(in oklab, transparent ${100-colorPercent}%,
+      var(${((item.scale.type === 'both' || !item.scale) && currentIndex > scaleValues.length/2) ? tint[0] : item.scale.type === 'negative' ? tint[0] : tint[1]}) ${colorPercent/2}%)
     `.trim()
 
     clearTimeout(countdownTimeout.current)
@@ -216,7 +217,7 @@ export default function ScrollerInput ({options, item, listIndex, items, setters
   }, [noteAssessment.current])
 
   return (
-    <div className="relative h-full w-18 border-l border-slate-700 text-xl bg-slate-900" ref={wrapperWrapper}>
+    <div className="relative h-full w-18 border-l border-slate-800 text-xl bg-slate-900" ref={wrapperWrapper}>
       <div
         ref={scrollerWrapper}
         className="scroller-input invisible-scroll"
