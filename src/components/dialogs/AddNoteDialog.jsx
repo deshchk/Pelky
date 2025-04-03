@@ -37,7 +37,7 @@ function AddNoteDialog({props, handleConfirm, closeDialog}) {
       <div className="px-6 py-8 w-full max-w-md rounded-lg bg-slate-800 border border-slate-700 text-white flex flex-col gap-6" ref={dialogEl}>
         <Pen className="size-10"/>
 
-        <div className={`flex gap-x-3 items-end text-xl font-semibold leading-[1.5] text-pretty mt-2 w-fit px-2.5 py-px rounded ${assessment < 0 ? 'bg-red-900' : item.scale.type === 'negative' && assessment > 0 ? 'bg-red-900' : assessment > 0 ? 'bg-green-900' : ''}`}>
+        <div className={`flex gap-x-3 items-end text-xl font-semibold leading-[1.5] text-pretty mt-2 w-fit px-2.5 py-px rounded ${assessment < 0 ? 'bg-red-900' : item.scale.type === 'negative' && assessment > 0 ? 'bg-red-900' : assessment > 0 ? 'bg-green-900' : 'bg-slate-950/50'}`}>
           <span>
             {assessment}:
           </span>
