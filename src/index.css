@@ -6,7 +6,7 @@
   font-weight: 400;
   overflow: hidden;
 
-  color-scheme: light dark;
+  /*color-scheme: light dark;*/
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -25,8 +25,9 @@ a {
 
 body {
   @apply m-0 min-w-xs;
-  @apply bg-white text-slate-900;
-  @apply dark:bg-slate-900 dark:text-slate-50;
+  /*@apply bg-white text-slate-900;*/
+  /*@apply dark:bg-slate-900 dark:text-slate-50;*/
+  @apply bg-slate-900 text-slate-50;
 }
 
 button {
