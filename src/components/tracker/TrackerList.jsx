@@ -125,7 +125,7 @@ function TrackerList() {
                 <p>No items here yet</p>
               </div>
 
-              <div className="absolute left-1/2 -translate-x-1/2 sm:right-20 bottom-44 px-5 py-2 bg-slate-800 text-slate-200 rounded-md shadow-xl shadow-slate-950/20 opacity-90">
+              <div className="absolute left-1/2 -translate-x-1/2 sm:right-20 bottom-50 px-5 py-2 bg-slate-800 text-slate-200 rounded-md shadow-xl shadow-slate-950/20 opacity-90">
                 Add a new one!
                 <div className="absolute left-1/2 -translate-x-1/2 bottom-0 translate-y-full border-t-24 border-slate-800 [border-inline:12px_solid_transparent]" />
               </div>
