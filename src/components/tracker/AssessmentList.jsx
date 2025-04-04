@@ -2,13 +2,11 @@ import { useEffect, useRef } from "react"
 import { setRandomInterval } from "@/services/utils"
 import AssessmentItem from "@/components/tracker/AssessmentItem"
 
-function AssessmentList({ item, assessments, collapseTitle, setter }) {
+function AssessmentList({ item, assessments, setter }) {
   const listContainer = useRef(null)
   const listEl = useRef(null)
   const eyesEl = useRef(null)
 
-  const topGradientRadial = useRef(null)
-  const topGradientLinear = useRef(null)
   const botGradientRadial = useRef(null)
   const botGradientLinear = useRef(null)
 
@@ -44,10 +42,6 @@ function AssessmentList({ item, assessments, collapseTitle, setter }) {
   }
 
   function updateGradient() {
-    const topPercent = Math.min(100, Math.abs(listContainer.current.scrollTop))
-    topGradientRadial.current.style.setProperty("opacity", topPercent + "%")
-    topGradientLinear.current.style.setProperty("opacity", Math.pow(topPercent, 2) + "%")
-
     const botPercent = Math.min(100, Math.abs(listContainer.current.scrollHeight-(listContainer.current.clientHeight+listContainer.current.scrollTop)))
     botGradientRadial.current.style.setProperty("opacity", botPercent + "%")
     botGradientLinear.current.style.setProperty("opacity", Math.pow(botPercent, 2) + "%")
@@ -80,17 +74,6 @@ function AssessmentList({ item, assessments, collapseTitle, setter }) {
       className="grid grid-cols-1 h-full empty:!hidden overflow-y-auto invisible-scroll overscroll-none"
       onTouchStart={onTouchStart} onScroll={onScroll} onTouchEnd={onTouchEnd}
     >
-      <div
-        className="pointer-events-none fixed -left-60 top-63 w-[calc(100%+480px)] z-20 h-10"
-        style={{
-          top: collapseTitle ? '6.53rem' : '15.75rem',
-          transition: 'top .2s ease-in',
-        }}
-      >
-        <div ref={topGradientRadial} className="absolute top-0 left-0 w-full h-10 bg-radial-[at_50%_150%] from-transparent from-0% via-transparent via-40% to-slate-900 to-60% opacity-0 transition-opacity duration-500"></div>
-        <div ref={topGradientLinear} className="absolute top-0 left-0 w-full h-10 bg-linear-to-b from-slate-900 to-transparent opacity-0 transition-opacity duration-500"></div>
-      </div>
-
       <div className="pointer-events-none fixed -left-60 bottom-32 w-[calc(100%+480px)] z-20 h-10">
         <div ref={botGradientRadial} className="absolute bottom-0 left-0 w-full h-10 bg-radial-[at_50%_150%] from-transparent from-0% via-transparent via-40% to-slate-900 to-60% opacity-0 transition-opacity duration-500 scale-y-[-1]"></div>
         <div ref={botGradientLinear} className="absolute bottom-0 left-0 w-full h-10 bg-linear-to-t from-slate-900 to-transparent opacity-0 transition-opacity duration-500"></div>
@@ -99,7 +82,7 @@ function AssessmentList({ item, assessments, collapseTitle, setter }) {
       {assessments.entries.length > 0 ?
         (
           <ul
-            className="self-end grid grid-cols-1 place-items-center pt-px"
+            className="self-end grid grid-cols-1 place-items-center py-10"
             ref={listEl}
           >
             {assessments.entries.map((ass, i) => (

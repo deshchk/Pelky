@@ -17,16 +17,18 @@ function AssessmentLayout() {
   return (
     <div className="grid grid-cols-1 h-full empty:!hidden overflow-y-auto invisible-scroll">
       <div
-        className="grid place-items-center h-fit px-10"
+        className="relative z-10 grid place-items-center h-fit px-10"
         style={{
-          paddingTop: collapseTitle ? '2.5rem' : '5rem',
-          paddingBottom: collapseTitle ? '1rem' : '3.5rem',
-          transition: 'padding .2s linear',
+          paddingInline: collapseTitle ? '1.25rem' : '2.5rem',
+          paddingTop: collapseTitle ? '1.25rem' : '5rem',
+          paddingBottom: collapseTitle ? '1rem' : '2rem',
+          boxShadow: collapseTitle ? '0 0 20px 20px var(--color-slate-900)' : '0 0 0 0 var(--color-slate-900)',
+          transition: 'padding .3s ease-out, box-shadow .2s linear',
         }}
       >
         <div className="flex flex-col gap-1">
-          <small className="text-xs text-center tracking-wide uppercase font-semibold text-slate-400">Assessments of</small>
-          <span className="text-xl text-center font-medium">{item.title}</span>
+          <small className={`text-center tracking-wide uppercase font-semibold text-slate-400 ${collapseTitle ? 'text-[11px]' : 'text-xs'} transition-all`}>Assessments of</small>
+          <span className={`text-center font-medium ${collapseTitle ? 'line-clamp-1 text-ellipsis text-base' : 'text-lg'} transition-all`}>{item.title}</span>
         </div>
 
         <Chevron
@@ -34,7 +36,7 @@ function AssessmentLayout() {
           style={{
             marginTop: collapseTitle ? '0' : '2.5rem',
             height: collapseTitle ? '0' : '1.75rem',
-            transition: 'height .1s ease-in-out, margin-top .2s ease-in-out',
+            transition: 'height .1s ease-in-out, margin-top .1s ease-in-out',
           }}
         />
       </div>

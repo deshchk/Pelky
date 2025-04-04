@@ -5,7 +5,6 @@ import { AppContext, DialogContext, ToastContext } from "@/services/ctxs"
 import ToastsContainer from "@/components/toasts/ToastsContainer"
 import DialogContainer from "@/components/dialogs/DialogContainer"
 import Nav from "@/components/Nav"
-import Droplets from "@/assets/droplets.svg?react"
 
 function AppLayout() {
   const [loading, setLoading] = useState(true)
@@ -61,11 +60,7 @@ function AppLayout() {
           toast: setToastData
         }
       }}>
-        <header className="fixed top-0 left-0 w-full grid place-items-center z-80">
-          <Droplets className="size-10 text-sky-600" />
-        </header>
-
-        <main className="h-dvh min-w-full flex flex-col pb-32">
+        <main className="h-dvh min-w-full flex flex-col pb-34">
           {!loading &&
             <Outlet/>
           }

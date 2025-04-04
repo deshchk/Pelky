@@ -5,8 +5,8 @@ import { getSortedItems } from "@/services/data"
 import { handleBigToast, nbsps, newID } from "@/services/utils"
 import useDialog from "@/hooks/useDialog"
 import Stars from "@/assets/stars.svg?react"
-import Plus from "@/assets/plus.svg?react"
 import Chevron from "@/assets/chevron.svg?react"
+import Logo from "@/assets/logo.svg?react"
 
 
 function Nav() {
@@ -79,9 +79,15 @@ function Nav() {
         <ul className="py-6 flex justify-center mb-6">
           {!location.pathname.includes('ass') ?
             <li className="relative" onClick={addItem}>
-              <Plus className="size-14 text-slate-200 p-2 bg-sky-600/90 rounded-full" />
+              <div className="size-15 relative">
+                <Logo className="size-13 absolute left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 z-40"/>
+                <div className="size-17 absolute left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 bg-slate-900/90 rounded-full blur-[2px] z-30"/>
+                <div className="absolute z-10 motion-safe:animate-[ai-blob-1_8s_ease-in-out_infinite]"/>
+                <div className="absolute z-10 motion-safe:animate-[ai-blob-2_8s_ease-in-out_infinite]"/>
+                <div className="absolute z-20 motion-safe:animate-[ai-blob-3_5s_ease-in-out_infinite]"/>
+              </div>
               {data.items.length === 0 &&
-                <Stars className="absolute -top-1.5 -left-5 size-8 scale-x-[-1] text-yellow-500"/>}
+                  <Stars className="absolute -top-1.5 -left-5 size-8 scale-x-[-1] text-yellow-500"/>}
             </li>
             :
             <li className="h-14 flex gap-2 items-center text-slate-200 font-medium pl-3 pr-6 bg-slate-800 rounded-full" onClick={goBack}>
