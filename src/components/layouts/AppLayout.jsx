@@ -40,15 +40,15 @@ function AppLayout() {
 
   return (
     <>
-      <ToastContext.Provider value={{ data: toastData, push: setToastData }}>
+      <ToastContext value={{ data: toastData, push: setToastData }}>
         <ToastsContainer />
-      </ToastContext.Provider>
+      </ToastContext>
 
-      <DialogContext.Provider value={{ data: dialogData, push: setDialogData }}>
+      <DialogContext value={{ data: dialogData, push: setDialogData }}>
         <DialogContainer />
-      </DialogContext.Provider>
+      </DialogContext>
 
-      <AppContext.Provider value={{
+      <AppContext value={{
         data: {
           items,
           assessments,
@@ -60,14 +60,14 @@ function AppLayout() {
           toast: setToastData
         }
       }}>
-        <main className="h-dvh min-w-full flex flex-col pb-34">
+        <main className="h-dvh min-w-full flex flex-col pb-38">
           {!loading &&
             <Outlet/>
           }
         </main>
 
         <Nav />
-      </AppContext.Provider>
+      </AppContext>
     </>
   )
 }

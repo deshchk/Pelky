@@ -14,7 +14,7 @@ function Toast({handleClose, toast}) {
   }, [toast.message])
 
   return (toast.message &&
-    <div className={`small-toast ${toast.type} -translate-y-[200%] [&.open]:translate-y-6 transition-transform duration-300 pointer-events-auto`}
+    <div className={`small-toast ${toast.type} -translate-y-[200%] [&.open]:translate-y-0 transition-transform duration-300 pointer-events-auto`}
       onClick={() => handleClose(toast.id)} ref={toastEl}
     >
       {

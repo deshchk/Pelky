@@ -76,7 +76,7 @@ function Nav() {
   return (
     <>
       <nav className="fixed bottom-0 left-0 w-full bg-slate-900">
-        <ul className="py-6 flex justify-center mb-6">
+        <ul className="pb-6 pt-10 flex justify-center mb-6">
           {!location.pathname.includes('ass') ?
             <li className="relative" onClick={addItem}>
               <div className="size-15 relative">
@@ -87,7 +87,7 @@ function Nav() {
                 <div className="absolute z-20 motion-safe:animate-[ai-blob-3_5s_ease-in-out_infinite]"/>
               </div>
               {data.items.length === 0 &&
-                  <Stars className="absolute -top-1.5 -left-5 size-8 scale-x-[-1] text-yellow-500"/>}
+                  <Stars className="absolute -top-1.5 -left-5 size-8 scale-x-[-1] text-yellow-500 z-50"/>}
             </li>
             :
             <li className="h-14 flex gap-2 items-center text-slate-200 font-medium pl-3 pr-6 bg-slate-800 rounded-full" onClick={goBack}>

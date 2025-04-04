@@ -88,7 +88,7 @@ button {
 }
 
 .toast {
-  @apply relative top-6 flex flex-col p-4 pb-6 rounded overflow-hidden;
+  @apply relative top-0 flex flex-col p-4 pb-6 rounded overflow-hidden;
 
   .toast-progress-container {
     @apply flex absolute bottom-0 left-0 right-0;
