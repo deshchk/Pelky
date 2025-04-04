@@ -1,8 +1,10 @@
-import { useEffect, useRef } from "react"
+import {useEffect, useRef, useState} from "react"
 import { setRandomInterval } from "@/services/utils"
 import AssessmentItem from "@/components/tracker/AssessmentItem"
 
 function AssessmentList({ item, assessments, setter }) {
+  const [listLoaded, setListLoaded] = useState(false)
+
   const listContainer = useRef(null)
   const listEl = useRef(null)
   const eyesEl = useRef(null)
@@ -44,7 +46,7 @@ function AssessmentList({ item, assessments, setter }) {
   function updateGradient() {
     const botPercent = Math.min(100, Math.abs(listContainer.current.scrollHeight-(listContainer.current.clientHeight+listContainer.current.scrollTop)))
     botGradientRadial.current.style.setProperty("opacity", botPercent + "%")
-    botGradientLinear.current.style.setProperty("opacity", Math.pow(botPercent, 2) + "%")
+    botGradientLinear.current.style.setProperty("opacity", Math.pow(botPercent, 1.5) + "%")
   }
 
   function onTouchEnd() {
@@ -64,6 +66,7 @@ function AssessmentList({ item, assessments, setter }) {
 
   useEffect(() => {
     updateGradient()
+    setListLoaded(true)
     setTimeout(() => {
       listScrolling.current = false
     }, 100)
@@ -73,10 +76,14 @@ function AssessmentList({ item, assessments, setter }) {
     <div ref={listContainer}
       className="grid grid-cols-1 h-full empty:!hidden overflow-y-auto invisible-scroll overscroll-none"
       onTouchStart={onTouchStart} onScroll={onScroll} onTouchEnd={onTouchEnd}
+      style={{
+        opacity: listLoaded ? 1 : 0,
+        transition: 'opacity .1s ease-in-out',
+      }}
     >
       <div className="pointer-events-none fixed -left-60 bottom-41 w-[calc(100%+480px)] z-20 h-10">
         <div ref={botGradientRadial} className="absolute bottom-0 left-0 w-full h-10 bg-radial-[at_50%_150%] from-transparent from-0% via-transparent via-40% to-slate-900 to-60% opacity-0 transition-opacity duration-500 scale-y-[-1]"></div>
-        <div ref={botGradientLinear} className="absolute bottom-0 left-0 w-full h-10 bg-linear-to-t from-slate-900 to-transparent opacity-0 transition-opacity duration-500"></div>
+        <div ref={botGradientLinear} className="absolute bottom-0 left-0 w-full h-10 bg-linear-to-t from-slate-900 to-transparent opacity-100 transition-opacity duration-100"></div>
       </div>
 
       {assessments.entries.length > 0 ?
