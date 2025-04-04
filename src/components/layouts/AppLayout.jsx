@@ -60,7 +60,7 @@ function AppLayout() {
           toast: setToastData
         }
       }}>
-        <main className="h-dvh min-w-full flex flex-col pb-38">
+        <main className="h-dvh min-w-full flex flex-col pb-41">
           {!loading &&
             <Outlet/>
           }

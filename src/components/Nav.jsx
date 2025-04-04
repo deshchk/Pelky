@@ -76,7 +76,7 @@ function Nav() {
   return (
     <>
       <nav className="fixed bottom-0 left-0 w-full bg-slate-900">
-        <ul className="pb-6 pt-10 flex justify-center mb-6">
+        <ul className="py-10 flex justify-center mb-6">
           {!location.pathname.includes('ass') ?
             <li className="relative" onClick={addItem}>
               <div className="size-15 relative">

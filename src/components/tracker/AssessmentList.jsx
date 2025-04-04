@@ -74,7 +74,7 @@ function AssessmentList({ item, assessments, setter }) {
       className="grid grid-cols-1 h-full empty:!hidden overflow-y-auto invisible-scroll overscroll-none"
       onTouchStart={onTouchStart} onScroll={onScroll} onTouchEnd={onTouchEnd}
     >
-      <div className="pointer-events-none fixed -left-60 bottom-38 w-[calc(100%+480px)] z-20 h-10">
+      <div className="pointer-events-none fixed -left-60 bottom-41 w-[calc(100%+480px)] z-20 h-10">
         <div ref={botGradientRadial} className="absolute bottom-0 left-0 w-full h-10 bg-radial-[at_50%_150%] from-transparent from-0% via-transparent via-40% to-slate-900 to-60% opacity-0 transition-opacity duration-500 scale-y-[-1]"></div>
         <div ref={botGradientLinear} className="absolute bottom-0 left-0 w-full h-10 bg-linear-to-t from-slate-900 to-transparent opacity-0 transition-opacity duration-500"></div>
       </div>
