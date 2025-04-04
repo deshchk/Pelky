@@ -89,7 +89,7 @@ function TrackerList() {
       </div>
 
       {data.items.length > 0 ? (
-        <ul className="self-end grid grid-cols-1 place-items-center pt-30" ref={listEl}>
+        <ul className="self-end grid grid-cols-1 place-items-center pt-30 pb-px" ref={listEl}>
           {data.items.map((item, i) => {
             const props = {
               item,

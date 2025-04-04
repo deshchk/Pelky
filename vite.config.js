@@ -66,7 +66,7 @@ export default defineConfig({
             }
           ]
         },
-        defaultOptions: { enabled: true }
+        defaultOptions: { enabled: false }
       })
   ],
   resolve: {

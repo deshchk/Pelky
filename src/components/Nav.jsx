@@ -75,7 +75,7 @@ function Nav() {
 
   return (
     <>
-      <nav className="fixed bottom-0 left-0 w-full bg-slate-900">
+      <nav className="fixed bottom-0 left-0 w-full">
         <ul className="py-10 flex justify-center mb-6">
           {!location.pathname.includes('ass') ?
             <li className="relative" onClick={addItem}>
@@ -90,9 +90,13 @@ function Nav() {
                   <Stars className="absolute -top-1.5 -left-5 size-8 scale-x-[-1] text-yellow-500 z-50"/>}
             </li>
             :
-            <li className="h-14 flex gap-2 items-center text-slate-200 font-medium pl-3 pr-6 bg-slate-800 rounded-full" onClick={goBack}>
-              <Chevron className="size-7 stroke-2 rotate-90" />
-              Back
+            <li className="relative pl-5 pr-7.5" onClick={goBack}>
+              <div className="relative h-15 z-20 flex gap-2 items-center text-slate-200 font-medium">
+                <Chevron className="size-5 stroke-2 rotate-90" />
+                Back
+              </div>
+              <div className="absolute inset-0 bg-slate-900 rounded-full z-10 blur-xs" />
+              <div className="absolute inset-0 bg-slate-500/10 rounded-full z-0 shadow shadow-slate-950/20" />
             </li>
           }
         </ul>

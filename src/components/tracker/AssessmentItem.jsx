@@ -203,7 +203,7 @@ export default function AssessmentItem({item, ass, listScrolling, setter}) {
   return (
     <li
       ref={itemWrapper}
-      className="group/item relative grid grid-cols-1 grid-rows-1 w-full overflow-hidden border-y -mt-px first:border-y border-slate-700 bg-red-500 touch-manipulation"
+      className="group/item relative grid grid-cols-1 grid-rows-1 w-full overflow-hidden border-y -mt-px border-[hsl(222_55%_7%)] bg-red-500 touch-manipulation"
       style={{
         transform: `translateZ(0) ${loadingItem ? 'translateX(-100%)' : 'translateX(0)'}`,
         transition: `opacity .2s ease-in-out, transform .2s`,
@@ -251,7 +251,7 @@ export default function AssessmentItem({item, ass, listScrolling, setter}) {
                 <div
                   contentEditable={true}
                   placeholder="add a note"
-                  className="px-2 py-1 rounded bg-slate-950/30 flex min-h-7 items-center gap-3 text-slate-200 text-sm focus:outline-none focus:bg-slate-950"
+                  className="px-2 py-1 rounded bg-slate-950/15 flex min-h-7 items-center gap-3 text-slate-200 text-sm focus:outline-none focus:bg-slate-950"
                   onFocus={onNoteChangeFocus}
                   onBeforeInput={onNoteChangeBeforeInput}
                   onInput={onNoteChangeInput}
@@ -276,7 +276,7 @@ export default function AssessmentItem({item, ass, listScrolling, setter}) {
             backgroundColor: ass.value === 0 ? 'color-mix(in oklab, transparent, var(--color-slate-950) 50%'
               : `color-mix(in oklab, transparent ${100-colorPercent}%, var(${((item.scale.type === 'both' || !item.scale) && scaleValues.indexOf(ass.value) < scaleValues.length/2) ? '--color-red-500' : item.scale.type === 'negative' ? '--color-red-500' : '--color-green-500'}) ${colorPercent/2}%)`,
           }}
-          className="h-full w-18 grid place-items-center text-xl border-l border-slate-800"
+          className="h-full w-18 grid place-items-center text-xl border-l border-[hsl(222_55%_7%)]"
         >
           {ass.value}
         </div>

@@ -8,11 +8,11 @@ export default function ItemBody({item, items, setters, assessments}) {
   const {
     setItems,
     setToastData,
-    setLoadingItem
+    setLoadingItem,
+    changingName
   } = setters
 
   const nameChangeEl = useRef(null)
-  const changingName = useRef(false)
 
   function onNameChangeFocus(e) {
     e.target.classList.add('active')

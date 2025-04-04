@@ -41,6 +41,8 @@ export default function TrackerItem({item, listIndex, items, assessments, listSc
   const isAfterSnapLeft = useRef(false)
   const isAfterSnapRight = useRef(false)
 
+  const changingName = useRef(false)
+
   const stateRef = useRef({})
   stateRef.current = {
     mainTranslateX,
@@ -177,10 +179,10 @@ export default function TrackerItem({item, listIndex, items, assessments, listSc
 
     setMainTranslateX(isAfterSnapLeft.current ? Math.max(tX, 0) : isAfterSnapRight.current ? Math.min(tX, 0) : tX)
     setLeftWidth(isAfterSnapLeft.current ? Math.max(tX, 0) : isAfterSnapRight.current ? Math.min(tX, 0) : tX)
-    setRightWidth(isAfterSnapLeft.current ? Math.max(-tX, 0) : isAfterSnapRight.current ? Math.min(-tX, 0) : -tX)
+    setRightWidth(isAfterSnapLeft.current ? Math.max(-tX, 0) : isAfterSnapRight.current ? Math.max(-tX, 0) : -tX)
 
-    setShouldLeftAction(tX > itemWrapper.current.clientWidth/2)
-    setShouldRightAction(tX < -(itemWrapper.current.clientWidth/2))
+    setShouldLeftAction(isAfterSnapRight.current ? false : tX > itemWrapper.current.clientWidth/2)
+    setShouldRightAction(isAfterSnapLeft.current ? false : tX < -(itemWrapper.current.clientWidth/2))
   }
 
 
@@ -277,7 +279,7 @@ export default function TrackerItem({item, listIndex, items, assessments, listSc
   return (
     <li
       ref={itemWrapper}
-      className="group/item relative grid grid-cols-2 w-full max-h-26 overflow-hidden border-y -mt-px first:border-y border-slate-700 touch-manipulation"
+      className="group/item relative grid grid-cols-2 w-full max-h-26 overflow-hidden touch-manipulation border-y -mt-px border-[hsl(222_55%_7%)]"
       style={{
         transform: `translateZ(0) ${loadingItem ? 'translateX(-100%)' : 'translateX(0)'}`,
         transition: `opacity .2s ease-in-out, transform .2s`,
@@ -295,7 +297,7 @@ export default function TrackerItem({item, listIndex, items, assessments, listSc
         }}
       >
         <div className="relative overflow-hidden">
-          <ItemBody item={item} setters={{...setters, setLoadingItem}} {...{items, assessments}} />
+          <ItemBody item={item} setters={{...setters, setLoadingItem, changingName}} {...{items, assessments}} />
 
           <div
             ref={assessmentOptions}
@@ -320,7 +322,7 @@ export default function TrackerItem({item, listIndex, items, assessments, listSc
           item={item}
           listIndex={listIndex}
           items={items}
-          setters={{...setters, setSwipingBlocked, setLoadingItem}}
+          setters={{...setters, setSwipingBlocked, setLoadingItem, changingName}}
           options={{cancelAssessment, noteAssessment, setShowAssessmentOptions}}
         />
       </div>
@@ -339,7 +341,7 @@ export default function TrackerItem({item, listIndex, items, assessments, listSc
             justifyItems: shouldLeftAction ? 'end' : 'center',
           }}
         >
-          <ItemAction type="pin" action={actionPinItem} />
+          <ItemAction type="pin" action={actionPinItem}/>
         </li>
 
         <li
@@ -348,7 +350,7 @@ export default function TrackerItem({item, listIndex, items, assessments, listSc
             justifyItems: 'center',
           }}
         >
-          <ItemAction type="reminder" action={actionReminderItem} />
+          <ItemAction type="reminder" action={actionReminderItem}/>
         </li>
       </ul>
 
@@ -366,7 +368,7 @@ export default function TrackerItem({item, listIndex, items, assessments, listSc
             justifyItems: 'center',
           }}
         >
-          <ItemAction type="details" action={actionDetailsItem} />
+          <ItemAction type="details" action={actionDetailsItem}/>
         </li>
 
         <li
@@ -375,7 +377,7 @@ export default function TrackerItem({item, listIndex, items, assessments, listSc
             justifyItems: shouldRightAction ? 'start' : 'center',
           }}
         >
-          <ItemAction type="delete" action={actionDeleteItem} />
+          <ItemAction type="delete" action={actionDeleteItem}/>
         </li>
       </ul>
     </li>

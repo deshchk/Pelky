@@ -54,7 +54,7 @@ function Dialog({props, handleConfirm, closeDialog}) {
       <div className="relative flex">
         <div className="flex flex-col gap-2">
           {title &&
-            <div className="text-xl font-semibold text-pretty">
+            <div className="text-xl font-semibold text-pretty max-w-[18ch]">
               {nbsps(title)}
             </div>
           }

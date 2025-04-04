@@ -11,6 +11,7 @@ export default function ScrollerInput ({options, item, listIndex, items, setters
     setDialogData,
     setItems,
     setAssessments,
+    changingName
   } = setters
 
   const {
@@ -93,7 +94,7 @@ export default function ScrollerInput ({options, item, listIndex, items, setters
 
 
   function handleScroll(e) {
-    if (dontHandleScroll.current) return
+    if (dontHandleScroll.current || changingName.current) return
     setSwipingBlocked(true)
     setAnimating(false)
     setShowAssessmentOptions(true)
@@ -217,7 +218,7 @@ export default function ScrollerInput ({options, item, listIndex, items, setters
   }, [noteAssessment.current])
 
   return (
-    <div className="relative h-full w-18 border-l border-slate-800 text-xl bg-slate-900" ref={wrapperWrapper}>
+    <div className="relative h-full w-18 text-xl bg-slate-900 border-l border-dashed border-[hsl(222_55%_7%)]" ref={wrapperWrapper}>
       <div
         ref={scrollerWrapper}
         className="scroller-input invisible-scroll"

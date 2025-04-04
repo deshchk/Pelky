@@ -82,7 +82,7 @@ function AssessmentList({ item, assessments, setter }) {
       {assessments.entries.length > 0 ?
         (
           <ul
-            className="self-end grid grid-cols-1 place-items-center py-10"
+            className="self-end grid grid-cols-1 place-items-center pt-10"
             ref={listEl}
           >
             {assessments.entries.map((ass, i) => (
