@@ -1,12 +1,13 @@
-# React + Vite
+# Pelky - Drop by yourself and see what's changed
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+`
+The psychological tracker app. Learn more about yourself and your life tracking what happens and changes each day.
+`
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Made with:
+- [Vite](https://github.com/vitejs/vite)
+- [Vite Plugin PWA](https://github.com/vite-pwa/vite-plugin-pwa)
+- [React](https://github.com/facebook/react)
+- [React Router](https://github.com/remix-run/react-router)
+- [TailwindCSS](https://github.com/tailwindlabs/tailwindcss)
+- [svgr](https://github.com/gregberge/svgr)
