@@ -53,9 +53,8 @@ button {
   }
 
   -webkit-overflow-scrolling: touch;
-  & ::-webkit-scrollbar {
-    @apply !hidden;
-  }
+  &::-webkit-scrollbar { @apply !hidden }
+  & ::-webkit-scrollbar { @apply !hidden }
 }
 
 .hide-able {
